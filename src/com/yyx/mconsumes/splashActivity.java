@@ -3,7 +3,7 @@ package com.yyx.mconsumes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-//引用自定义的类包
+//引用consume自定义的类包
 import com.yyx.mconsumes.BaseActivity.DataCallback;
 import com.yyx.mconsumes.db.ConsumeDao;
 import com.yyx.mconsumes.entity.ConsumeInfo;
@@ -67,7 +67,6 @@ public class splashActivity extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.splash_activity);
 		super.onCreate(savedInstanceState);
-
 	}
 
 	@Override
@@ -128,9 +127,18 @@ public class splashActivity extends BaseActivity {
 		backGround.setAnimation(alphaAnimation);
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 
-		boolean isDownLoad = sharedPreferences.getBoolean("isDownLoad", false);
-		if (isDownLoad) {
-			promot.setText("加载中......");
+		//boolean isDownLoad = sharedPreferences.getBoolean("isDownLoad", false);
+		//判断是否已经登陆
+		//未登陆则直接显示登陆界面
+		if(sharedPreferences.contains("is_login") && sharedPreferences.getBoolean("is_login",false)){
+			startActivity(new Intent(splashActivity.this,B.class));
+		} else {
+			startActivity(new Intent(splashActivity.this,C.class));
+		}
+		
+		finish();
+		//if (isDownLoad) {
+			//promot.setText("加载中......");
 			//new Thread() {
 				//public void run() {
 					//try {
@@ -143,10 +151,10 @@ public class splashActivity extends BaseActivity {
 					//}
 				//};
 			//}.start();
-		} else {
+		//} else {
 			//ConsumeListParse consumeListParse = new ConsumeListParse();
 			//getdataFromServer(getApplicationContext(), consumeListParse, url, callback);
-		}
+		//}
 
 	}
 }

@@ -63,9 +63,6 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 		mainBt.setOnClickListener(this);
 		mainBt.setChecked(true);
 
-	    //login
-		Button button_submit =(Button)findViewById(R.id.button_submit); 
-		button_submit.setOnClickListener(button_login_listener); 
 	}
 
 	@Override
@@ -117,54 +114,6 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 		}
 	}
 
-	/*用户登陆
-     * 服务器检测用户的账号和密码是否一致，并返回结果
-     * */
-	Button.OnClickListener button_login_listener = new Button.OnClickListener(){//创建监听对象  
-		public void onClick(View v){  
-			EditText editText_login_email = (EditText) findViewById(R.id.editText_Email);
-			EditText editText_login_pwd   = (EditText) findViewById(R.id.editText_Pwd);
-			//登陆用户密码及密码
-			String login_email = editText_login_email.getText().toString();
-			String login_pwd   = editText_login_pwd.getText().toString();
-			Login(login_email,login_pwd);
-		}
-	};
-	
-    public static Boolean Login(String Account ,String PassWord)
-    {
-    	
-        //Step One  从服务器接口中获取当前账号和密码的配对情况
-        Boolean actionResult=false;   
-        String httpUrl="http://solife.us/api/consumes/create?Account="+Account+"&PassWord="+PassWord;
-        //httpGet 连接对象
-        HttpGet httpRequest =new HttpGet(httpUrl);
-        
-        try
-        {
-            //取得HttpClinet对象
-            HttpClient httpclient=new DefaultHttpClient();
-            // 请求HttpClient,取得HttpResponse
-            HttpResponse  httpResponse=httpclient.execute(httpRequest);
-            //请求成功
-            if(httpResponse.getStatusLine().getStatusCode()==HttpStatus.SC_OK)
-            {
-                //取得返回的字符串
-                String strResult=EntityUtils.toString(httpResponse.getEntity());
-                
-                JSONObject jsonObject = new JSONObject(strResult) ;
-                //获取返回值,并判断是否正确
-                //actionResult=jsonObject.getBoolean("ActionResult");
-                Integer ret = jsonObject.getInt("ret");
-                String ret_info = jsonObject.getString("ret_info");
-            }
-        }
-        catch(Exception e)
-        {
-            return false;
-            
-        }
-        return actionResult;
-    }
+
     
 }

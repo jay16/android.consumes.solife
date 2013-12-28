@@ -9,39 +9,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
+        <Button
+            android:id="@+id/button_consume_form_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="提交" />
+
         <EditText
-            android:id="@+id/editText1"
-            android:layout_width="wrap_content"
+            android:id="@+id/editText_consume_form_value"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="40dp"
             android:ems="10"
-            android:hint="消费值" >
+            android:hint="消费值" />
+
+        <EditText
+            android:id="@+id/editText_consume_form_msg"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/editText_consume_form_value"
+            android:ems="10"
+            android:hint="消费备注"
+            android:inputType="textPostalAddress" >
 
             <requestFocus />
         </EditText>
-
-        <DatePicker
-            android:id="@+id/datePicker1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/editText1"
-            android:layout_alignRight="@+id/editText1"
-            android:layout_below="@+id/editText1"
-            android:layout_marginTop="51dp" />
-
-        <EditText
-            android:id="@+id/editText2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/editText1"
-            android:layout_below="@+id/datePicker1"
-            android:layout_marginTop="54dp"
-            android:ems="10"
-            android:hint="消费备注"
-            android:inputType="textPostalAddress" />
 
     </RelativeLayout>
 

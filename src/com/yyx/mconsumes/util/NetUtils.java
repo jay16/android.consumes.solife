@@ -16,14 +16,13 @@ public class NetUtils {
 	public static Object post(URL url) {
 		return new Object();
 	}
-/**
- * ≈–∂œ «∑Ò”–Õ¯¬Á
- * @param context
- * @return
- */
+	/**
+	 * ≈–∂œ «∑Ò”–Õ¯¬Á
+	 * @param context
+	 * @return
+	 */
 	public static boolean hasNetWork(Context context) {
-		ConnectivityManager con = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager con = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo workinfo = con.getActiveNetworkInfo();
 		if (workinfo == null || !workinfo.isAvailable()) {
 			return false;
