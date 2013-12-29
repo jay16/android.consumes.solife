@@ -5,29 +5,17 @@
     android:background="@android:color/transparent"
     android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/editText_Email"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="邮件"
-        android:inputType="textEmailAddress" >
+        android:text="用户信息:" />
 
-        <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/editText_Pwd"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textView_Current_User_Email"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="密码"
-        android:inputType="textPassword" />
-
-    <Button
-        android:id="@+id/button_submit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="登陆" />
+        android:text="用户邮箱"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </LinearLayout>

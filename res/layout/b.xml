@@ -9,14 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <Button
-            android:id="@+id/button_consume_form_submit"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:text="提交" />
-
         <EditText
             android:id="@+id/editText_consume_form_value"
             android:layout_width="match_parent"
@@ -29,7 +21,7 @@
         <EditText
             android:id="@+id/editText_consume_form_msg"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="200dp"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/editText_consume_form_value"
             android:ems="10"
@@ -38,6 +30,14 @@
 
             <requestFocus />
         </EditText>
+
+        <Button
+            android:id="@+id/button_consume_form_submit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/editText_consume_form_msg"
+            android:text="提交" />
 
     </RelativeLayout>
 

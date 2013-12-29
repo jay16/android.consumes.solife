@@ -16,19 +16,9 @@
         style="@style/main_footbar_cutline"
         android:src="@drawable/widget_bar_cut_off" />
 
-    <RadioButton
-        android:id="@+id/main_footbar_question"
-        style="@style/main_footbar_radio"
-        android:drawableTop="@drawable/widget_bar_question" />
-
     <ImageView
         style="@style/main_footbar_cutline"
         android:src="@drawable/widget_bar_cut_off" />
-
-    <RadioButton
-        android:id="@+id/main_footbar_tweet"
-        style="@style/main_footbar_radio"
-        android:drawableTop="@drawable/widget_bar_tweet" />
 
     <ImageView
         style="@style/main_footbar_cutline"
@@ -39,6 +29,14 @@
         style="@style/main_footbar_radio"
         android:drawableTop="@drawable/widget_bar_active" />
 
-    
+    <RadioButton
+        android:id="@+id/main_footbar_user"
+        style="@style/main_footbar_radio"
+        android:drawableTop="@drawable/widget_bar_user" />
+
+    <RadioButton
+        android:id="@+id/main_footbar_question"
+        style="@style/main_footbar_radio"
+        android:drawableTop="@drawable/widget_bar_question" />
 
 </LinearLayout>

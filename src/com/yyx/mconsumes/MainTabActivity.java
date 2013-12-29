@@ -51,7 +51,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 				.setContent(new Intent(this, D.class)));
 		mainBt = (RadioButton) findViewById(R.id.main_footbar_news);
 		bBt = (RadioButton) findViewById(R.id.main_footbar_question);
-		cBt = (RadioButton) findViewById(R.id.main_footbar_tweet);
+		cBt = (RadioButton) findViewById(R.id.main_footbar_user);
 		dBt = (RadioButton) findViewById(R.id.main_footbar_active);
 		buttons[0] = mainBt;
 		buttons[1] = bBt;
@@ -90,7 +90,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 			tabHost.setCurrentTabByTag("B");
 
 			break;
-		case R.id.main_footbar_tweet:
+		case R.id.main_footbar_user:
 			index = 2;
 			buttons[2].setChecked(true);
 			buttons[0].setChecked(false);
