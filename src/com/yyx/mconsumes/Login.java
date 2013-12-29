@@ -32,8 +32,8 @@ public class Login extends BaseActivity {
 		setContentView(R.layout.login);
 		
 	    //login
-		//Button button_submit =(Button)findViewById(R.id.button_submit); 
-		//button_submit.setOnClickListener(button_login_listener); 
+		Button button_submit =(Button)findViewById(R.id.button_submit); 
+		button_submit.setOnClickListener(button_login_listener); 
 	}
 	
 	/*ÓÃ»§µÇÂ½

@@ -29,10 +29,10 @@ public class C extends BaseActivity {
 		// TODO Auto-generated method stub
 		setContentView(R.layout.c);
 		
-		//sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-		//String current_user = sharedPreferences.getString("current_user","");
+		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+		String current_user = sharedPreferences.getString("current_user","");
 	    //login
-		//TextView  textView_Current_User_Email = (TextView)findViewById(R.id.textView_Current_User_Email); 
-		//textView_Current_User_Email.setText(current_user);
+		TextView  textView_Current_User_Email = (TextView)findViewById(R.id.textView_Current_User_Email); 
+		textView_Current_User_Email.setText(current_user);
 	}
 }

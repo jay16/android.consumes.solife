@@ -65,8 +65,9 @@ public class splashActivity extends BaseActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		//以下两句不可调换，否则会出现错误
 		setContentView(R.layout.splash_activity);
+		super.onCreate(savedInstanceState);
 	}
 
 	@Override
@@ -131,11 +132,11 @@ public class splashActivity extends BaseActivity {
 		//判断是否已经登陆
 		//未登陆则直接显示登陆界面
 		if(sharedPreferences.contains("is_login") && sharedPreferences.getBoolean("is_login",false)){
-			//startActivity(new Intent(splashActivity.this,MainTabActivity.class));
+			  startActivity(new Intent(splashActivity.this,MainTabActivity.class));
 		} else {
-			//startActivity(new Intent(splashActivity.this,Login.class));
+			startActivity(new Intent(splashActivity.this,Login.class));
 		}
-		startActivity(new Intent(splashActivity.this,MainTabActivity.class));
+		//startActivity(new Intent(splashActivity.this,MainTabActivity.class));
 		finish();
 		//if (isDownLoad) {
 			//promot.setText("加载中......");
