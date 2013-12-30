@@ -125,7 +125,6 @@ public abstract class BaseActivity extends Activity {
 			this.baseParse = baseParse;
 			this.url       = url;
 			this.context   = context;
-
 		}
 
 		@Override

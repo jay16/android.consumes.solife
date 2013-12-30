@@ -8,8 +8,9 @@ public class ConsumeInfo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	private String created_at, msg, updated_at;
-	private int id;
+	private int consume_id, user_id;
 	private double volue;
+	private Boolean sync;
 
 	public String getCreated_at() {
 		return created_at;
@@ -35,12 +36,20 @@ public class ConsumeInfo implements Serializable {
 		this.updated_at = updated_at;
 	}
 
-	public int getId() {
-		return id;
+	public int getUserId() {
+		return user_id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
+	public void setUserId(int id) {
+		this.user_id = id;
+	}
+
+	public int getConsumeId() {
+		return consume_id;
+	}
+
+	public void setConsumeId(int id) {
+		this.consume_id = id;
 	}
 
 	public double getVolue() {
@@ -49,6 +58,14 @@ public class ConsumeInfo implements Serializable {
 
 	public void setVolue(double volue) {
 		this.volue = volue;
+	}
+
+	public Boolean getSync() {
+		return sync;
+	}
+
+	public void setSync(boolean sync) {
+		this.sync = sync;
 	}
 
 }

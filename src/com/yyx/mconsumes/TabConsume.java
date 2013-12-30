@@ -16,7 +16,10 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import com.yyx.mconsumes.db.ConsumeDao;
+
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 //import android.content.SharedPreferences.Editor;
 import android.widget.Toast;
@@ -56,37 +59,53 @@ public class TabConsume extends BaseActivity {
      * */
 	Button.OnClickListener button_consume_form_submit_listener = new Button.OnClickListener() {
 		public void onClick(View v){  
-            Toast.makeText(TabConsume.this, "this is two", 0).show();
-            
 			EditText editText_consume_form_value = (EditText) findViewById(R.id.editText_consume_form_value);
 			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
 			EditText editText_consume_form_msg   = (EditText) findViewById(R.id.editText_consume_form_msg);
 			
-			String consume_value = editText_consume_form_value.getText().toString();
-			String consume_created_at = editText_consume_form_created_at.getText().toString();
-			String consume_msg   = editText_consume_form_msg.getText().toString();
+			String volue = editText_consume_form_value.getText().toString();
+			String created_at = editText_consume_form_created_at.getText().toString();
+			String msg   = editText_consume_form_msg.getText().toString();
+			Integer user_id    = -1;
+			Integer consume_id = -1;
+			long    row_id     = (long)-1;
+	        Boolean sync = false;
 			
 			//登陆用户密码及密码
-			//String consume_created_at = "2013-12-29 9:1:1";
+			//String created_at = "2013-12-29 9:1:1";
 			String login_email = "";
 			String [] ret_array = {"0", "login email is empty!"};
 
             Toast.makeText(TabConsume.this, "this is three", 0).show();
 			//login email不存在则提示用户无登陆
 			sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-			if(sharedPreferences.contains("login_email") && 
-			   !sharedPreferences.getString("login_email","").equals("")){
-				login_email = sharedPreferences.getString("login_email","");
-				ret_array = consume_create(login_email,consume_value,consume_created_at,consume_msg);
+			if(sharedPreferences.contains("current_user") && 
+			   !sharedPreferences.getString("current_user","").equals("")){
+				login_email = sharedPreferences.getString("current_user","");
+				ret_array = consume_create(login_email,volue,created_at,msg);
 			} 
 			
 	        String ret_str;
 	        if(ret_array[0].equals("1")){
-	            ret_str = "创建成功";			
+	            ret_str = "创建成功";
+	            sync = true;
 	        } else {
 	            ret_str = "创建失败:" +ret_array[1];
+	            sync = false;
 	        }
-            Toast.makeText(TabConsume.this, ret_str, 0).show();
+	        ConsumeDao consumeDao = new ConsumeDao(TabConsume.this);
+	        try {
+	          row_id = consumeDao.insertRecord(user_id,consume_id,volue,msg, created_at,sync);
+	        } catch (Exception e) {
+			  e.printStackTrace();
+		    }
+            
+			//界面切换
+			//显示记录记录
+			Intent intent = new Intent(TabConsume.this,ConsumeItem.class);
+			intent.putExtra("row_id", row_id);  
+			startActivity(intent);
+	        Toast.makeText(TabConsume.this, ret_str, 0).show();
 		}
 	};
 	
@@ -94,8 +113,8 @@ public class TabConsume extends BaseActivity {
 	Button.OnClickListener button_date_add_listener = new Button.OnClickListener() {
 		public void onClick(View v){  		
 			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
-			String consume_created_at = editText_consume_form_created_at.getText().toString();
-			editText_consume_form_created_at.setText(get_date(consume_created_at,1));
+			String created_at = editText_consume_form_created_at.getText().toString();
+			editText_consume_form_created_at.setText(get_date(created_at,1));
 			
 			//控件重新赋值后刷新界面
 			v.invalidate();
@@ -105,8 +124,8 @@ public class TabConsume extends BaseActivity {
 	Button.OnClickListener button_date_plus_listener = new Button.OnClickListener() {
 		public void onClick(View v){  		
 			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
-			String consume_created_at = editText_consume_form_created_at.getText().toString();
-			editText_consume_form_created_at.setText(get_date(consume_created_at,-1));
+			String created_at = editText_consume_form_created_at.getText().toString();
+			editText_consume_form_created_at.setText(get_date(created_at,-1));
 			
 			//控件重新赋值后刷新界面
 			v.invalidate();

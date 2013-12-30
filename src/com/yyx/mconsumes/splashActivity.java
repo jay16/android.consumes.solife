@@ -51,15 +51,15 @@ public class splashActivity extends BaseActivity {
 				Toast.makeText(splashActivity.this, "数据库初始化失败！", 0).show();
 				intent.putExtra("flag", 2000);
 				startActivity(intent);
-
 				break;
-
+				
+			case 3000:
+				Toast.makeText(splashActivity.this, "错误:未连接网络！", 0).show();
+                break;
 			default:
 				break;
-
 			}
 			finish();
-
 		};
 	};
 

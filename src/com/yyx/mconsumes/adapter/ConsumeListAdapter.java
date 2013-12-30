@@ -15,8 +15,7 @@ public class ConsumeListAdapter extends BaseAdapter {
 	ArrayList<ConsumeInfo> consumeInfos;
 	private Context context;
 
-	public ConsumeListAdapter(ArrayList<ConsumeInfo> consumeInfos,
-			Context context) {
+	public ConsumeListAdapter(ArrayList<ConsumeInfo> consumeInfos, Context context) {
 		this.consumeInfos = consumeInfos;
 		this.context = context;
 	}
@@ -46,16 +45,13 @@ public class ConsumeListAdapter extends BaseAdapter {
 		ViewHolder holder;
 		if (convertView != null) {
 			holder = (ViewHolder) convertView.getTag();
-
 		} else {
 			holder = new ViewHolder();
-			convertView = View.inflate(context, R.layout.consume_list_item,
-					null);
+			convertView = View.inflate(context, R.layout.consume_list_item, null);
 			holder.amount = (TextView) convertView.findViewById(R.id.amount);
 			holder.date = (TextView) convertView.findViewById(R.id.date);
 			holder.remark = (TextView) convertView.findViewById(R.id.remark);
 			convertView.setTag(holder);
-
 		}
 		holder.amount.setText("消费金额：" + consumeInfo.getVolue() + "元");
 		holder.date.setText("日期：" + consumeInfo.getCreated_at());
