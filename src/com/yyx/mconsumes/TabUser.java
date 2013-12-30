@@ -21,13 +21,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class C extends BaseActivity {
+public class TabUser extends BaseActivity {
 	SharedPreferences sharedPreferences;
 
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
-		setContentView(R.layout.c);
+		setContentView(R.layout.tab_user);
 		
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		String current_user = sharedPreferences.getString("current_user","");

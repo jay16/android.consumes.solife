@@ -35,7 +35,7 @@ public class splashActivity extends BaseActivity {
 	//句柄-数据插入
 	Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
-			//解决Android应用的各项组件之间的通讯
+			//intent解决Android应用的各项组件之间的通讯
 			//专门提供组件互相调用的相关信息，实现调用者与被调用者之间的解耦
 			Intent intent = new Intent(splashActivity.this, MainTabActivity.class);
 			switch (msg.what) {
@@ -127,17 +127,18 @@ public class splashActivity extends BaseActivity {
 		//alphaAnimation.setDuration(1000);
 		backGround.setAnimation(alphaAnimation);
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-
-		//boolean isDownLoad = sharedPreferences.getBoolean("isDownLoad", false);
+		
 		//判断是否已经登陆
 		//未登陆则直接显示登陆界面
+		Intent intent;
 		if(sharedPreferences.contains("is_login") && sharedPreferences.getBoolean("is_login",false)){
-			  startActivity(new Intent(splashActivity.this,MainTabActivity.class));
+			intent = new Intent(splashActivity.this,MainTabActivity.class);
 		} else {
-			startActivity(new Intent(splashActivity.this,Login.class));
+			intent = new Intent(splashActivity.this,Login.class);
 		}
-		//startActivity(new Intent(splashActivity.this,MainTabActivity.class));
+		startActivity(intent);
 		finish();
+		//boolean isDownLoad = sharedPreferences.getBoolean("isDownLoad", false);
 		//if (isDownLoad) {
 			//promot.setText("加载中......");
 			//new Thread() {

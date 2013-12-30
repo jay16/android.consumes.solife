@@ -44,9 +44,9 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 		tabHost.addTab(tabHost.newTabSpec("main").setIndicator("main")
 				.setContent(new Intent(this, MainRecordActivity.class)));
 		tabHost.addTab(tabHost.newTabSpec("B").setIndicator("B")
-				.setContent(new Intent(this, B.class)));
+				.setContent(new Intent(this, TabConsume.class)));
 		tabHost.addTab(tabHost.newTabSpec("C").setIndicator("C")
-				.setContent(new Intent(this, C.class)));
+				.setContent(new Intent(this, TabUser.class)));
 		tabHost.addTab(tabHost.newTabSpec("D").setIndicator("D")
 				.setContent(new Intent(this, D.class)));
 		mainBt = (RadioButton) findViewById(R.id.main_footbar_news);

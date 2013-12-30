@@ -34,9 +34,9 @@
         </activity>
         <activity android:name="MainRecordActivity" >
         </activity>
-        <activity android:name=".B" >
+        <activity android:name=".TabConsume" >
         </activity>
-        <activity android:name=".C" >
+        <activity android:name=".TabUser" >
         </activity>
         <activity android:name=".D" >
         </activity>

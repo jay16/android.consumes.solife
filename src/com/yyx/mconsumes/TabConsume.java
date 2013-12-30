@@ -29,41 +29,49 @@ import android.widget.EditText;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
-public class B extends BaseActivity {
+public class TabConsume extends BaseActivity {
 	SharedPreferences sharedPreferences;
 	
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
-		setContentView(R.layout.b);
-
+		setContentView(R.layout.tab_consume);
 		
-		Toast.makeText(B.this, "this is one", 0).show();
+		//初始化创建日期时间
+		EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		editText_consume_form_created_at.setText(dateFormat.format(new Date()));
 	    //consume_form
 		Button button_consume_form_submit =(Button)findViewById(R.id.button_consume_form_submit); 
 		button_consume_form_submit.setOnClickListener(button_consume_form_submit_listener); 
+		Button button_date_add =(Button)findViewById(R.id.button_date_add); 
+		button_date_add.setOnClickListener(button_date_add_listener);
+		Button button_date_plus =(Button)findViewById(R.id.button_date_plus); 
+		button_date_plus.setOnClickListener(button_date_plus_listener);
 	}
 	
 	/* 创建consume submit监听对象  
      * */
 	Button.OnClickListener button_consume_form_submit_listener = new Button.OnClickListener() {
 		public void onClick(View v){  
-            Toast.makeText(B.this, "this is two", 0).show();
+            Toast.makeText(TabConsume.this, "this is two", 0).show();
             
 			EditText editText_consume_form_value = (EditText) findViewById(R.id.editText_consume_form_value);
+			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
 			EditText editText_consume_form_msg   = (EditText) findViewById(R.id.editText_consume_form_msg);
-			//DatePicker datePicker_consume_form_created_at = (DatePicker) findViewById(R.id.datePicker_consume_form_created_at);
-			//登陆用户密码及密码
+			
 			String consume_value = editText_consume_form_value.getText().toString();
+			String consume_created_at = editText_consume_form_created_at.getText().toString();
 			String consume_msg   = editText_consume_form_msg.getText().toString();
-			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	        String consume_created_at   =  dateFormat.format(new Date());
+			
+			//登陆用户密码及密码
 			//String consume_created_at = "2013-12-29 9:1:1";
 			String login_email = "";
 			String [] ret_array = {"0", "login email is empty!"};
 
-            Toast.makeText(B.this, "this is three", 0).show();
+            Toast.makeText(TabConsume.this, "this is three", 0).show();
 			//login email不存在则提示用户无登陆
 			sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 			if(sharedPreferences.contains("login_email") && 
@@ -78,10 +86,44 @@ public class B extends BaseActivity {
 	        } else {
 	            ret_str = "创建失败:" +ret_array[1];
 	        }
-            Toast.makeText(B.this, ret_str, 0).show();
+            Toast.makeText(TabConsume.this, ret_str, 0).show();
 		}
 	};
 	
+	/* 日期加一天   */
+	Button.OnClickListener button_date_add_listener = new Button.OnClickListener() {
+		public void onClick(View v){  		
+			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
+			String consume_created_at = editText_consume_form_created_at.getText().toString();
+			editText_consume_form_created_at.setText(get_date(consume_created_at,1));
+			
+			//控件重新赋值后刷新界面
+			v.invalidate();
+		}
+	};
+	/* 日期减一天   */
+	Button.OnClickListener button_date_plus_listener = new Button.OnClickListener() {
+		public void onClick(View v){  		
+			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
+			String consume_created_at = editText_consume_form_created_at.getText().toString();
+			editText_consume_form_created_at.setText(get_date(consume_created_at,-1));
+			
+			//控件重新赋值后刷新界面
+			v.invalidate();
+		}
+	};
+	
+	public static String get_date(String date_string, Integer num) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = null;
+		try {
+		    date = dateFormat.parse(date_string);
+		} catch (ParseException e) {
+		    e.printStackTrace();
+		}
+        String ret_string = dateFormat.format(new Date(date.getTime()+num*24*60*60*1000));
+        return ret_string;
+	}
     public static String [] consume_create(String login_email, String value ,String created_at,String msg) {
         //Step One  从服务器接口中获取当前账号和密码的配对情况
     	String [] ret_array = {"0","no return"};
