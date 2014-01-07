@@ -4,18 +4,107 @@
     android:layout_height="match_parent"
     android:background="@android:color/transparent"
     android:orientation="vertical" >
+    
+    <include layout="@layout/main_header" />
 
-    <TextView
-        android:id="@+id/textView_consume_volue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="用户信息:" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="86dp"
+        android:gravity="center|left" >
+        
 
-    <TextView
-        android:id="@+id/textView_Current_User_Email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="用户邮箱"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.77"
+            android:src="@drawable/ic_launcher" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="7.40"
+            android:gravity="center" >
+
+            <TextView
+                android:id="@+id/textView_User_Name"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_weight="0.31"
+                android:text="用户名称"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="12dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center|left" >
+
+            <TextView
+                android:id="@+id/sync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="所在地:"
+                android:textSize="15dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.10" 
+            android:gravity="center|left" >
+
+            <TextView
+                android:id="@+id/textView_User_Province"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.74"
+                android:text="用户所在地"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="15dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center|left" >
+
+            <TextView
+                android:id="@+id/TextView02"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="登陆名:"
+                android:textSize="15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.96"
+            android:gravity="center|left" >
+
+            <TextView
+                android:id="@+id/textView_User_Email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="用户邮箱"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textSize="15dp" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

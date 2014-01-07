@@ -7,36 +7,46 @@
     android:gravity="center_vertical"
     android:orientation="horizontal" >
 
-    <RadioButton
-        android:id="@+id/main_footbar_news"
-        style="@style/main_footbar_radio"
-        android:drawableTop="@drawable/widget_bar_news" />
-
-    <ImageView
-        style="@style/main_footbar_cutline"
-        android:src="@drawable/widget_bar_cut_off" />
-
-    <ImageView
-        style="@style/main_footbar_cutline"
-        android:src="@drawable/widget_bar_cut_off" />
-
-    <ImageView
-        style="@style/main_footbar_cutline"
-        android:src="@drawable/widget_bar_cut_off" />
 
     <RadioButton
-        android:id="@+id/main_footbar_active"
+        android:id="@+id/main_footbar_chart"
         style="@style/main_footbar_radio"
-        android:drawableTop="@drawable/widget_bar_active" />
+        android:drawableTop="@drawable/widget_bar_chart" />
+
+    <ImageView
+        style="@style/main_footbar_cutline"
+        android:src="@drawable/widget_bar_cut_off" />
+    
+    <RadioButton
+        android:id="@+id/main_footbar_list"
+        style="@style/main_footbar_radio"
+        android:drawableTop="@drawable/widget_bar_list" />
+
+    <ImageView
+        style="@style/main_footbar_cutline"
+        android:src="@drawable/widget_bar_cut_off" />
+
+    <RadioButton
+        android:id="@+id/main_footbar_add"
+        style="@style/main_footbar_radio"
+        android:drawableTop="@drawable/widget_bar_add" />
+
+    <ImageView
+        style="@style/main_footbar_cutline"
+        android:src="@drawable/widget_bar_cut_off" />
 
     <RadioButton
         android:id="@+id/main_footbar_user"
         style="@style/main_footbar_radio"
         android:drawableTop="@drawable/widget_bar_user" />
 
+    <ImageView
+        style="@style/main_footbar_cutline"
+        android:src="@drawable/widget_bar_cut_off" />
+
     <RadioButton
-        android:id="@+id/main_footbar_question"
+        android:id="@+id/main_footbar_about"
         style="@style/main_footbar_radio"
-        android:drawableTop="@drawable/widget_bar_question" />
+        android:drawableTop="@drawable/widget_bar_about" />
 
 </LinearLayout>

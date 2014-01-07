@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="45dp"
     android:background="@drawable/widget_bar_bg_n"
+    android:gravity="center_vertical"
     android:orientation="vertical" >
 
     <TextView
-        android:id="@+id/name"
+        android:id="@+id/textView_main_header"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_gravity="center"
+        android:layout_weight="0.82"
         android:gravity="center"
         android:text="消费记录"
         android:textColor="@color/white" />

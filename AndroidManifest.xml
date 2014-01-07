@@ -24,7 +24,7 @@
         <uses-library android:name="android.test.runner" />
 
         <activity
-            android:name=".splashActivity"
+            android:name="us.solife.consumes.splashActivity"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,17 +34,21 @@
         </activity>
         <activity android:name="MainRecordActivity" >
         </activity>
-        <activity android:name=".TabConsume" >
+        <activity android:name="us.solife.consumes.TabConsume" >
         </activity>
-        <activity android:name=".TabUser" >
+        <activity android:name="us.solife.consumes.TabChart" >
         </activity>
-        <activity android:name=".D" >
+        <activity android:name="us.solife.consumes.TabList" >
         </activity>
-        <activity android:name=".MainTabActivity" >
+        <activity android:name="us.solife.consumes.TabUser" >
         </activity>
-        <activity android:name=".Login" >
+        <activity android:name="us.solife.consumes.TabAbout" >
         </activity>
-        <activity android:name=".ConsumeItem" >
+        <activity android:name="us.solife.consumes.MainTabActivity" >
+        </activity>
+        <activity android:name="us.solife.consumes.Login" >
+        </activity>
+        <activity android:name="us.solife.consumes.ConsumeItem" >
         </activity>
     </application>
 

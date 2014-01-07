@@ -2,85 +2,65 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
     android:orientation="vertical" >
 
-    <TableLayout
+        <include layout="@layout/main_header" />
+        
+    <EditText
+        android:id="@+id/editText_consume_form_value"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:hint="消费值"
+        android:inputType="numberDecimal" >
 
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+        <requestFocus />
+    </EditText>
 
-            <EditText
-                android:id="@+id/editText_consume_form_value"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="消费值"
-                android:inputType="numberDecimal" >
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
 
-                <requestFocus />
-            </EditText>
-        </TableRow>
+        <EditText
+            android:id="@+id/editText_consume_form_created_at"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:editable="false" />
 
-        <TableRow
-            android:id="@+id/tableRow1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
+        <Button
+            android:id="@+id/button_date_add"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="+" />
 
-            <EditText
-                android:id="@+id/editText_consume_form_created_at"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:editable="false"
-                android:ems="10" />
+        <Button
+            android:id="@+id/button_date_plus"
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="-" />
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/button_date_add"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="25dp"
-                android:layout_height="match_parent"
-                android:text="+" />
+    <EditText
+        android:id="@+id/editText_consume_form_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.72"
+        android:hint="消费备注"
+        android:ems="10"
+        android:inputType="textMultiLine"
+        android:gravity="top" />
 
-            <Button
-                android:id="@+id/button_date_plus"
-                style="?android:attr/buttonStyleSmall"
-                android:layout_width="25dp"
-                android:layout_height="match_parent"
-                android:text="-" />
 
-        </TableRow>
 
-        <TableRow
-            android:id="@+id/tableRow3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-            <EditText
-                android:id="@+id/editText_consume_form_msg"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:ems="10"
-                android:hint="消费备注"
-                android:inputType="text|textPostalAddress" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" >
-
-            <Button
-                android:id="@+id/button_consume_form_submit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="提交" />
-
-        </TableRow>
-
-    </TableLayout>
+    <Button
+        android:id="@+id/button_consume_form_submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="提交" />
 
 </LinearLayout>
