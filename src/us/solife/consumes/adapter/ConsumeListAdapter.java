@@ -54,14 +54,19 @@ public class ConsumeListAdapter extends BaseAdapter{
 		} else {
 			holder        = new ViewHolder();
 			convertView   = View.inflate(context, R.layout.consume_list_item, null);
+			
 			holder.item_id   = (TextView) convertView.findViewById(R.id.item_id);
+			holder.list_id   = (TextView) convertView.findViewById(R.id.list_id);
 			holder.volue   = (TextView) convertView.findViewById(R.id.volue);
 			holder.created_at   = (TextView) convertView.findViewById(R.id.created_at);
 			//holder.msg     = (TextView) convertView.findViewById(R.id.msg);
-			holder.sync    = (TextView) convertView.findViewById(R.id.sync);
+			holder.sync    = (TextView) convertView.findViewById(R.id.textView_consume_sync);
 			convertView.setTag(holder);
 		}
+		position = position+1;
 		holder.item_id.setText(""+consumeInfo.getId());
+		holder.item_id.setVisibility(View.INVISIBLE);
+		holder.list_id.setText(""+position);
 		holder.volue.setText(consumeInfo.getVolue() + "Ԫ");
 		holder.created_at.setText(consumeInfo.getCreated_at().substring(0,10));
 		holder.sync.setText(""+consumeInfo.getSync());
@@ -70,7 +75,7 @@ public class ConsumeListAdapter extends BaseAdapter{
 	}
 
 	class ViewHolder {
-		private TextView volue, msg, created_at,sync,item_id;
+		private TextView volue, msg, created_at,sync,item_id,list_id;
 
 	}
 

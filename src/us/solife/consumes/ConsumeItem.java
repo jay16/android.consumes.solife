@@ -23,11 +23,14 @@ public class ConsumeItem extends BaseActivity {
 
 		Cursor cursor;
 		Float volue;
-		String msg, created_at, updated_at, sync;
+		String msg, created_at, updated_at;
+		Long sync;
 
+		TextView textView_row_id = (TextView) findViewById(R.id.textView_row_id);
 		TextView textView_consume_volue = (TextView) findViewById(R.id.textView_consume_volue);
 		TextView textView_consume_msg = (TextView) findViewById(R.id.textView_consume_msg);
 		TextView textView_consume_created_at = (TextView) findViewById(R.id.textView_consume_created_at);
+		TextView textView_consume_sync = (TextView) findViewById(R.id.textView_consume_sync);
 
 		Intent intent = getIntent();
 		Long row_id = intent.getLongExtra("row_id", (long) -1);
@@ -40,10 +43,16 @@ public class ConsumeItem extends BaseActivity {
 			volue  = cursor.getFloat(cursor.getColumnIndex("volue"));
 			msg    = cursor.getString(cursor.getColumnIndex("msg"));
 			created_at = cursor.getString(cursor.getColumnIndex("created_at"));
-			sync       = cursor.getString(cursor.getColumnIndex("sync"));
+			sync       = cursor.getLong(cursor.getColumnIndex("sync"));
+			textView_row_id.setText(""+row_id);
 			textView_consume_volue.setText(volue.toString());
 			textView_consume_msg.setText(msg);
 			textView_consume_created_at.setText(created_at);
+			if(sync == 1){
+				textView_consume_sync.setText("已同步");
+			} else {
+				textView_consume_sync.setText("本地保存");
+			}
 		} else {
 			textView_consume_msg.setText("Fail with row id:"+row_id);
 		}
@@ -58,16 +67,12 @@ public class ConsumeItem extends BaseActivity {
 	 */
 	Button.OnClickListener button_back_listener = new Button.OnClickListener() {
 		public void onClick(View v) {
-			Intent intent;
-			if(from_page.equals("TabList")){
-		      intent = new Intent(ConsumeItem.this, TabList.class);
-			} else if (from_page.equals("TabConsume")){
-				intent = new Intent(ConsumeItem.this, MainTabActivity.class);
+		
+			if (from_page.equals("TabConsume")) {
+				startActivity(new Intent(ConsumeItem.this, MainTabActivity.class));
 			} else {
-				intent = new Intent(ConsumeItem.this, MainTabActivity.class);
+				ConsumeItem.this.finish();
 			}
-				
-			startActivity(intent);
 		}
 	};
 	

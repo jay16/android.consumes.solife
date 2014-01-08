@@ -5,12 +5,6 @@
     android:orientation="vertical" >
             
     <include layout="@layout/tab_list_header" />
-
-    <TextView
-        android:id="@+id/item_id"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
     
     <include layout="@layout/consumelist_activity" />
 

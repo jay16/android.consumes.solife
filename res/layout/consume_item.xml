@@ -28,7 +28,7 @@
             android:layout_weight="0.78" >
 
             <TextView
-                android:id="@+id/row_id"
+                android:id="@+id/textView_row_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.23"
@@ -77,7 +77,7 @@
          <LinearLayout
              android:layout_width="wrap_content"
              android:layout_height="match_parent"
-             android:layout_weight="0.23" >
+             android:layout_weight="0.14" >
 
              <TextView
                  android:id="@+id/TextView_User_Email"
@@ -111,7 +111,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="0.23" >
+            android:layout_weight="0.16" >
 
             <TextView
                 android:id="@+id/TextView03"
@@ -146,7 +146,7 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="0.23" >
+            android:layout_weight="0.11" >
 
             <TextView
                 android:id="@+id/item_id"
@@ -162,7 +162,7 @@
             android:layout_weight="0.78" >
 
             <TextView
-                android:id="@+id/sync"
+                android:id="@+id/textView_consume_sync"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.23"
@@ -188,9 +188,14 @@
             android:layout_height="match_parent"
             android:layout_weight="0.78" >
         </LinearLayout>
+
     </LinearLayout>
-    
-    
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="0.23" >
+    </LinearLayout>
 
     <Button
         android:id="@+id/button_back"

@@ -88,7 +88,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 			buttons[1].setChecked(false);
 			buttons[2].setChecked(false);
 			buttons[3].setChecked(false);
-			//buttons[4].setChecked(false);
+			buttons[4].setChecked(false);
 			tabHost.setCurrentTabByTag("TabChart");
 			
 			break;
@@ -99,7 +99,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 			buttons[1].setChecked(true);
 			buttons[2].setChecked(false);
 			buttons[3].setChecked(false);
-			//buttons[4].setChecked(false);
+			buttons[4].setChecked(false);
 			tabHost.setCurrentTabByTag("TabList");
 
 			break;
@@ -109,7 +109,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 			buttons[1].setChecked(false);
 			buttons[2].setChecked(true);
 			buttons[3].setChecked(false);
-			//buttons[4].setChecked(false);
+			buttons[4].setChecked(false);
 			
 			tabHost.setCurrentTabByTag("TabUser");
 
@@ -120,7 +120,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 			buttons[1].setChecked(false);
 			buttons[2].setChecked(false);
 			buttons[3].setChecked(true);
-			//buttons[4].setChecked(false);
+			buttons[4].setChecked(false);
 			tabHost.setCurrentTabByTag("TabConsume");
 
 			break;

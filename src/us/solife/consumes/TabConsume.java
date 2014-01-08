@@ -171,7 +171,7 @@ public class TabConsume extends BaseActivity {
 		Integer ret = 0;
 		String ret_info = "no return";
 
-		String http_url = "http://solife.us/api/consumes/create?";// ?email="+login_email+"&consume[volue]="+value+"&consume[created_at]="+created_at+"&consume[msg]="+msg;
+		String http_url = "http://solife.us/api/consumes/create?";
 		// 创建httpRequest对象
 		HttpPost httpRequest = new HttpPost(http_url);
 		// HttpGet httpRequest =new HttpGet(httpUrl);
@@ -183,7 +183,7 @@ public class TabConsume extends BaseActivity {
 
 		try {
 			// 设置字符集
-			HttpEntity httpentity = new UrlEncodedFormEntity(params, "gb2312");
+			HttpEntity httpentity = new UrlEncodedFormEntity(params, "utf-8");
 			// 请求httpRequest
 			httpRequest.setEntity(httpentity);
 			// 取得HttpClinet对象
