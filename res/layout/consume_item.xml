@@ -19,7 +19,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.23"
                 android:text="记录ID:" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -34,76 +33,71 @@
                 android:layout_weight="0.23"
                 android:text="Medium Text"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <LinearLayout
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.16" >
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="消费数值:" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="0.88" >
+
+            <TextView
+                android:id="@+id/textView_consume_volue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Volue"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </LinearLayout>
     </LinearLayout>
-    
-    
-     <LinearLayout
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content" >
 
-         <LinearLayout
-             android:layout_width="60dp"
-             android:layout_height="match_parent"
-             android:layout_weight="0.16" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.23"
+        android:orientation="vertical" >
 
-             <TextView
-                 android:id="@+id/textView2"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="消费数值:" />
-         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
 
-         <LinearLayout
-             android:layout_width="wrap_content"
-             android:layout_height="match_parent"
-             android:layout_weight="0.88" >
+            <TextView
+                android:id="@+id/TextView_User_Email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.23"
+                android:text="消费备注:" />
+        </LinearLayout>
 
-             <TextView
-                 android:id="@+id/textView_consume_volue"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="Volue"
-                 android:textAppearance="?android:attr/textAppearanceLarge" />
-         </LinearLayout>
-     </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.97" >
 
-     <LinearLayout
-         android:layout_width="match_parent"
-         android:layout_height="wrap_content" >
+            <TextView
+                android:id="@+id/textView_consume_msg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Msg"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+        </LinearLayout>
+    </LinearLayout>
 
-         <LinearLayout
-             android:layout_width="wrap_content"
-             android:layout_height="match_parent"
-             android:layout_weight="0.14" >
-
-             <TextView
-                 android:id="@+id/TextView_User_Email"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:layout_weight="0.23"
-                 android:text="消费备注:" />
-
-         </LinearLayout>
-
-         <LinearLayout
-             android:layout_width="wrap_content"
-             android:layout_height="match_parent"
-             android:layout_weight="0.78" >
-
-             <TextView
-                 android:id="@+id/textView_consume_msg"
-                 android:layout_width="wrap_content"
-                 android:layout_height="wrap_content"
-                 android:text="Msg"
-                 android:textAppearance="?android:attr/textAppearanceLarge" />
-
-         </LinearLayout>
-     </LinearLayout>
-
-     
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
@@ -119,7 +113,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="0.23"
                 android:text="消费时间:" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -134,9 +127,7 @@
                 android:layout_weight="0.23"
                 android:text="Created at "
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-
         </LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -153,7 +144,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="同步状态:" />
-
         </LinearLayout>
 
         <LinearLayout
@@ -168,34 +158,10 @@
                 android:layout_weight="0.23"
                 android:text="sync"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
-
         </LinearLayout>
-
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.23" >
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.78" >
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.23" >
-    </LinearLayout>
 
     <Button
         android:id="@+id/button_back"
@@ -203,5 +169,5 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="返回" />
-    
+
 </LinearLayout>

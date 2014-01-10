@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
@@ -60,22 +61,28 @@ public class ConsumeListAdapter extends BaseAdapter{
 			holder.volue   = (TextView) convertView.findViewById(R.id.volue);
 			holder.created_at   = (TextView) convertView.findViewById(R.id.created_at);
 			//holder.msg     = (TextView) convertView.findViewById(R.id.msg);
-			holder.sync    = (TextView) convertView.findViewById(R.id.textView_consume_sync);
+			holder.sync_true  = (ImageView) convertView.findViewById(R.id.imageView_consume_sync_true);
+			holder.sync_false = (ImageView) convertView.findViewById(R.id.imageView_consume_sync_false);
 			convertView.setTag(holder);
 		}
 		position = position+1;
 		holder.item_id.setText(""+consumeInfo.getId());
-		holder.item_id.setVisibility(View.INVISIBLE);
+		holder.item_id.setVisibility(View.GONE);
 		holder.list_id.setText(""+position);
 		holder.volue.setText(consumeInfo.getVolue() + "Ԫ");
 		holder.created_at.setText(consumeInfo.getCreated_at().substring(0,10));
-		holder.sync.setText(""+consumeInfo.getSync());
+		if(consumeInfo.getSync().toString().equals("1")){
+			holder.sync_false.setVisibility(View.GONE);
+		} else {
+			holder.sync_true.setVisibility(View.GONE);
+		}
 
 		return convertView;
 	}
 
 	class ViewHolder {
-		private TextView volue, msg, created_at,sync,item_id,list_id;
+		private TextView volue, msg, created_at, item_id,list_id;
+		private ImageView sync_true,sync_false;
 
 	}
 

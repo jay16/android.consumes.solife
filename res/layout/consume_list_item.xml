@@ -13,7 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.08"
-            android:text="TextView" />
+            android:text="item_id" />
 
         <TextView
             android:id="@+id/list_id"
@@ -40,24 +40,19 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textSize="14dp" />
 
-        <TextView
-            android:id="@+id/textView_consume_sync"
+        <ImageView
+            android:id="@+id/imageView_consume_sync_true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="sync" />
+            android:layout_weight="0.08"
+            android:src="@drawable/widget_icon_sync_true" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="left|right" >
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        <ImageView
+            android:id="@+id/imageView_consume_sync_false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.08"
+            android:src="@drawable/widget_icon_sync_false" />
 
     </LinearLayout>
 

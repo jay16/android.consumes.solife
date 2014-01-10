@@ -62,7 +62,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 		bBt = (RadioButton) findViewById(R.id.main_footbar_list);
 		cBt = (RadioButton) findViewById(R.id.main_footbar_user);
 		dBt = (RadioButton) findViewById(R.id.main_footbar_add);
-		eBt = (RadioButton) findViewById(R.id.main_footbar_about);
+		eBt = (RadioButton) findViewById(R.id.main_footbar_more);
 		buttons[0] = aBt;
 		buttons[1] = bBt;
 		buttons[2] = cBt;
@@ -73,7 +73,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 		cBt.setOnClickListener(this);
 		dBt.setOnClickListener(this);
 		eBt.setOnClickListener(this);
-		bBt.setChecked(true);
+		aBt.setChecked(true);
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 			tabHost.setCurrentTabByTag("TabConsume");
 
 			break;
-		case R.id.main_footbar_about:
+		case R.id.main_footbar_more:
 			index = 4;
 			buttons[0].setChecked(false);
 			buttons[1].setChecked(false);

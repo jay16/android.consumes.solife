@@ -45,8 +45,8 @@
         android:src="@drawable/widget_bar_cut_off" />
 
     <RadioButton
-        android:id="@+id/main_footbar_about"
+        android:id="@+id/main_footbar_more"
         style="@style/main_footbar_radio"
-        android:drawableTop="@drawable/widget_bar_about" />
+        android:drawableTop="@drawable/widget_bar_more" />
 
 </LinearLayout>
