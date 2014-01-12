@@ -29,14 +29,14 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="0.82" >
-
-            <TextView
-                android:id="@+id/textView_list_header"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:gravity="center"
-                android:text="消费记录"
-                android:textColor="@color/white" />
+            
+	        <Spinner
+	            android:id="@+id/Spinnered"
+	            android:layout_width="fill_parent"
+	            android:layout_height="match_parent" />
+	        <!-- 
+	            android:background="#00000000" -->
+  
         </LinearLayout>
 
         <LinearLayout

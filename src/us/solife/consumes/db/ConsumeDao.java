@@ -1,6 +1,8 @@
 package us.solife.consumes.db;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import us.solife.consumes.TabList;
 import us.solife.consumes.entity.ConsumeInfo;
@@ -72,6 +74,46 @@ public class ConsumeDao {
 		// public Integer getAllRecords(Context context) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		Cursor cursor = database.rawQuery("select * from consumes order by created_at desc", null);
+
+		// Cursor cursor = database.query(true, DATABASE_TABLE, new String[] {
+		// "volue","msg","created_at" }, null, null, null, null, null, null);
+		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
+		if (cursor.getCount() > 0) {
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+				ConsumeInfo consumeInfo = new ConsumeInfo();
+				
+				int id = cursor.getInt(cursor.getColumnIndex("id"));
+				int user_id    = cursor.getInt(cursor.getColumnIndex("user_id"));
+				int consume_id = cursor.getInt(cursor.getColumnIndex("consume_id"));
+				double volue = cursor.getDouble(cursor.getColumnIndex("volue"));
+				String msg = cursor.getString(cursor.getColumnIndex("msg")).toString();
+				String created_at = cursor.getString(cursor.getColumnIndex("created_at")).toString();
+			    String updated_at = cursor.getString(cursor.getColumnIndex("updated_at"));
+			    Long sync         = cursor.getLong(cursor.getColumnIndex("sync"));
+			    
+				consumeInfo.setId(id);
+				consumeInfo.setUser_id(user_id);
+				consumeInfo.setConsume_id(consume_id);
+				consumeInfo.setVolue(volue);
+				consumeInfo.setMsg(msg);
+				consumeInfo.setCreated_at(created_at);
+				consumeInfo.setUpdated_at(updated_at);
+				consumeInfo.setSync(sync);
+				consumeInfos.add(consumeInfo);
+			}
+		}
+		cursor.close();
+		database.close();
+		return consumeInfos;
+	}
+
+	//取得所有消费记录
+	public ArrayList<ConsumeInfo> getRecordsByType(String type,Context context) {
+		// public Integer getAllRecords(Context context) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
+		String y_m = df.format(new Date());
+		Cursor cursor = database.rawQuery("select * from consumes where created_at like '"+y_m+"%' order by created_at desc", null);
 
 		// Cursor cursor = database.query(true, DATABASE_TABLE, new String[] {
 		// "volue","msg","created_at" }, null, null, null, null, null, null);

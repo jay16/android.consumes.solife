@@ -12,13 +12,12 @@
         android:layout_height="86dp"
         android:gravity="center|left" >
         
-
         <ImageView
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.77"
-            android:src="@drawable/ic_launcher" />
+            android:src="@drawable/widget_bar_user" />
 
         <LinearLayout
             android:layout_width="wrap_content"

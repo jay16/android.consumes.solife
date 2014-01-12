@@ -1,6 +1,7 @@
 package us.solife.consumes;
 
 import java.util.ArrayList;
+import android.widget.SimpleAdapter;
 import java.util.HashMap;
 import java.util.List;
 
@@ -42,9 +43,12 @@ import us.solife.consumes.BaseActivity.DataCallback;
 import us.solife.consumes.db.ConsumeDao;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.parseJson.ConsumeListParse;
+import android.widget.Spinner;
+import android.widget.AdapterView.OnItemSelectedListener;
 
 public class TabList extends BaseActivity{
 	ListView listView;
+    Spinner spinner=null;  
 	int      precursor;
 	int      index;
 	String url = "http://solife.us/api/consumes/list";
@@ -57,8 +61,16 @@ public class TabList extends BaseActivity{
 	public void init() { // TODO Auto-generated method stub
 		setContentView(R.layout.tab_list);
 
-		TextView  textView_main_header = (TextView)findViewById(R.id.textView_list_header);
-		textView_main_header.setText("消费列表");
+		//下拉列表
+		spinner = (Spinner)findViewById(R.id.Spinnered);  
+		ArrayAdapter <CharSequence> adapter = ArrayAdapter.createFromResource(this,  
+                R.array.plants_array, android.R.layout.simple_spinner_item);  
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);  
+        spinner.setPrompt("列表显示方式"); 
+        spinner.setOnItemSelectedListener(new SpinnerOnItemSelectListener());  
+		//TextView  textView_main_header = (TextView)findViewById(R.id.textView_list_header);
+		//textView_main_header.setText("消费列表");
 		
 		consumeDao = ConsumeDao.getConsumeDao(TabList.this);
 		
@@ -75,6 +87,48 @@ public class TabList extends BaseActivity{
 		setViewList();
 	}
 	
+	class SpinnerOnItemSelectListener implements OnItemSelectedListener{  
+		  
+	    @Override  
+	    public void onItemSelected(AdapterView<?> AdapterView, View view, int position, long arg3) {  
+	        // TODO Auto-generated method stub  
+	        String selected = AdapterView.getItemAtPosition(position).toString();  
+	        Toast.makeText(TabList.this, selected, 0).show();
+	        
+	        setViewListByType("month",TabList.this);
+	    }  
+	  
+	    @Override  
+	    public void onNothingSelected(AdapterView<?> arg0) {  
+	        // TODO Auto-generated method stub   
+	        Toast.makeText(TabList.this, "NothingSelected", 0).show();
+	    }  
+	      
+	}  	
+	public void setViewListByType(String type,Context context) {
+		listView = (ListView) findViewById(R.id.consumeListView);
+        consumeInfos = consumeDao.getRecordsByType("Month", TabList.this);
+        
+		if (consumeInfos != null && consumeInfos.size() != 0) {
+			listView.setAdapter(new ConsumeListAdapter(consumeInfos,TabList.this));
+			listView.setClickable(true);
+			listView.setOnItemClickListener(new OnItemClickListener(){
+				 @Override
+		         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					    String item_id = ((TextView) view.findViewById(R.id.item_id)).getText().toString();
+
+						Intent intent = new Intent(TabList.this, ConsumeItem.class);
+						intent.putExtra("row_id", Long.parseLong(item_id));
+						intent.putExtra("from_page", "TabList");
+						startActivity(intent);
+				 }
+			});
+		} else {
+			Toast.makeText(TabList.this, "No Data", 0).show();
+		}
+		listView.invalidate();
+	}
+	
 	public void setViewList() {
 		listView = (ListView) findViewById(R.id.consumeListView);
 		//获取数据库的时候应该单独开一条线程  以为是耗时的操作  这个demo数据库简单  我就放在主线程了
@@ -87,10 +141,6 @@ public class TabList extends BaseActivity{
 				 @Override
 		         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					    String item_id = ((TextView) view.findViewById(R.id.item_id)).getText().toString();
-						//ConsumeDao consumeDao = ConsumeDao.getConsumeDao(getApplicationContext());
-						//Cursor cursor = consumeDao.getRecordByRowId(id);
-						//String msg    = cursor.getString(cursor.getColumnIndex("msg"));
-						//Toast.makeText(TabList.this, msg, 0).show();
 
 						// 界面切换
 						// 显示记录记录
@@ -100,10 +150,10 @@ public class TabList extends BaseActivity{
 						startActivity(intent);
 				 }
 			});
-			//Toast.makeText(TabList.this, consumeInfos.size() + "", 0).show();
 		} else {
 			Toast.makeText(TabList.this, "No Data", 0).show();
 		}
+		listView.invalidate();
 	}
 
 	// 句柄-数据插入

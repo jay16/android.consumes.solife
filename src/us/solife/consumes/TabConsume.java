@@ -32,6 +32,8 @@ import android.widget.Button;
 //import android.widget.CalendarView;
 //import android.widget.DatePicker;
 import android.widget.EditText;
+import android.text.TextWatcher;
+import android.text.Editable;
 
 import java.util.Date;
 import java.text.DateFormat;
@@ -61,8 +63,49 @@ public class TabConsume extends BaseActivity {
 		button_date_add.setOnClickListener(button_date_add_listener);
 		Button button_date_plus = (Button) findViewById(R.id.button_date_plus);
 		button_date_plus.setOnClickListener(button_date_plus_listener);
-	}
+		
+		EditText editText_consume_form_msg = (EditText) findViewById(R.id.editText_consume_form_msg);
+		editText_consume_form_msg.addTextChangedListener(text_watcher);
 
+	}
+	
+	private TextWatcher text_watcher = new TextWatcher(){
+		 
+	    @Override
+	    public void afterTextChanged(Editable s) {
+	        // TODO Auto-generated method stub
+	    }
+	 
+	    @Override
+	    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+	        // TODO Auto-generated method stub
+	    }
+	 
+	    @Override
+	    public void onTextChanged(CharSequence s, int start, int before, int count) {
+	    	String[] rows = new String[20];
+	    	String row = "";
+	    	String tmp = "";
+	    	Float value = (float)0;
+	    	TextView  editText_consume_form_value = (TextView)findViewById(R.id.editText_consume_form_value);
+	    	
+            rows = s.toString().split("\n");
+            for (int i = 0; i < rows.length; i++) {
+              row = rows[i];
+              
+              tmp = row.split("-")[0];
+              try
+              {
+                //float f = Float.valueOf(tmp.trim()).floatValue();
+                float f = Float.parseFloat(tmp.trim());
+                value = value + f;
+              } catch (NumberFormatException nfe) {}
+            }
+	    	//Toast.makeText(TabConsume.this, ""+value, 0).show();
+            editText_consume_form_value.setText(Float.toString(value));
+	    }
+	     
+	};
 	/*
 	 * 创建consume submit监听对象
 	 */
@@ -125,6 +168,7 @@ public class TabConsume extends BaseActivity {
 		}
 	};
 
+	 
 	/* 日期加一天 */
 	Button.OnClickListener button_date_add_listener = new Button.OnClickListener() {
 		public void onClick(View v) {
@@ -141,8 +185,7 @@ public class TabConsume extends BaseActivity {
 	Button.OnClickListener button_date_plus_listener = new Button.OnClickListener() {
 		public void onClick(View v) {
 			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
-			String created_at = editText_consume_form_created_at.getText()
-					.toString();
+			String created_at = editText_consume_form_created_at.getText().toString();
 			editText_consume_form_created_at.setText(get_date(created_at, -1));
 
 			// 控件重新赋值后刷新界面
