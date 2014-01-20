@@ -18,6 +18,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import us.solife.consumes.adapter.ConsumeListAdapter;
+//import us.solife.consumes.adapter.Display;
 import us.solife.consumes.db.ConsumeDao;
 import us.solife.consumes.entity.ConsumeInfo;
 import android.database.Cursor;
@@ -45,6 +46,7 @@ import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.parseJson.ConsumeListParse;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
+//import android.view.Display;
 
 public class TabList extends BaseActivity{
 	ListView listView;
@@ -84,7 +86,10 @@ public class TabList extends BaseActivity{
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		setViewList();
+
+		//Display display = this.getWindowManager().getDefaultDisplay();
+		//int width = display.getWidth();
+		setViewList("month","");
 	}
 	
 	class SpinnerOnItemSelectListener implements OnItemSelectedListener{  
@@ -95,9 +100,17 @@ public class TabList extends BaseActivity{
 	        String selected = AdapterView.getItemAtPosition(position).toString();  
 	        Toast.makeText(TabList.this, selected, 0).show();
 	        
-	        setViewListByType("month",TabList.this);
-	    }  
-	  
+	        //点击下拉列表spinner不同选项，响应不同信息
+	        if(position == 0) {
+	        	setViewList("month","");
+	        } else if(position == 1) {
+	        	setViewList("year","");
+	        } else if(position == 2) {
+	        	setViewList("all","");
+	        } else {
+	        	setViewList("month","");
+	        }
+	    }
 	    @Override  
 	    public void onNothingSelected(AdapterView<?> arg0) {  
 	        // TODO Auto-generated method stub   
@@ -105,9 +118,13 @@ public class TabList extends BaseActivity{
 	    }  
 	      
 	}  	
-	public void setViewListByType(String type,Context context) {
+
+	
+	public void setViewList(String ShowType,String day) {
 		listView = (ListView) findViewById(R.id.consumeListView);
-        consumeInfos = consumeDao.getRecordsByType("Month", TabList.this);
+		//获取数据库的时候应该单独开一条线程  以为是耗时的操作  这个demo数据库简单  我就放在主线程了
+
+        consumeInfos = consumeDao.getRecordsAsDay(TabList.this,ShowType,day);
         
 		if (consumeInfos != null && consumeInfos.size() != 0) {
 			listView.setAdapter(new ConsumeListAdapter(consumeInfos,TabList.this));
@@ -115,37 +132,12 @@ public class TabList extends BaseActivity{
 			listView.setOnItemClickListener(new OnItemClickListener(){
 				 @Override
 		         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					    String item_id = ((TextView) view.findViewById(R.id.item_id)).getText().toString();
-
-						Intent intent = new Intent(TabList.this, ConsumeItem.class);
-						intent.putExtra("row_id", Long.parseLong(item_id));
-						intent.putExtra("from_page", "TabList");
-						startActivity(intent);
-				 }
-			});
-		} else {
-			Toast.makeText(TabList.this, "No Data", 0).show();
-		}
-		listView.invalidate();
-	}
-	
-	public void setViewList() {
-		listView = (ListView) findViewById(R.id.consumeListView);
-		//获取数据库的时候应该单独开一条线程  以为是耗时的操作  这个demo数据库简单  我就放在主线程了
-
-        consumeInfos = consumeDao.getAllRecords(TabList.this);
-		if (consumeInfos != null && consumeInfos.size() != 0) {
-			listView.setAdapter(new ConsumeListAdapter(consumeInfos,TabList.this));
-			listView.setClickable(true);
-			listView.setOnItemClickListener(new OnItemClickListener(){
-				 @Override
-		         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					    String item_id = ((TextView) view.findViewById(R.id.item_id)).getText().toString();
+					    String created_at = ((TextView) view.findViewById(R.id.created_at)).getText().toString();
 
 						// 界面切换
 						// 显示记录记录
 						Intent intent = new Intent(TabList.this, ConsumeItem.class);
-						intent.putExtra("row_id", Long.parseLong(item_id));
+						intent.putExtra("created_at", created_at);
 						intent.putExtra("from_page", "TabList");
 						startActivity(intent);
 				 }
@@ -238,7 +230,7 @@ public class TabList extends BaseActivity{
 				
 				ConsumeListParse consumeListParse = new ConsumeListParse();
 				getDataFromServer(getApplicationContext(), consumeListParse, url, callback);
-				setViewList();
+				setViewList("month","");
 			}
 		};
 		//同步本地数据至服务器
@@ -267,7 +259,7 @@ public class TabList extends BaseActivity{
 						}	
 					}
 					Toast.makeText(TabList.this, "更新未同步数据完毕", 0).show();
-					setViewList();
+					setViewList("month","");
 			    } else {
 			    	Toast.makeText(TabList.this, "获取用户信息失败", 0).show();
 			    }
@@ -292,7 +284,7 @@ public class TabList extends BaseActivity{
 
 			try {
 				// 设置字符集
-				HttpEntity httpentity = new UrlEncodedFormEntity(params, "gb2312");
+				HttpEntity httpentity = new UrlEncodedFormEntity(params, "utf-8");
 				// 请求httpRequest
 				httpRequest.setEntity(httpentity);
 				// 取得HttpClinet对象

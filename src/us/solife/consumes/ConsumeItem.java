@@ -1,6 +1,9 @@
 package us.solife.consumes;
 
+import java.util.ArrayList;
+
 import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.entity.ConsumeInfo;
 
 import com.yyx.mconsumes.R;
 import android.database.Cursor;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 
 public class ConsumeItem extends BaseActivity {
 	String from_page;
+	ArrayList<ConsumeInfo> consumeInfos;
 	
 	@Override
 	public void init() {
@@ -22,8 +26,10 @@ public class ConsumeItem extends BaseActivity {
 		setContentView(R.layout.consume_item);
 
 		Cursor cursor;
-		Float volue;
-		String msg, created_at, updated_at;
+		Float volue = (float)0;
+		String msg = "";
+		String created_at = "";
+		String updated_at = "";
 		Long sync;
 
 		TextView textView_row_id = (TextView) findViewById(R.id.textView_row_id);
@@ -33,30 +39,49 @@ public class ConsumeItem extends BaseActivity {
 		TextView textView_consume_sync = (TextView) findViewById(R.id.textView_consume_sync);
 
 		Intent intent = getIntent();
-		Long row_id = intent.getLongExtra("row_id", (long) -1);
 	    from_page = intent.getStringExtra("from_page");
+		Long row_id = intent.getLongExtra("row_id", (long) -1);
+	    String day = intent.getStringExtra("created_at");
 
 		ConsumeDao consumeDao = ConsumeDao.getConsumeDao(getApplicationContext());
         
-		if(row_id != (long)-1) {
-			cursor = consumeDao.getRecordByRowId(row_id);
-			volue  = cursor.getFloat(cursor.getColumnIndex("volue"));
-			msg    = cursor.getString(cursor.getColumnIndex("msg"));
-			created_at = cursor.getString(cursor.getColumnIndex("created_at"));
-			sync       = cursor.getLong(cursor.getColumnIndex("sync"));
-			textView_row_id.setText(""+row_id);
+		if(from_page.equals("TabConsume")){
+	      if(row_id != (long)-1) {
+				cursor = consumeDao.getRecordByRowId(row_id);
+				volue  = cursor.getFloat(cursor.getColumnIndex("volue"));
+				msg    = cursor.getString(cursor.getColumnIndex("msg"));
+				created_at = cursor.getString(cursor.getColumnIndex("created_at"));
+				sync       = cursor.getLong(cursor.getColumnIndex("sync"));
+				textView_row_id.setText(""+row_id);
+				textView_consume_volue.setText(volue.toString());
+				textView_consume_msg.setText(msg);
+				textView_consume_created_at.setText(created_at);
+				if(sync == 1){
+					textView_consume_sync.setText("已同步");
+				} else {
+					textView_consume_sync.setText("本地保存");
+				}
+			} else {
+				textView_consume_msg.setText("Fail with row id:"+row_id);
+			}
+		} else if(from_page.equals("TabList")){
+			consumeInfos = consumeDao.getDayDetailRecords(day);
+			ConsumeInfo  consumeInfo;
+			for(int i=0; i<consumeInfos.size(); i++ ) {
+				consumeInfo = consumeInfos.get(i);
+				volue = volue + (float)consumeInfo.getVolue();
+				if(msg.length()==0) {
+					msg = consumeInfo.getMsg();
+				} else {
+					msg = msg + "\n----------------\n" + consumeInfo.getMsg();
+				}
+			}
 			textView_consume_volue.setText(volue.toString());
 			textView_consume_msg.setText(msg);
 			textView_consume_created_at.setText(created_at);
-			if(sync == 1){
-				textView_consume_sync.setText("已同步");
-			} else {
-				textView_consume_sync.setText("本地保存");
-			}
-		} else {
-			textView_consume_msg.setText("Fail with row id:"+row_id);
 		}
-		
+
+
 
 		Button button_back = (Button) findViewById(R.id.button_back);
 		button_back.setOnClickListener(button_back_listener);

@@ -108,15 +108,65 @@ public class ConsumeDao {
 	}
 
 	//取得所有消费记录
-	public ArrayList<ConsumeInfo> getRecordsByType(String type,Context context) {
-		// public Integer getAllRecords(Context context) {
-		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM");
-		String y_m = df.format(new Date());
-		Cursor cursor = database.rawQuery("select * from consumes where created_at like '"+y_m+"%' order by created_at desc", null);
+	//按天分组
+    public ArrayList<ConsumeInfo> getRecordsAsDay(Context context,String show_type,String day) {
+			// public Integer getAllRecords(Context context) {
+			SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			String y_m_d = df.format(new Date());
+			SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+			String sql = "select substr(created_at,0,11) as created_at,count(*) as count,sum(volue) as volue " +
+					"from consumes where length(created_at)>=10 ";
+			if(show_type.equals("day")){
+				  sql = sql + " and substr(created_at,0,11)='"+day+"' ";
+			} else if(show_type.equals("month")){
+			  sql = sql + " and substr(created_at,0,8)='"+y_m_d.substring(0,7)+"' ";
+			} else if(show_type.equals("year")) {
+				  sql = sql + " and substr(created_at,0,5)='"+y_m_d.substring(0,4)+"' ";
+			} else if(show_type.equals("all")) {
+				
+			} else {
+				  sql = sql + " and substr(created_at,0,8)='"+y_m_d.substring(0,7)+"' ";
+			}
+			sql = sql +" group by substr(created_at,0,11) order by  substr(created_at,0,11) desc";
+			Cursor cursor = database.rawQuery(sql, null);
 
-		// Cursor cursor = database.query(true, DATABASE_TABLE, new String[] {
-		// "volue","msg","created_at" }, null, null, null, null, null, null);
+			// Cursor cursor = database.query(true, DATABASE_TABLE, new String[] {
+			// "volue","msg","created_at" }, null, null, null, null, null, null);
+			ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
+			if (cursor.getCount() > 0) {
+				for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+					ConsumeInfo consumeInfo = new ConsumeInfo();
+					
+					int count = cursor.getInt(cursor.getColumnIndex("count"));
+					//int user_id    = cursor.getInt(cursor.getColumnIndex("user_id"));
+					//int consume_id = cursor.getInt(cursor.getColumnIndex("consume_id"));
+					double volue = cursor.getDouble(cursor.getColumnIndex("volue"));
+					//String msg = cursor.getString(cursor.getColumnIndex("msg")).toString();
+					String created_at = cursor.getString(cursor.getColumnIndex("created_at")).toString();
+				    //String updated_at = cursor.getString(cursor.getColumnIndex("count"));
+				    
+					consumeInfo.setId(count);
+					//consumeInfo.setUser_id(user_id);
+					//consumeInfo.setConsume_id(consume_id);
+					consumeInfo.setVolue(volue);
+					//consumeInfo.setMsg(msg);
+					consumeInfo.setCreated_at(created_at);
+					//consumeInfo.setUpdated_at(updated_at);
+					//consumeInfo.setSync(sync);
+					consumeInfos.add(consumeInfo);
+				}
+			}
+			cursor.close();
+			database.close();
+			return consumeInfos;
+		}
+
+    public ArrayList<ConsumeInfo> getDayDetailRecords(String day) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		String sql = "select * from consumes where substr(created_at,0,11) = '" + day + "' order by created_at desc";
+		Cursor cursor = database.rawQuery(sql, null);
+
+
 		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
 		if (cursor.getCount() > 0) {
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
@@ -129,7 +179,6 @@ public class ConsumeDao {
 				String msg = cursor.getString(cursor.getColumnIndex("msg")).toString();
 				String created_at = cursor.getString(cursor.getColumnIndex("created_at")).toString();
 			    String updated_at = cursor.getString(cursor.getColumnIndex("updated_at"));
-			    Long sync         = cursor.getLong(cursor.getColumnIndex("sync"));
 			    
 				consumeInfo.setId(id);
 				consumeInfo.setUser_id(user_id);
@@ -138,7 +187,7 @@ public class ConsumeDao {
 				consumeInfo.setMsg(msg);
 				consumeInfo.setCreated_at(created_at);
 				consumeInfo.setUpdated_at(updated_at);
-				consumeInfo.setSync(sync);
+				//consumeInfo.setSync(sync);
 				consumeInfos.add(consumeInfo);
 			}
 		}
@@ -146,6 +195,7 @@ public class ConsumeDao {
 		database.close();
 		return consumeInfos;
 	}
+
 
 	//取得所有未同步至服务器的消费记录
 	public ArrayList<ConsumeInfo> getUnSyncRecords(Context context) {

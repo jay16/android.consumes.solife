@@ -24,10 +24,8 @@
     <string name="spiderwebchart_title4">title4</string>
     <string name="spiderwebchart_title5">title5</string>
     <string-array name="plants_array">  
-	     <item>最近7天</item>  
-	     <item>本周</item>  
-	     <item>本月</item> 
-	     <item>本年</item>  
-	     <item>所有</item>  
+	     <item>本月消费</item> 
+	     <item>本年消费</item>  
+	     <item>所有消费</item>  
     </string-array>  
 </resources>
