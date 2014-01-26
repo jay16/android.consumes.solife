@@ -21,6 +21,7 @@ import us.solife.consumes.adapter.ConsumeListAdapter;
 //import us.solife.consumes.adapter.Display;
 import us.solife.consumes.db.ConsumeDao;
 import us.solife.consumes.entity.ConsumeInfo;
+import us.solife.consumes.util.NetUtils;
 import android.database.Cursor;
 import android.content.Context;
 import android.content.Intent;
@@ -132,13 +133,14 @@ public class TabList extends BaseActivity{
 			listView.setOnItemClickListener(new OnItemClickListener(){
 				 @Override
 		         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					    String created_at = ((TextView) view.findViewById(R.id.created_at)).getText().toString();
+					    String created_at = ((TextView) view.findViewById(R.id.TextView_item_date)).getText().toString();
 
+
+						Toast.makeText(TabList.this, created_at, 0).show();
 						// 界面切换
 						// 显示记录记录
 						Intent intent = new Intent(TabList.this, ConsumeItem.class);
 						intent.putExtra("created_at", created_at);
-						intent.putExtra("from_page", "TabList");
 						startActivity(intent);
 				 }
 			});
@@ -158,9 +160,7 @@ public class TabList extends BaseActivity{
 				case 2000:
 					Toast.makeText(TabList.this, "数据库同步失败！", 0).show();
 					Toast.makeText(TabList.this, msg.obj.toString(), 0).show();
-					
-					TextView textView1 = (TextView) findViewById(R.id.item_id);		
-					textView1.setText(msg.obj.toString());
+
 					break;
 				case 3000:
 					Toast.makeText(TabList.this, "错误:未连接网络！", 0).show();
@@ -236,78 +236,23 @@ public class TabList extends BaseActivity{
 		//同步本地数据至服务器
 		Button.OnClickListener imageButton_refresh_listener = new Button.OnClickListener(){//创建监听对象  
 			public void onClick(View v){  
-				consumeInfos = consumeDao.getUnSyncRecords(TabList.this);
-				
+				consumeInfos = consumeDao.getUnSyncRecords();
 				sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 				
-		    	Toast.makeText(TabList.this, "更新未同步数据", 0).show();
+		    	//Toast.makeText(TabList.this, "更新未同步数据", 0).show();
 		    	
 				if (sharedPreferences.contains("current_user_email")
 						&& !sharedPreferences.getString("current_user_email", "").equals("")) {
 					String login_email = sharedPreferences.getString("current_user_email", "");
 					
-					Toast.makeText(TabList.this, "共有"+consumeInfos.size()+"条数据未同步", 0).show();
-					
-					for(int i = 0; i < consumeInfos.size(); i++) {
-						ConsumeInfo info = consumeInfos.get(i);
-						String[] ret_array = consume_create(login_email, Double.toString(info.getVolue()), info.getCreated_at(), info.getMsg());
-						if (ret_array[0].equals("1")) {
-							consumeDao.updateUnSyncRecordByRowId(info.getId(),info.getUser_id(),info.getConsume_id());
-							Toast.makeText(TabList.this, "更新第"+i+"笔数据", 0).show();
-						} else {
-							Toast.makeText(TabList.this, "update-" + info.getId()+"-fail!", 0).show();
-						}	
-					}
-					Toast.makeText(TabList.this, "更新未同步数据完毕", 0).show();
+					//后台同步更新未同步的数据
+					NetUtils.upload_unsync_consumes_background(TabList.this,login_email);
 					setViewList("month","");
 			    } else {
 			    	Toast.makeText(TabList.this, "获取用户信息失败", 0).show();
 			    }
 		};
-		
-		public  String[] consume_create(String login_email, String value,
-				String created_at, String msg) {
-			// Step One 从服务器接口中获取当前账号和密码的配对情况
-			String[] ret_array = { "0", "no return" };
-			Integer ret = 0;
-			String ret_info = "no return";
-
-			String http_url = "http://solife.us/api/consumes/create?";
-			// 创建httpRequest对象
-			HttpPost httpRequest = new HttpPost(http_url);
-			// HttpGet httpRequest =new HttpGet(httpUrl);
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("email", login_email));
-			params.add(new BasicNameValuePair("consume[volue]", value));
-			params.add(new BasicNameValuePair("consume[created_at]", created_at));
-			params.add(new BasicNameValuePair("consume[msg]", msg));
-
-			try {
-				// 设置字符集
-				HttpEntity httpentity = new UrlEncodedFormEntity(params, "utf-8");
-				// 请求httpRequest
-				httpRequest.setEntity(httpentity);
-				// 取得HttpClinet对象
-				HttpClient httpclient = new DefaultHttpClient();
-				// 请求HttpClient,取得HttpResponse
-				HttpResponse httpResponse = httpclient.execute(httpRequest);
-				// 请求成功
-				if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-					// 取得返回的字符串
-					String strResult = EntityUtils.toString(httpResponse
-							.getEntity());
-					JSONObject jsonObject = new JSONObject(strResult);
-					// 获取返回值
-					ret = jsonObject.getInt("ret");
-					ret_info = jsonObject.getString("ret_info");
-					ret_array[0] = ret.toString();
-					ret_array[1] = ret_info;
-				}
-			} catch (Exception e) {
-				ret_array[1] = e.getMessage().toString();
-				return ret_array;
-			}
-			return ret_array;
-		}
+	
+	
 	};
 }

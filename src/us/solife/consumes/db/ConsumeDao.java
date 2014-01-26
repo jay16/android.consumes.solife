@@ -13,6 +13,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
+import us.solife.consumes.util.NetUtils;
 
 public class ConsumeDao {
 	public static final String KEY_ROWID = "id";
@@ -47,25 +48,10 @@ public class ConsumeDao {
 		database.close();
 		for (int i = 0; i < consumeInfos.size(); i++) {
 			ConsumeInfo info = consumeInfos.get(i);
-			/*
-			ContentValues values = new ContentValues();
-			values.put("user_id", info.getUser_id());
-			values.put("consume_id", info.getConsume_id());
-			values.put("volue", info.getVolue());
-			values.put("msg", info.getMsg());
-			values.put("created_at", info.getCreated_at());
-			values.put("updated_at", info.getUpdated_at());
-			// 与服务器数据已同步
-			values.put("sync", (long)1);
-			database.insert("consumes", "created_at", values);
-			*/
+
 			insertRecord(info.getUser_id(), info.getConsume_id(), info.getVolue(),
 					info.getMsg(), info.getCreated_at(),info.getUpdated_at(),true);
 		}
-
-		//database.setTransactionSuccessful();
-		//database.endTransaction();
-		//database.close();
 
 	}
 
@@ -116,6 +102,8 @@ public class ConsumeDao {
 			SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 			String sql = "select substr(created_at,0,11) as created_at,count(*) as count,sum(volue) as volue " +
 					"from consumes where length(created_at)>=10 ";
+			//sqlite substr(str,begin_index=1,length)
+			//java substring(begin_index=0,<end_index)
 			if(show_type.equals("day")){
 				  sql = sql + " and substr(created_at,0,11)='"+day+"' ";
 			} else if(show_type.equals("month")){
@@ -163,10 +151,10 @@ public class ConsumeDao {
 
     public ArrayList<ConsumeInfo> getDayDetailRecords(String day) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		String sql = "select * from consumes where substr(created_at,0,11) = '" + day + "' order by created_at desc";
+		String sql = "select * from consumes where substr(created_at,0,11) = '" + day + "' order by created_at asc";
 		Cursor cursor = database.rawQuery(sql, null);
 
-
+      
 		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
 		if (cursor.getCount() > 0) {
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
@@ -179,6 +167,7 @@ public class ConsumeDao {
 				String msg = cursor.getString(cursor.getColumnIndex("msg")).toString();
 				String created_at = cursor.getString(cursor.getColumnIndex("created_at")).toString();
 			    String updated_at = cursor.getString(cursor.getColumnIndex("updated_at"));
+			    long sync = cursor.getLong(cursor.getColumnIndex("sync"));
 			    
 				consumeInfo.setId(id);
 				consumeInfo.setUser_id(user_id);
@@ -187,7 +176,7 @@ public class ConsumeDao {
 				consumeInfo.setMsg(msg);
 				consumeInfo.setCreated_at(created_at);
 				consumeInfo.setUpdated_at(updated_at);
-				//consumeInfo.setSync(sync);
+				consumeInfo.setSync(sync);
 				consumeInfos.add(consumeInfo);
 			}
 		}
@@ -198,7 +187,7 @@ public class ConsumeDao {
 
 
 	//取得所有未同步至服务器的消费记录
-	public ArrayList<ConsumeInfo> getUnSyncRecords(Context context) {
+	public ArrayList<ConsumeInfo> getUnSyncRecords() {
 		// public Integer getAllRecords(Context context) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		Cursor cursor = database.rawQuery("select * from consumes where sync = 0", null);

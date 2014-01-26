@@ -39,6 +39,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import us.solife.consumes.util.NetUtils;
 
 public class TabConsume extends BaseActivity {
 	SharedPreferences sharedPreferences;
@@ -121,9 +122,6 @@ public class TabConsume extends BaseActivity {
 			String msg = editText_consume_form_msg.getText().toString();
 			Integer user_id = -1;
 			Integer consume_id = -1;
-			long row_id = (long) -1;
-			Boolean sync = false;
-
 			// 登陆用户密码及密码
 			// String created_at = "2013-12-29 9:1:1";
 			String login_email = "";
@@ -136,35 +134,26 @@ public class TabConsume extends BaseActivity {
 					&& !sharedPreferences.getString("current_user_email", "").equals("")) {
 				login_email = sharedPreferences.getString("current_user_email", "");
 				
-				ret_array = consume_create(login_email, volue, created_at, msg);
-			}
+				ConsumeDao consumeDao = ConsumeDao.getConsumeDao(TabConsume.this);
+				try {
+					//先创建
+					consumeDao.insertRecord(user_id, consume_id,  Double.parseDouble(volue),
+							msg, created_at,created_at, false);
 
-			String ret_str;
-			if (ret_array[0].equals("1")) {
-				ret_str = "创建成功";
-				sync = true;
-			} else {
-				ret_str = "创建失败:" + ret_array[1];
-				sync = false;
-			}
-			ConsumeDao consumeDao = ConsumeDao.getConsumeDao(TabConsume.this);
-
-			try {
-				row_id = consumeDao.insertRecord(user_id, consume_id,  Double.parseDouble(volue),
-						msg, created_at,created_at, sync);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			if(row_id != -1){
+					//后台同步
+					NetUtils.upload_unsync_consumes_background(TabConsume.this,login_email);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				// 界面切换
 				// 显示记录记录
 				Intent intent = new Intent(TabConsume.this, ConsumeItem.class);
-				intent.putExtra("row_id", row_id);
-				intent.putExtra("from_page", "TabConsume");
+				intent.putExtra("created_at", created_at.substring(0,10));
 				startActivity(intent);
+			} else {
+				Toast.makeText(TabConsume.this, "Email Is Empty!", 0).show();
 			}
-			Toast.makeText(TabConsume.this, ret_str+"-"+row_id, 0).show();
+
 		}
 	};
 
@@ -207,6 +196,7 @@ public class TabConsume extends BaseActivity {
 		return ret_string;
 	}
 
+	/*
 	public static String[] consume_create(String login_email, String value,
 			String created_at, String msg) {
 		// Step One 从服务器接口中获取当前账号和密码的配对情况
@@ -251,7 +241,7 @@ public class TabConsume extends BaseActivity {
 		}
 		return ret_array;
 	}
-	
+	*/
 
 
 }
