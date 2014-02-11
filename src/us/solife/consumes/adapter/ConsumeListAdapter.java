@@ -2,27 +2,15 @@ package us.solife.consumes.adapter;
 
 import java.util.ArrayList;
 import java.math.BigDecimal;
-
-import us.solife.consumes.TabList;
 import us.solife.consumes.entity.ConsumeInfo;
-
+import us.solife.consumes.util.ToolUtils;
 import com.yyx.mconsumes.R;
-
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
-import android.widget.ImageView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import java.util.Calendar;
-import java.text.SimpleDateFormat;
-//import java.sql.Date;
-import java.util.Date;
-import android.net.ParseException;
-import android.widget.RelativeLayout;
+
 
 public class ConsumeListAdapter extends BaseAdapter{
 	ArrayList<ConsumeInfo> consumeInfos;
@@ -65,7 +53,8 @@ public class ConsumeListAdapter extends BaseAdapter{
 			
 			holder.item_value   = (TextView) convertView.findViewById(R.id.TextView_item_value);
 			holder.item_date   = (TextView) convertView.findViewById(R.id.TextView_item_date);
-
+			holder.item_week   = (TextView) convertView.findViewById(R.id.TextView_item_week);
+			
 			convertView.setTag(holder);
 		}
 
@@ -74,30 +63,14 @@ public class ConsumeListAdapter extends BaseAdapter{
 		holder.item_value.setText(volue + "元");
 		holder.item_date.setText(consumeInfo.getCreated_at());
 		
-		SimpleDateFormat sdf =   new SimpleDateFormat("yyyy-MM-dd");
-		String week = "F";
-		try {
-		    Date date = (Date)sdf.parse(consumeInfo.getCreated_at());
-		    Calendar calendar = Calendar.getInstance();
-		    calendar.setTime(date);  
-		    int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-		    String[] weeks = {"日","一","二","三","四","五","六"};
-		    week =  weeks[week_index];
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}catch(java.text.ParseException e){
-			e.printStackTrace();
-		}
-		//holder.week.setText(week);
-	
+		String week_name = ToolUtils.getWeekName(consumeInfo.getCreated_at());
+		holder.item_week.setText(week_name);
 
 		return convertView;
 	}
 
 	class ViewHolder {
-		private TextView volue, msg, created_at, item_id,list_id, week, count;
-		private TextView item_date,item_value,first_value,first_date,last_value,last_date;
-		//private ImageView sync_true,sync_false;
+		private TextView item_date,item_value,item_week;
 	}
 
 }

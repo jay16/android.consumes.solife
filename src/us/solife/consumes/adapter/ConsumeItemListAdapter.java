@@ -71,20 +71,16 @@ public class ConsumeItemListAdapter extends BaseAdapter{
 			convertView.setTag(holder);
 		}
 
-		holder.created_at.setText(consumeInfo.getCreated_at());
+		holder.created_at.setText(consumeInfo.getCreated_at().substring(10, 16));
 		holder.msg.setText(consumeInfo.getMsg());
 		if(String.valueOf(consumeInfo.getSync()).toString().equals("1")) {
 		    holder.sync.setText("^_^");
 		} else {
 			holder.sync.setText("!_!");
 		}
-		/*	
-		holder.msg.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				
-			}
-		});
-		*/
+			
+
+		
 		return convertView;
 	}
 

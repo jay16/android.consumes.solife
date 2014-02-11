@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="#eee"
     android:orientation="vertical" >
+    
+   
 
     <RelativeLayout
         android:id="@+id/RelativeLayout_item"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/preference_item"
+        android:background="@drawable/preference_single_item"
         android:clickable="false"
         android:gravity="center_vertical" >
 
@@ -45,17 +47,35 @@
                 android:textColor="#C0C0C0"
                 android:textSize="17sp" />
         </LinearLayout>
+        
 
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/linearLayout1" >
+
+            <TextView
+                android:id="@+id/TextView_item_week"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="星期"
+                android:textColor="#C0C0C0"
+                android:textSize="17sp" />
+        </LinearLayout>
+        
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="37dp"
+            android:layout_marginRight="10dp"
             android:clickable="true"
             android:scaleType="matrix"
             android:src="@drawable/mm_submenu" />
-
     </RelativeLayout>
 
 </LinearLayout>

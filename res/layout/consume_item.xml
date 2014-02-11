@@ -4,40 +4,72 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#eee" >
-          		<RelativeLayout
-            			android:layout_width="fill_parent"
-            			android:layout_height="wrap_content"
-            			android:layout_marginTop="14dp"
-            			android:gravity="center_vertical"
-            			android:clickable="true"
-            			android:background="@drawable/preference_first_item" >
-            			<TextView
-        					android:layout_width="wrap_content" 
-        					android:layout_height="wrap_content"
-        					android:padding="8dp" 
-        					android:text="消费数值"
-        					android:textSize="17sp"		
-							android:textColor="#000" 
-                            android:id="@+id/consume_item_value" />
-                 					
-      				</RelativeLayout>
-      		
-      				<RelativeLayout
-            			android:layout_width="fill_parent"
-            			android:layout_height="wrap_content"
-            			android:gravity="center_vertical"
-            			android:clickable="true"
-            			android:background="@drawable/preference_last_item" >
-            			<TextView
-        					android:layout_width="wrap_content" 
-        					android:layout_height="wrap_content"
-        					android:padding="8dp" 
-        					android:text="消费日期"
-        					android:textSize="17sp"		
-							android:textColor="#000" 
-                            android:id="@+id/consume_item_created_at" 
-                            android:onClick="consume_item_edit" />     					
-      				</RelativeLayout>
+    
+    <include layout="@layout/main_header" />
+        
+    <RelativeLayout
+        android:id="@+id/RelativeLayout_item"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/preference_single_item"
+        android:clickable="false"
+        android:gravity="center_vertical" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true" >
+
+            <TextView
+                android:id="@+id/consume_item_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="消费数值"
+                android:textColor="#000"
+                android:textSize="17sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" >
+
+            <TextView
+                android:id="@+id/consume_item_created_at"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="消费日期"
+                android:textColor="#606060"
+                android:textSize="17sp" />
+        </LinearLayout>
+        
+
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/linearLayout1" >
+
+            <TextView
+                android:id="@+id/consume_item_created_at_week"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="星期"
+                android:textColor="#606060"
+                android:textSize="17sp" />
+        </LinearLayout>
+        
+    </RelativeLayout>
+    
+          	
       				
       				
     <LinearLayout

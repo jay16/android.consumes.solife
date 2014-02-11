@@ -1,0 +1,33 @@
+package us.solife.consumes.util;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import android.net.ParseException;
+
+public class ToolUtils {
+	
+	/**
+	 * 根据日期判断星期
+	 * @param context
+	 * @return
+	 */
+	public static String getWeekName(String date_str) {
+		SimpleDateFormat sdf =   new SimpleDateFormat("yyyy-MM-dd");
+		String week = "未知";
+		try {
+		    Date date = (Date)sdf.parse(date_str);
+		    Calendar calendar = Calendar.getInstance();
+		    calendar.setTime(date);  
+		    int week_index = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+		    String[] weeks = {"日","一","二","三","四","五","六"};
+		    week =  '周'+weeks[week_index];
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}catch(java.text.ParseException e){
+			e.printStackTrace();
+		}
+		
+		return week;
+	}
+}
