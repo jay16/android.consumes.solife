@@ -135,7 +135,6 @@ public class TabList extends BaseActivity{
 		         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					    String created_at = ((TextView) view.findViewById(R.id.TextView_item_date)).getText().toString();
 
-
 						Toast.makeText(TabList.this, created_at, 0).show();
 						// 界面切换
 						// 显示记录记录
@@ -245,11 +244,14 @@ public class TabList extends BaseActivity{
 						&& !sharedPreferences.getString("current_user_email", "").equals("")) {
 					String login_email = sharedPreferences.getString("current_user_email", "");
 					
+
+			    	Toast.makeText(TabList.this, "更新数据", 0).show();
 					//后台同步更新未同步的数据
 					NetUtils.upload_unsync_consumes_background(TabList.this,login_email);
+					Toast.makeText(TabList.this, "更新完毕", 0).show();
 					setViewList("month","");
 			    } else {
-			    	Toast.makeText(TabList.this, "获取用户信息失败", 0).show();
+			    	Toast.makeText(TabList.this, "更新失败", 0).show();
 			    }
 		};
 	

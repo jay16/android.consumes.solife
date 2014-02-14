@@ -14,6 +14,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 import us.solife.consumes.util.NetUtils;
+import us.solife.consumes.util.ToolUtils;
+
+import java.util.Calendar;
+import java.text.ParseException;
 
 public class ConsumeDao {
 	public static final String KEY_ROWID = "id";
@@ -263,5 +267,82 @@ public class ConsumeDao {
 		String[] args = {String.valueOf(row_id)};
 
 		return db.update(DATABASE_TABLE, cv, "id=?",args);
+	}
+	
+	public ArrayList<ConsumeInfo> user_consume_list() {
+		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
+		String sql;
+		String y_m_d = ToolUtils.getStandardDate();
+		String week = "00";
+		try {
+			int i = ToolUtils.getWeekNumber(y_m_d)-1;
+			if(i<10) {
+			  week = "0"+i;
+			} else {
+			  week = ""+i;
+			}
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//消费记录天数
+		sql = "select count(distinct substr(created_at,0,11)) as volue,'消费记录天数' as created_at from consumes ";
+		addDataToArrayBySql(consumeInfos,sql);
+		
+		//单笔最大消费记录
+		sql = "select volue,substr(created_at,0,11) as created_at from consumes ";
+		sql += " where length(created_at)>=10 order by volue desc";
+		addDataToArrayBySql(consumeInfos,sql);
+		
+		//单天最大消费记录
+		sql = "select sum(volue) as volue,substr(created_at,0,11) as created_at from consumes ";
+		sql += " where length(created_at)>=10 group by substr(created_at,0,11) order by sum(volue) desc";
+		addDataToArrayBySql(consumeInfos,sql);
+	
+		//单周消费记录
+		sql = "select sum(volue) as volue,strftime('%W',created_at) as created_at from consumes ";
+		sql += " where strftime('%W',created_at)='"+week+"'";
+		//sql += " where strftime('%Y-%m-%d',created_at)='"+y_m_d+"'";
+		sql += " group by strftime('%W',created_at) order by strftime('%W',created_at) desc";
+		addDataToArrayBySql(consumeInfos,sql);
+		
+		//单月消费记录
+		sql = "select sum(volue) as volue,substr(created_at,0,8) as created_at from consumes ";
+		sql += " where length(created_at)>=10 and substr(created_at,0,8)='"+y_m_d.substring(0,7)+"' ";
+		sql += " group by substr(created_at,0,8)";
+		addDataToArrayBySql(consumeInfos,sql);
+
+		//单年消费记录
+		sql = "select sum(volue) as volue,substr(created_at,0,5) as created_at from consumes ";
+		sql += " where length(created_at)>=10 and substr(created_at,0,5)='"+y_m_d.substring(0,4)+"' ";
+		sql += " group by substr(created_at,0,5)";
+		addDataToArrayBySql(consumeInfos,sql);
+	
+		//所有消费记录
+		sql = "select sum(volue) as volue,'所有消费记录' as created_at from consumes ";
+		addDataToArrayBySql(consumeInfos,sql);
+		
+		return consumeInfos;
+	}
+	
+	public void addDataToArrayBySql(ArrayList<ConsumeInfo> consumeInfos, String sql) {
+		ConsumeInfo consumeInfo = new ConsumeInfo();
+		double volue;
+		String created_at;
+		Cursor cursor;		    
+
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		cursor = database.rawQuery(sql, null);
+		
+		if(cursor.getCount()>0){
+			cursor.moveToFirst();
+			volue = cursor.getDouble(cursor.getColumnIndex("volue"));
+			created_at = cursor.getString(cursor.getColumnIndex("created_at")).toString();
+			consumeInfo.setVolue(volue); consumeInfo.setCreated_at(created_at);
+		} else {
+			consumeInfo.setVolue((double)0); consumeInfo.setCreated_at("0000/00/00 00:00");
+		}
+		consumeInfos.add(consumeInfo);
 	}
 }

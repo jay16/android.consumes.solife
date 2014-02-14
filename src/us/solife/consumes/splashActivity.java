@@ -137,9 +137,11 @@ public class splashActivity extends BaseActivity {
 		if (sharedPreferences.contains("is_login")
 				&& sharedPreferences.getBoolean("is_login", false)) {
 			intent = new Intent(splashActivity.this, MainTabActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
 		} else {
 			intent = new Intent(splashActivity.this, Login.class);
 		}
+		
 		startActivity(intent);
 		finish();
 		// boolean isDownLoad = sharedPreferences.getBoolean("isDownLoad",

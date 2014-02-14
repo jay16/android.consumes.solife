@@ -1,109 +1,369 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent"
+<LinearLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+  	android:layout_height="fill_parent"
+    android:background="#eee"
     android:orientation="vertical" >
     
-    <include layout="@layout/main_header" />
+   
+    <include layout="@layout/tab_user_header" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="86dp"
-        android:gravity="center|left" >
-        
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
+    <ScrollView
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:scrollbarStyle="outsideOverlay"  >
+			
+		<LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.77"
-            android:src="@drawable/widget_bar_user" />
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            >
+
+			<RelativeLayout
+			    android:layout_width="match_parent"
+			    android:layout_height="84dp"
+			    android:layout_marginTop="0dp" >
+
+			    <ImageView
+			        android:id="@+id/imageView_current_user_gravatar_image"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_alignParentLeft="true"
+			        android:layout_centerVertical="true"
+			        android:layout_marginLeft="20dp"
+			        android:padding="2dp"
+			        android:scaleType="matrix"
+			        android:src="@drawable/gravatar_default" />
+			    
+			    <TextView
+			        android:id="@+id/textView_current_user_name"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_alignParentTop="true"
+			        android:layout_marginLeft="14dp"
+			        android:layout_toRightOf="@+id/imageView_current_user_gravatar_image"
+			        android:padding="5dp"
+			        android:text="用户名称"
+			        android:textColor="#000"
+			        android:textSize="18sp" />
+
+
+			    <TextView
+			        android:id="@+id/textView_current_user_registeration_time"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_alignLeft="@+id/textView_current_user_name"
+			        android:layout_centerVertical="true"
+			        android:padding="5dp"
+			        android:text="注册时间：2014/01/01 01:01"
+			        android:textColor="#333"
+			        android:textSize="10sp" />
+			    
+			    <TextView
+			        android:id="@+id/textView_current_date"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_alignLeft="@+id/textView_current_user_registeration_time"
+			        android:layout_alignParentBottom="true"
+			        android:layout_below="@+id/textView_current_user_registeration_time"
+			        android:padding="5dp"
+			        android:text="当前时间：2014/01/01 第12周  周二"
+			        android:textColor="#333"
+			        android:textSize="10sp" />
+
+			</RelativeLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="7.40"
-            android:gravity="center" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="3dp" >
+			
+         	<RelativeLayout
+         	    android:layout_width="fill_parent"
+         	    android:layout_height="wrap_content"
+         	    android:background="@drawable/preference_first_item"
+         	    android:clickable="true"
+         	    android:gravity="center_vertical" >
 
-            <TextView
-                android:id="@+id/textView_User_Name"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_weight="0.31"
-                android:text="用户名称"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="12dp" />
-        </LinearLayout>
-    </LinearLayout>
+         	    <TextView
+         	        android:id="@+id/textView7"
+         	        android:layout_width="wrap_content"
+         	        android:layout_height="wrap_content"
+         	        android:layout_centerVertical="true"
+         	        android:padding="8dp"
+         	        android:text="地区:"
+         	        android:textColor="#333"
+         	        android:textSize="17sp" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+         	    <TextView
+         	        android:id="@+id/textView_current_user_area"
+         	        android:layout_width="wrap_content"
+         	        android:layout_height="wrap_content"
+         	        android:layout_alignParentBottom="true"
+         	        android:layout_toRightOf="@+id/textView7"
+         	        android:padding="8dp"
+         	        android:text="中国上海"
+         	        android:textColor="#000"
+         	        android:textSize="15sp" />
+         	</RelativeLayout>
 
+			
+         	<RelativeLayout
+         	    android:layout_width="fill_parent"
+         	    android:layout_height="wrap_content"
+         	    android:background="@drawable/preference_last_item"
+         	    android:clickable="true"
+         	    android:gravity="center_vertical" >
+
+         	    <TextView
+         	        android:id="@+id/textView8"
+         	        android:layout_width="wrap_content"
+         	        android:layout_height="wrap_content"
+         	        android:layout_centerVertical="true"
+         	        android:padding="8dp"
+         	        android:text="邮箱:"
+         	        android:textColor="#333"
+         	        android:textSize="17sp" />
+
+         	    <TextView
+         	        android:id="@+id/textView_current_user_email"
+         	        android:layout_width="wrap_content"
+         	        android:layout_height="wrap_content"
+         	        android:layout_alignParentBottom="true"
+         	        android:layout_toRightOf="@+id/textView8"
+         	        android:padding="8dp"
+         	        android:text="consume@solife.us"
+         	        android:textColor="#000"
+         	        android:textSize="15sp" />
+         	</RelativeLayout>
+         	
+
+			
+   		</LinearLayout>
+   			
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center|left" >
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="3dp" >
+         	<RelativeLayout      				    
+            	android:layout_width="fill_parent"
+            	android:layout_height="wrap_content"            	
+            	android:gravity="center_vertical"
+            	android:clickable="true"
+            	android:background="@drawable/preference_first_item" >
 
-            <TextView
-                android:id="@+id/textView_consume_sync"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="所在地:"
-                android:textSize="15dp" />
+      		  <TextView
+      		      android:id="@+id/textView11"
+      		      android:layout_width="wrap_content"
+      		      android:layout_height="wrap_content"
+      		      android:layout_centerVertical="true"
+      		      android:padding="8dp"
+      		      android:text="消费记录天数:"
+      		      android:textColor="#333"
+      		      android:textSize="17sp" />
+ 				
+   		  	    <TextView
+   		  	        android:id="@+id/consume_day_number"
+   		  	        android:layout_width="wrap_content"
+   		  	        android:layout_height="wrap_content"
+   		  	        android:layout_alignParentBottom="true"
+   		  	        android:layout_marginLeft="5dp"
+   		  	        android:layout_toRightOf="@+id/textView11"
+   		  	        android:padding="8dp"
+   		  	        android:text="123天"
+   		  	        android:textColor="#000"
+   		  	        android:textSize="15sp" />
+   		  	</RelativeLayout>
+
+   		  	<RelativeLayout
+   		  	    android:layout_width="fill_parent"
+   		  	    android:layout_height="wrap_content"
+   		  	    android:background="@drawable/preference_item"
+   		  	    android:clickable="true"
+   		  	    android:gravity="center_vertical" >
+
+   		  	    <TextView
+   		  	        android:id="@+id/textView1"
+   		  	        android:layout_width="wrap_content"
+   		  	        android:layout_height="wrap_content"
+   		  	        android:layout_centerVertical="true"
+   		  	        android:padding="8dp"
+   		  	        android:text="单笔最大消费:"
+   		  	        android:textColor="#333"
+   		  	        android:textSize="17sp" />
+
+   		  	    <TextView
+   		  	        android:id="@+id/consume_max_value_by_once"
+   		  	        android:layout_width="wrap_content"
+   		  	        android:layout_height="wrap_content"
+   		  	        android:layout_alignParentBottom="true"
+   		  	        android:layout_marginLeft="5dp"
+   		  	        android:layout_toRightOf="@+id/textView1"
+   		  	        android:padding="8dp"
+   		  	        android:text="￥1234"
+   		  	        android:textColor="#000"
+   		  	        android:textSize="15sp" />
+   		  	</RelativeLayout>
+
+      		<RelativeLayout
+      		    android:layout_width="fill_parent"
+      		    android:layout_height="wrap_content"
+      		    android:background="@drawable/preference_item"
+      		    android:clickable="true"
+      		    android:gravity="center_vertical" >
+
+      		    <TextView
+      		        android:id="@+id/textView2"
+      		        android:layout_width="wrap_content"
+      		        android:layout_height="wrap_content"
+      		        android:layout_centerVertical="true"
+      		        android:padding="8dp"
+      		        android:text="单天最大消费:"
+      		        android:textColor="#333"
+      		        android:textSize="17sp" />
+
+      		    <TextView
+      		        android:id="@+id/consume_max_value_by_day"
+      		        android:layout_width="wrap_content"
+      		        android:layout_height="wrap_content"
+      		        android:layout_alignParentTop="true"
+      		        android:layout_marginLeft="5dp"
+      		        android:layout_toRightOf="@+id/textView2"
+      		        android:padding="8dp"
+      		        android:text="￥4567"
+      		        android:textColor="#000"
+      		        android:textSize="15sp" />
+      		</RelativeLayout>
+
+      		<RelativeLayout
+      		    android:layout_width="fill_parent"
+      		    android:layout_height="wrap_content"
+      		    android:background="@drawable/preference_item"
+      		    android:clickable="true"
+      		    android:gravity="center_vertical" >
+
+      		    <TextView
+      		        android:id="@+id/textView3"
+      		        android:layout_width="wrap_content"
+      		        android:layout_height="wrap_content"
+      		        android:layout_centerVertical="true"
+      		        android:padding="8dp"
+      		        android:text="本周累积消费:"
+      		        android:textColor="#333"
+      		        android:textSize="17sp" />
+
+      		    <TextView
+      		        android:id="@+id/consume_accumulate_value_by_week"
+      		        android:layout_width="wrap_content"
+      		        android:layout_height="wrap_content"
+      		        android:layout_alignBaseline="@+id/textView3"
+      		        android:layout_alignBottom="@+id/textView3"
+      		        android:layout_marginLeft="5dp"
+      		        android:layout_toRightOf="@+id/textView3"
+      		        android:padding="8dp"
+      		        android:text="￥4567"
+      		        android:textColor="#000"
+      		        android:textSize="15sp" />
+      		</RelativeLayout>
+      		
+      		<RelativeLayout
+      		    android:layout_width="fill_parent"
+      		    android:layout_height="wrap_content"
+      		    android:background="@drawable/preference_item"
+      		    android:clickable="true"
+      		    android:gravity="center_vertical" >
+
+      		    <TextView
+      		        android:id="@+id/textView4"
+      		        android:layout_width="wrap_content"
+      		        android:layout_height="wrap_content"
+      		        android:layout_centerVertical="true"
+      		        android:padding="8dp"
+      		        android:text="本月累积消费:"
+      		        android:textColor="#333"
+      		        android:textSize="17sp" />
+
+      		    <TextView
+      		        android:id="@+id/consume_accumulate_value_by_month"
+      		        android:layout_width="wrap_content"
+      		        android:layout_height="wrap_content"
+      		        android:layout_alignBottom="@+id/textView4"
+      		        android:layout_marginLeft="5dp"
+      		        android:layout_toRightOf="@+id/textView4"
+      		        android:padding="8dp"
+      		        android:text="￥4567"
+      		        android:textColor="#000"
+      		        android:textSize="15sp" />
+      		</RelativeLayout>
+      		
+    		<RelativeLayout
+    		    android:layout_width="fill_parent"
+    		    android:layout_height="wrap_content"
+    		    android:background="@drawable/preference_item"
+    		    android:clickable="true"
+    		    android:gravity="center_vertical" >
+
+    		    <TextView
+    		        android:id="@+id/textView6"
+    		        android:layout_width="wrap_content"
+    		        android:layout_height="wrap_content"
+    		        android:layout_centerVertical="true"
+    		        android:padding="8dp"
+    		        android:text="本年累积消费:"
+    		        android:textColor="#333"
+    		        android:textSize="17sp" />
+
+    		    <TextView
+    		        android:id="@+id/consume_accumulate_value_by_year"
+    		        android:layout_width="wrap_content"
+    		        android:layout_height="wrap_content"
+    		        android:layout_alignParentBottom="true"
+    		        android:layout_marginLeft="5dp"
+    		        android:layout_toRightOf="@+id/textView6"
+    		        android:padding="8dp"
+    		        android:text="￥4567"
+    		        android:textColor="#000"
+    		        android:textSize="15sp" />
+
+    		</RelativeLayout>
+
+    		<RelativeLayout
+    		    android:layout_width="fill_parent"
+    		    android:layout_height="wrap_content"
+    		    android:background="@drawable/preference_last_item"
+    		    android:clickable="true"
+    		    android:gravity="center_vertical" >
+
+    		    <TextView
+    		        android:id="@+id/textView5"
+    		        android:layout_width="wrap_content"
+    		        android:layout_height="wrap_content"
+    		        android:layout_centerVertical="true"
+    		        android:padding="8dp"
+    		        android:text="所有累积消费:"
+    		        android:textColor="#333"
+    		        android:textSize="17sp" />
+
+    		    <TextView
+    		        android:id="@+id/consume_accumulate_value_by_all"
+    		        android:layout_width="wrap_content"
+    		        android:layout_height="wrap_content"
+    		        android:layout_alignTop="@+id/textView5"
+    		        android:layout_marginLeft="5dp"
+    		        android:layout_toRightOf="@+id/textView5"
+    		        android:padding="8dp"
+    		        android:text="￥4567"
+    		        android:textColor="#000"
+    		        android:textSize="15sp" />
+    		</RelativeLayout>
+      		
 
         </LinearLayout>
+        
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.10" 
-            android:gravity="center|left" >
-
-            <TextView
-                android:id="@+id/textView_User_Province"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="0.74"
-                android:text="用户所在地"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="15dp" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center|left" >
-
-            <TextView
-                android:id="@+id/TextView02"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="登陆名:"
-                android:textSize="15dp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="0.96"
-            android:gravity="center|left" >
-
-            <TextView
-                android:id="@+id/textView_User_Email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="用户邮箱"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="15dp" />
-        </LinearLayout>
-    </LinearLayout>
-
+	</LinearLayout>
+  </ScrollView>
 </LinearLayout>

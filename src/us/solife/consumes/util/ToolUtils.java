@@ -30,4 +30,20 @@ public class ToolUtils {
 		
 		return week;
 	}
+	
+	public static int getWeekNumber(String date_str) throws java.text.ParseException{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Calendar cl = Calendar.getInstance();
+		Date date = (Date)sdf.parse(date_str);
+		//df.parse(y_m_d)
+		cl.setTime(date); 
+		int week = cl.get(Calendar.WEEK_OF_YEAR); 
+		return week;
+	}
+	
+	public static String getStandardDate() {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		String y_m_d = df.format(new Date());
+		return y_m_d;
+	}
 }

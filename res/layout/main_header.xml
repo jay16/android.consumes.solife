@@ -13,6 +13,7 @@
         android:layout_weight="0.82"
         android:gravity="center"
         android:text="消费记录"
+        android:textSize="20sp"	
         android:textColor="@color/white" />
 
 </LinearLayout>

@@ -1,6 +1,7 @@
 package us.solife.consumes;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +84,12 @@ public abstract class BaseActivity extends Activity {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		AppManager.getAppManager().addActivity(this);
-		init();
+		try {
+			init();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -106,7 +112,7 @@ public abstract class BaseActivity extends Activity {
 		manager.addTask(task);
 	}
 
-	public abstract void init();
+	public abstract void init() throws ParseException;
 
 
 	//接口，继承类可以自定义处理

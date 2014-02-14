@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import us.solife.consumes.db.ConsumeDao;
 
+
 import com.yyx.mconsumes.R;
 
 import android.app.TabActivity;
@@ -33,6 +34,7 @@ import android.widget.Button;
 //import android.content.DialogInterface;
 
 public class MainTabActivity extends TabActivity implements OnClickListener {
+	public static MainTabActivity instance = null;
 	TabHost tabHost;
 	RadioButton aBt, bBt, cBt, dBt, eBt;
 	int index = 0;
@@ -44,6 +46,8 @@ public class MainTabActivity extends TabActivity implements OnClickListener {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		instance = this;
+		
 		
 		buttons = new RadioButton[5];
 		
