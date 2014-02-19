@@ -9,7 +9,7 @@ public class ConsumeInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private int id, consume_id, user_id;
 	private double volue;
-	private String  msg, created_at, updated_at;
+	private String  msg, created_at, updated_at,user_name;
 	private Long sync; //Boolean ´æ·ÅÎªLong£¬true => 1, flase => 0
 
 	public int getId() {
@@ -70,6 +70,13 @@ public class ConsumeInfo implements Serializable {
 
 	public String getUpdated_at() {
 		return updated_at;
+	}
+	public void setUserName(String user_name) {
+		this.user_name = user_name;
+	}
+
+	public String getUserName() {
+        return user_name.length()==0 ? "unset" : user_name;
 	}
 
 	public void setUpdated_at(String updated_at) {

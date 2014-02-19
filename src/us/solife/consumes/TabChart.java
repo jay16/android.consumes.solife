@@ -1,5 +1,6 @@
 package us.solife.consumes;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,17 +21,28 @@ import us.solife.androidcharts.view.StickChart;
 import us.solife.androidcharts.view.PieChart;
 
 import android.view.View;
+import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView;
+import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
 import us.solife.androidcharts.entity.TitleValueColorEntity;
+import us.solife.consumes.adapter.ConsumeListAdapter;
+import us.solife.consumes.adapter.FriendsConsumeListAdapter;
+import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.entity.ConsumeInfo;
 
 public class TabChart extends BaseActivity {
-
+	
 	List<OHLCEntity> ohlc;
 	List<StickEntity> vol;
 	GridChart gridchart;
@@ -41,6 +53,11 @@ public class TabChart extends BaseActivity {
 	CandleStickChart candlestickchart;
 	MACandleStickChart macandlestickchart;
 	PieChart piechart;
+	/**/
+	ListView listView;
+	SharedPreferences      preferences;
+	ArrayList<ConsumeInfo> consumeInfos;
+	ConsumeDao             consumeDao;
 	
 	@Override
 	public void init() {
@@ -48,8 +65,11 @@ public class TabChart extends BaseActivity {
 		setContentView(R.layout.tab_chart);
 
 		TextView  textView_main_header = (TextView)findViewById(R.id.textView_main_header);
-		textView_main_header.setText("消费报表");
+		textView_main_header.setText("消费圈");
 		
+		Button btn_back = (Button)findViewById(R.id.btn_back);
+		btn_back.setVisibility(View.GONE);
+		/*
         initVOL();
         initOHLC();
        
@@ -61,6 +81,48 @@ public class TabChart extends BaseActivity {
     	initCandleStickChart();
     	initMACandleStickChart();   
         initPieChart();
+        */
+	}
+	
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		
+		setViewList();
+	}
+	public void setViewList() {
+		listView = (ListView) findViewById(R.id.listView_consumes);
+		//获取数据库的时候应该单独开一条线程  以为是耗时的操作  这个demo数据库简单  我就放在主线程了
+        //consumeInfos = consumeDao.getRecordsAsDay(TabList.this,ShowType,day);
+       //consumeInfos = consumeDao.getAllRecords(TabChart.this);
+
+		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
+		consumeDao = ConsumeDao.getConsumeDao(TabChart.this,current_user_id);
+        consumeInfos = consumeDao.getAllRecords(TabChart.this);
+		if (consumeInfos != null && consumeInfos.size() != 0) {
+			Toast.makeText(TabChart.this, "Data", 0).show();
+			listView.setAdapter(new FriendsConsumeListAdapter(consumeInfos,TabChart.this));
+			listView.setClickable(true);
+			listView.setOnItemClickListener(new OnItemClickListener(){
+				 @Override
+		         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+					    ConsumeInfo consumeinfo = consumeInfos.get(position);
+					    //String consume_id = ((TextView) view.findViewById(R.id.consume_id)).getText().toString();
+
+						Toast.makeText(TabChart.this, consumeinfo.getMsg(), 0).show();
+						// 界面切换
+						// 显示记录记录
+						//Intent intent = new Intent(TabChart.this, ConsumeItem.class);
+						//intent.putExtra("created_at", created_at);
+						//startActivity(intent);
+				 }
+			});
+		} else {
+			Toast.makeText(TabChart.this, "No Data", 0).show();
+		}
+		listView.invalidate();
 	}
     private void initGridChart()
 	{

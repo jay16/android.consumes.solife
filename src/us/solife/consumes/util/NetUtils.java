@@ -122,11 +122,13 @@ public class NetUtils {
 		return ret_array;
 	}
 	
-	public static void sync_unupload_consumes(Context context,String login_email) {
+	public static void sync_unupload_consumes(Context context,String login_email,long current_user_id) {
 		    ArrayList<ConsumeInfo> consumeInfos;
 		    ConsumeDao             consumeDao;
 		    
-		    consumeDao = ConsumeDao.getConsumeDao(context);
+
+
+		    consumeDao = ConsumeDao.getConsumeDao(context,current_user_id);
 		    consumeInfos = consumeDao.getUnSyncRecords();
 		    
 			Integer un_sync_count = consumeInfos.size();
@@ -147,10 +149,10 @@ public class NetUtils {
 
     }
 	
-	public static void upload_unsync_consumes_background(final Context context,final String login_email) {
+	public static void upload_unsync_consumes_background(final Context context,final String login_email,final long current_user_id) {
 		 new Thread() {
 			 public void run() {
-				sync_unupload_consumes(context, login_email);
+				sync_unupload_consumes(context, login_email,current_user_id);
 			 };
 		 }.start();
 	}
@@ -189,15 +191,24 @@ public class NetUtils {
          String user_province = jsonObject.getString("user_province");
          String user_register = jsonObject.getString("user_register");
          String user_gravatar = jsonObject.getString("user_gravatar");
+         int user_id = jsonObject.getInt("user_id");
+         
 					//Editor.putInt("current_user_id", user_id);
 					Editor.putString("current_user_name", user_name);
 					Editor.putString("current_user_email", user_email);
 					Editor.putString("current_user_province", user_province);
 					Editor.putString("current_user_register", user_register);
 					Editor.putString("current_user_gravatar", user_gravatar);
+					Editor.putLong("current_user_id", user_id);
+					Editor.putBoolean("is_login", true);
 					ret_array[1] = user_gravatar;
 
 					String picDirStr = Environment.getExternalStorageDirectory().getAbsolutePath() + "/solife/"; 
+			    	File picDir = new File(picDirStr);
+			        if(!picDir.exists()){
+			            picDir.mkdir();
+			        }
+			        picDirStr += "gravatar/";
 					download_image_with_url(user_gravatar,picDirStr,user_email.replace("@", "_")+".jpg");
 					Editor.commit();
      }

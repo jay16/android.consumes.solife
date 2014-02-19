@@ -24,8 +24,9 @@
     <string name="spiderwebchart_title4">title4</string>
     <string name="spiderwebchart_title5">title5</string>
     <string-array name="plants_array">  
-	     <item>本月消费</item> 
-	     <item>本年消费</item>  
-	     <item>所有消费</item>  
+	     <item>年份</item> 
+	     <item>月份</item>  
+	     <item>星期</item>  
+	     <item>天</item>  
     </string-array>  
 </resources>

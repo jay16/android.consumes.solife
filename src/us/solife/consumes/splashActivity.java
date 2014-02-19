@@ -93,7 +93,7 @@ public class splashActivity extends BaseActivity {
 						public void run() {
 							Message message = new Message();
 							try {
-								ConsumeDao consumeDao = ConsumeDao.getConsumeDao(splashActivity.this);
+								ConsumeDao consumeDao = ConsumeDao.getConsumeDao(splashActivity.this,(long)-1);
 								consumeDao.insertAllRecord(splashActivity.this, arrayList);
 								message.what = 1000;
 								message.obj = arrayList;
@@ -109,7 +109,7 @@ public class splashActivity extends BaseActivity {
 					}.start();
 
 				} else {
-					ConsumeDao consumeDao = ConsumeDao.getConsumeDao(splashActivity.this);
+					ConsumeDao consumeDao = ConsumeDao.getConsumeDao(splashActivity.this,(long)-1);
 				}
 
 			} else {

@@ -15,6 +15,7 @@ import android.database.Cursor;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ParseException;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,7 +34,7 @@ public class ConsumeItem extends BaseActivity {
 	ListView listView;
 	ConsumeDao             consumeDao;
 	ArrayList<ConsumeInfo> consumeInfos;
-	String from_page;
+	SharedPreferences sharedPreferences;
 	
 	@Override
 	public void init() {
@@ -48,11 +49,13 @@ public class ConsumeItem extends BaseActivity {
 		Intent intent = getIntent();
 	    String day = intent.getStringExtra("created_at");
 
-		consumeDao = ConsumeDao.getConsumeDao(getApplicationContext());
-		consumeInfos = consumeDao.getDayDetailRecords(day);
-		ConsumeInfo  consumeInfo;
+		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
+		consumeDao = ConsumeDao.getConsumeDao(ConsumeItem.this,current_user_id);
+		consumeInfos = consumeDao.getDetailRecords(day);
+		
 		for(int i=0; i<consumeInfos.size(); i++ ) {
-			consumeInfo = consumeInfos.get(i);
+			ConsumeInfo  consumeInfo = consumeInfos.get(i);
 			volue = volue + (float)consumeInfo.getVolue();
 		}
 		
@@ -71,7 +74,7 @@ public class ConsumeItem extends BaseActivity {
 		//ÏÔÊ¾Ã÷Ï¸
 		setViewList(day);
 		
-		Button button_back = (Button) findViewById(R.id.button_back);
+		Button button_back = (Button) findViewById(R.id.btn_back);
 		button_back.setOnClickListener(button_back_listener);
 	}
 
@@ -88,7 +91,7 @@ public class ConsumeItem extends BaseActivity {
 	};
 	public void setViewList(String day) {
 		listView = (ListView) findViewById(R.id.consume_item_list_view);
-		consumeInfos = consumeDao.getDayDetailRecords(day);
+		consumeInfos = consumeDao.getDetailRecords(day);
 		
 		listView.setAdapter(new ConsumeItemListAdapter(consumeInfos,ConsumeItem.this));
 		listView.setClickable(false);

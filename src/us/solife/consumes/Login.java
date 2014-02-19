@@ -16,6 +16,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+
+import us.solife.consumes.util.NetUtils;
 //import org.json.JSONException;
 
 //import us.solife.consumes.BaseActivity.DataCallback;
@@ -60,8 +62,8 @@ public class Login extends BaseActivity {
 			
     		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);	
             Editor Editor = sharedPreferences.edit();
-			String [] ret_array = Login(Editor, login_email,login_pwd);
-			
+            
+			String [] ret_array = NetUtils.get_user_info(sharedPreferences,login_email);
 	        String ret_str;
 	        if(ret_array[0].equals("1")){
 	            ret_str = "µÇÂ½³É¹¦";	

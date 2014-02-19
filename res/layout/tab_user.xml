@@ -34,6 +34,7 @@
 			        android:layout_marginLeft="20dp"
 			        android:padding="2dp"
 			        android:scaleType="matrix"
+                    android:background="@anim/shape_rounded_rectangle"
 			        android:src="@drawable/gravatar_default" />
 			    
 			    <TextView
@@ -186,7 +187,7 @@
    		  	    android:gravity="center_vertical" >
 
    		  	    <TextView
-   		  	        android:id="@+id/textView1"
+   		  	        android:id="@+id/consume_id"
    		  	        android:layout_width="wrap_content"
    		  	        android:layout_height="wrap_content"
    		  	        android:layout_centerVertical="true"
@@ -201,7 +202,7 @@
    		  	        android:layout_height="wrap_content"
    		  	        android:layout_alignParentBottom="true"
    		  	        android:layout_marginLeft="5dp"
-   		  	        android:layout_toRightOf="@+id/textView1"
+   		  	        android:layout_toRightOf="@+id/consume_id"
    		  	        android:padding="8dp"
    		  	        android:text="￥1234"
    		  	        android:textColor="#000"

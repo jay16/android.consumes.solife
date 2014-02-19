@@ -4,19 +4,6 @@ import java.util.ArrayList;
 import android.widget.SimpleAdapter;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
 import us.solife.consumes.adapter.ConsumeListAdapter;
 //import us.solife.consumes.adapter.Display;
 import us.solife.consumes.db.ConsumeDao;
@@ -27,23 +14,18 @@ import android.content.Context;
 import android.content.Intent;
 //import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Looper;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import com.yyx.mconsumes.R;
 import android.widget.ArrayAdapter;
-import us.solife.consumes.BaseActivity.DataCallback;
-import us.solife.consumes.db.ConsumeDao;
-import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.parseJson.ConsumeListParse;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -70,12 +52,15 @@ public class TabList extends BaseActivity{
                 R.array.plants_array, android.R.layout.simple_spinner_item);  
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);  
+        spinner.setSelection(3,true);
         spinner.setPrompt("列表显示方式"); 
-        spinner.setOnItemSelectedListener(new SpinnerOnItemSelectListener());  
+        spinner.setOnItemSelectedListener(new SpinnerOnItemSelectListener()); 
 		//TextView  textView_main_header = (TextView)findViewById(R.id.textView_list_header);
 		//textView_main_header.setText("消费列表");
 		
-		consumeDao = ConsumeDao.getConsumeDao(TabList.this);
+		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
+		consumeDao = ConsumeDao.getConsumeDao(TabList.this,current_user_id);
 		
 		ImageButton imageButton_download = (ImageButton) findViewById(R.id.imageButton_download);		
 		ImageButton imageButton_refresh  = (ImageButton) findViewById(R.id.imageButton_refresh);
@@ -90,7 +75,7 @@ public class TabList extends BaseActivity{
 
 		//Display display = this.getWindowManager().getDefaultDisplay();
 		//int width = display.getWidth();
-		setViewList("month","");
+		setViewList("day");
 	}
 	
 	class SpinnerOnItemSelectListener implements OnItemSelectedListener{  
@@ -103,13 +88,13 @@ public class TabList extends BaseActivity{
 	        
 	        //点击下拉列表spinner不同选项，响应不同信息
 	        if(position == 0) {
-	        	setViewList("month","");
+	        	setViewList("year");
 	        } else if(position == 1) {
-	        	setViewList("year","");
+	        	setViewList("month");
 	        } else if(position == 2) {
-	        	setViewList("all","");
+	        	setViewList("week");
 	        } else {
-	        	setViewList("month","");
+	        	setViewList("day");
 	        }
 	    }
 	    @Override  
@@ -121,11 +106,12 @@ public class TabList extends BaseActivity{
 	}  	
 
 	
-	public void setViewList(String ShowType,String day) {
+	public void setViewList(String ShowType) {
 		listView = (ListView) findViewById(R.id.consumeListView);
 		//获取数据库的时候应该单独开一条线程  以为是耗时的操作  这个demo数据库简单  我就放在主线程了
 
-        consumeInfos = consumeDao.getRecordsAsDay(TabList.this,ShowType,day);
+        //consumeInfos = consumeDao.getRecordsAsDay(TabList.this,ShowType,day);
+        consumeInfos = consumeDao.getConsumeItemList(ShowType);
         
 		if (consumeInfos != null && consumeInfos.size() != 0) {
 			listView.setAdapter(new ConsumeListAdapter(consumeInfos,TabList.this));
@@ -133,13 +119,14 @@ public class TabList extends BaseActivity{
 			listView.setOnItemClickListener(new OnItemClickListener(){
 				 @Override
 		         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					    String created_at = ((TextView) view.findViewById(R.id.TextView_item_date)).getText().toString();
-
-						Toast.makeText(TabList.this, created_at, 0).show();
+					    //String created_at = ((TextView) view.findViewById(R.id.TextView_item_date)).getText().toString();
+                        ConsumeInfo consumeinfo = consumeInfos.get(position);
+                        
+						Toast.makeText(TabList.this, consumeinfo.getCreated_at(), 0).show();
 						// 界面切换
 						// 显示记录记录
 						Intent intent = new Intent(TabList.this, ConsumeItem.class);
-						intent.putExtra("created_at", created_at);
+						intent.putExtra("created_at",  consumeinfo.getCreated_at());
 						startActivity(intent);
 				 }
 			});
@@ -195,7 +182,9 @@ public class TabList extends BaseActivity{
 								Message message = new Message();
 								try {
 									Toast.makeText(TabList.this, "开始同步数据2", 0).show();
-									ConsumeDao consumeDao = ConsumeDao.getConsumeDao(TabList.this);
+									sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+									long current_user_id = sharedPreferences.getLong("current_user_id", -1);
+									ConsumeDao consumeDao = ConsumeDao.getConsumeDao(TabList.this,current_user_id);
 									consumeDao.insertAllRecord(TabList.this, arrayList);
 									message.what = 1000;
 									message.obj  = arrayList;
@@ -229,7 +218,7 @@ public class TabList extends BaseActivity{
 				
 				ConsumeListParse consumeListParse = new ConsumeListParse();
 				getDataFromServer(getApplicationContext(), consumeListParse, url, callback);
-				setViewList("month","");
+				setViewList("day");
 			}
 		};
 		//同步本地数据至服务器
@@ -243,13 +232,14 @@ public class TabList extends BaseActivity{
 				if (sharedPreferences.contains("current_user_email")
 						&& !sharedPreferences.getString("current_user_email", "").equals("")) {
 					String login_email = sharedPreferences.getString("current_user_email", "");
+					long current_user_id = sharedPreferences.getLong("current_user_id", -1);
 					
 
 			    	Toast.makeText(TabList.this, "更新数据", 0).show();
 					//后台同步更新未同步的数据
-					NetUtils.upload_unsync_consumes_background(TabList.this,login_email);
+					NetUtils.upload_unsync_consumes_background(TabList.this,login_email,current_user_id);
 					Toast.makeText(TabList.this, "更新完毕", 0).show();
-					setViewList("month","");
+					setViewList("day");
 			    } else {
 			    	Toast.makeText(TabList.this, "更新失败", 0).show();
 			    }
@@ -257,4 +247,11 @@ public class TabList extends BaseActivity{
 	
 	
 	};
+	
+	//设置标题栏右侧按钮的作用
+	public void btnmainright(View v) {  
+		Intent intent = new Intent (TabList.this,MenuConsumeItemListType.class);			
+		startActivity(intent);	
+		//Toast.makeText(getApplicationContext(), "点击了功能按钮", Toast.LENGTH_LONG).show();
+      }  
 }

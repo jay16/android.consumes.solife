@@ -9,6 +9,7 @@
         
     <RelativeLayout
         android:id="@+id/RelativeLayout_item"
+           android:layout_marginTop="5dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/preference_single_item"
@@ -69,9 +70,6 @@
         
     </RelativeLayout>
     
-          	
-      				
-      				
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="460dp"
@@ -85,16 +83,5 @@
         </ListView>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/button_back"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="返回" />
-    </LinearLayout>
 
 </LinearLayout>

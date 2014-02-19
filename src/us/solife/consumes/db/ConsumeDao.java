@@ -10,6 +10,7 @@ import us.solife.consumes.entity.ConsumeInfo;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
@@ -23,19 +24,21 @@ public class ConsumeDao {
 	public static final String KEY_ROWID = "id";
 	private static final String DATABASE_TABLE = "consumes";
 
+	private long current_user_id;
 	private Context context;
 	public ConsumeDatabaseHelper consumeDatabaseHelper;
 	static ConsumeDao consumeDao;
 
-	private ConsumeDao(Context context) {
+	private ConsumeDao(Context context,Long user_id) {
+		this.current_user_id = user_id;
 		this.context = context;
 		this.consumeDatabaseHelper = new ConsumeDatabaseHelper(context);
 	}
 
-	public static ConsumeDao getConsumeDao(Context context) {
+	public static ConsumeDao getConsumeDao(Context context,Long user_id) {
 		if (consumeDao != null) {
 		} else {
-			consumeDao = new ConsumeDao(context);
+			consumeDao = new ConsumeDao(context,user_id);
 
 		}
 		return consumeDao;
@@ -63,10 +66,9 @@ public class ConsumeDao {
 	public ArrayList<ConsumeInfo> getAllRecords(Context context) {
 		// public Integer getAllRecords(Context context) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		Cursor cursor = database.rawQuery("select * from consumes order by created_at desc", null);
+		Cursor cursor = database.rawQuery("select * from consumes where length(created_at)>=10 order by created_at desc", null);
 
-		// Cursor cursor = database.query(true, DATABASE_TABLE, new String[] {
-		// "volue","msg","created_at" }, null, null, null, null, null, null);
+	
 		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
 		if (cursor.getCount() > 0) {
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
@@ -119,7 +121,7 @@ public class ConsumeDao {
 			} else {
 				  sql = sql + " and substr(created_at,0,8)='"+y_m_d.substring(0,7)+"' ";
 			}
-			sql = sql +" group by substr(created_at,0,11) order by  substr(created_at,0,11) desc";
+			sql = sql +" and user_id = " + current_user_id +" group by substr(created_at,0,11) order by  substr(created_at,0,11) desc";
 			Cursor cursor = database.rawQuery(sql, null);
 
 			// Cursor cursor = database.query(true, DATABASE_TABLE, new String[] {
@@ -189,7 +191,42 @@ public class ConsumeDao {
 		return consumeInfos;
 	}
 
+    public ArrayList<ConsumeInfo> getDetailRecords(String day) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		String sql = "select * from consumes where created_at like '" + day + "%'";
+		sql += " order by created_at asc";
+		Cursor cursor = database.rawQuery(sql, null);
 
+      
+		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
+		if (cursor.getCount() > 0) {
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+				ConsumeInfo consumeInfo = new ConsumeInfo();
+				
+				int id = cursor.getInt(cursor.getColumnIndex("id"));
+				int user_id    = cursor.getInt(cursor.getColumnIndex("user_id"));
+				int consume_id = cursor.getInt(cursor.getColumnIndex("consume_id"));
+				double volue = cursor.getDouble(cursor.getColumnIndex("volue"));
+				String msg   = cursor.getString(cursor.getColumnIndex("msg")).toString();
+				String created_at = cursor.getString(cursor.getColumnIndex("created_at")).toString();
+			    String updated_at = cursor.getString(cursor.getColumnIndex("updated_at"));
+			    long sync = cursor.getLong(cursor.getColumnIndex("sync"));
+			    
+				consumeInfo.setId(id);
+				consumeInfo.setUser_id(user_id);
+				consumeInfo.setConsume_id(consume_id);
+				consumeInfo.setVolue(volue);
+				consumeInfo.setMsg(msg);
+				consumeInfo.setCreated_at(created_at);
+				consumeInfo.setUpdated_at(updated_at);
+				consumeInfo.setSync(sync);
+				consumeInfos.add(consumeInfo);
+			}
+		}
+		cursor.close();
+		database.close();
+		return consumeInfos;
+	}
 	//取得所有未同步至服务器的消费记录
 	public ArrayList<ConsumeInfo> getUnSyncRecords() {
 		// public Integer getAllRecords(Context context) {
@@ -288,39 +325,40 @@ public class ConsumeDao {
 		
 		//消费记录天数
 		sql = "select count(distinct substr(created_at,0,11)) as volue,'消费记录天数' as created_at from consumes ";
+		sql += "where user_id="+current_user_id;
 		addDataToArrayBySql(consumeInfos,sql);
 		
 		//单笔最大消费记录
 		sql = "select volue,substr(created_at,0,11) as created_at from consumes ";
-		sql += " where length(created_at)>=10 order by volue desc";
+		sql += " where length(created_at)>=10 and user_id="+current_user_id + " order by volue desc";
 		addDataToArrayBySql(consumeInfos,sql);
 		
 		//单天最大消费记录
 		sql = "select sum(volue) as volue,substr(created_at,0,11) as created_at from consumes ";
-		sql += " where length(created_at)>=10 group by substr(created_at,0,11) order by sum(volue) desc";
+		sql += " where length(created_at)>=10 and user_id="+current_user_id + " group by substr(created_at,0,11) order by sum(volue) desc";
 		addDataToArrayBySql(consumeInfos,sql);
 	
 		//单周消费记录
 		sql = "select sum(volue) as volue,strftime('%W',created_at) as created_at from consumes ";
-		sql += " where strftime('%W',created_at)='"+week+"'";
-		//sql += " where strftime('%Y-%m-%d',created_at)='"+y_m_d+"'";
+		sql += " where strftime('%W',created_at)='"+week+"' and user_id="+current_user_id;
 		sql += " group by strftime('%W',created_at) order by strftime('%W',created_at) desc";
 		addDataToArrayBySql(consumeInfos,sql);
 		
 		//单月消费记录
 		sql = "select sum(volue) as volue,substr(created_at,0,8) as created_at from consumes ";
 		sql += " where length(created_at)>=10 and substr(created_at,0,8)='"+y_m_d.substring(0,7)+"' ";
-		sql += " group by substr(created_at,0,8)";
+		sql += "  and user_id="+current_user_id +" group by substr(created_at,0,8)";
 		addDataToArrayBySql(consumeInfos,sql);
 
 		//单年消费记录
 		sql = "select sum(volue) as volue,substr(created_at,0,5) as created_at from consumes ";
 		sql += " where length(created_at)>=10 and substr(created_at,0,5)='"+y_m_d.substring(0,4)+"' ";
-		sql += " group by substr(created_at,0,5)";
+		sql += " and user_id="+current_user_id +"  group by substr(created_at,0,5)";
 		addDataToArrayBySql(consumeInfos,sql);
 	
 		//所有消费记录
 		sql = "select sum(volue) as volue,'所有消费记录' as created_at from consumes ";
+		sql += " where user_id="+current_user_id;
 		addDataToArrayBySql(consumeInfos,sql);
 		
 		return consumeInfos;
@@ -345,4 +383,41 @@ public class ConsumeDao {
 		}
 		consumeInfos.add(consumeInfo);
 	}
+	//根据不同参数group by 
+	//year month week day
+	public ArrayList<ConsumeInfo> getConsumeItemList(String ShowType) {
+		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
+		String sql;
+        if(ShowType.equals("year")){
+        	sql = "select sum(volue) as volue,substr(created_at,0,5) as created_at from consumes ";
+        	sql += " where length(created_at)>=10 group by substr(created_at,0,5) order by substr(created_at,0,5) desc";
+        } else if(ShowType.equals("month")){
+        	sql = "select sum(volue) as volue,substr(created_at,0,8) as created_at from consumes ";
+        	sql += " where length(created_at)>=10 group by substr(created_at,0,8) order by substr(created_at,0,8) desc";
+        }else if(ShowType.equals("week")){
+        	sql = "select sum(volue) as volue,strftime('%W',created_at) as created_at from consumes ";
+        	sql += " where length(created_at)>=10 group by strftime('%W',created_at) order by strftime('%W',created_at) desc";
+        } else {
+        	sql = "select volue,substr(created_at,0,11) as created_at from consumes ";
+            sql += " where length(created_at)>=10 group by substr(created_at,0,11) order by created_at desc";
+        }
+		double volue;
+		String created_at;
+		Cursor cursor;		    
+
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		cursor = database.rawQuery(sql, null);
+		
+		if(cursor.getCount()>0){
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+				ConsumeInfo consumeInfo = new ConsumeInfo();
+				volue = cursor.getDouble(cursor.getColumnIndex("volue"));
+				created_at = cursor.getString(cursor.getColumnIndex("created_at")).toString();
+				consumeInfo.setVolue(volue); consumeInfo.setCreated_at(created_at);
+				consumeInfos.add(consumeInfo);
+			}
+		}
+		return consumeInfos;
+	}
+	
 }

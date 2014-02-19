@@ -134,14 +134,16 @@ public class TabConsume extends BaseActivity {
 					&& !sharedPreferences.getString("current_user_email", "").equals("")) {
 				login_email = sharedPreferences.getString("current_user_email", "");
 				
-				ConsumeDao consumeDao = ConsumeDao.getConsumeDao(TabConsume.this);
+				sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+				long current_user_id = sharedPreferences.getLong("current_user_id", -1);
+				ConsumeDao consumeDao = ConsumeDao.getConsumeDao(TabConsume.this,current_user_id);
 				try {
 					//先创建
 					consumeDao.insertRecord(user_id, consume_id,  Double.parseDouble(volue),
 							msg, created_at,created_at, false);
 
 					//后台同步
-					NetUtils.upload_unsync_consumes_background(TabConsume.this,login_email);
+					NetUtils.upload_unsync_consumes_background(TabConsume.this,login_email,current_user_id);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

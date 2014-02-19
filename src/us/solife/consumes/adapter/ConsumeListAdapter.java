@@ -63,8 +63,10 @@ public class ConsumeListAdapter extends BaseAdapter{
 		holder.item_value.setText(volue + "Ԫ");
 		holder.item_date.setText(consumeInfo.getCreated_at());
 		
-		String week_name = ToolUtils.getWeekName(consumeInfo.getCreated_at());
-		holder.item_week.setText(week_name);
+		if(consumeInfo.getCreated_at().length()>=10){
+			String week_name = ToolUtils.getWeekName(consumeInfo.getCreated_at());
+			holder.item_week.setText(week_name);
+		}
 
 		return convertView;
 	}

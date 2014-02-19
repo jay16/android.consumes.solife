@@ -72,6 +72,7 @@ public class TabUser extends BaseActivity {
 		String current_user_area = sharedPreferences.getString("current_user_province","");
 		String current_user_register = sharedPreferences.getString("current_user_register","");
 		String current_user_gravatar = sharedPreferences.getString("current_user_gravatar","");
+		long current_user_id = sharedPreferences.getLong("current_user_id",-1);
 
 		String standard_date = ToolUtils.getStandardDate();
 		String week_name = ToolUtils.getWeekName(standard_date);
@@ -102,14 +103,17 @@ public class TabUser extends BaseActivity {
 		TextView  textView_user_email    = (TextView)findViewById(R.id.textView_current_user_email); 
 		TextView  textView_user_register = (TextView)findViewById(R.id.textView_current_user_registeration_time); 
 		TextView  textView_user_area     = (TextView)findViewById(R.id.textView_current_user_area); 
-		textView_user_name.setText(current_user_name);
+		textView_user_name.setText(current_user_name+"["+current_user_id+"]");
 		textView_user_email.setText(current_user_email);
 		textView_user_register.setText("×¢²áÈÕÆÚ:"+current_user_register);
 		textView_user_area.setText(current_user_area);
 	}
 	public void initControls() {
 		BigDecimal volue;
-		consumeDao = ConsumeDao.getConsumeDao(TabUser.this);
+
+		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
+		consumeDao = ConsumeDao.getConsumeDao(TabUser.this,current_user_id);
 		
 		ArrayList<ConsumeInfo> consumeinfos = consumeDao.user_consume_list();
 		ConsumeInfo consumeInfo = new ConsumeInfo();
