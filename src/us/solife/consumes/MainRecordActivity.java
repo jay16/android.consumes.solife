@@ -2,7 +2,7 @@ package us.solife.consumes;
 
 import java.util.ArrayList;
 
-import us.solife.consumes.adapter.ConsumeListAdapter;
+import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.db.ConsumeDao;
 import us.solife.consumes.entity.ConsumeInfo;
 
@@ -46,7 +46,7 @@ public class MainRecordActivity extends BaseActivity {
 			//		.getAllRecords(getApplicationContext());
 
 			if (consumeInfos != null && consumeInfos.size() != 0) {
-				listView.setAdapter(new ConsumeListAdapter(consumeInfos,
+				listView.setAdapter(new ListViewConsumeAdapter(consumeInfos,
 						MainRecordActivity.this));
 			}
 		} else {

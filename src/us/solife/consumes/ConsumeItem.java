@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import us.solife.consumes.adapter.ConsumeListAdapter;
+import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.db.ConsumeDao;
 import us.solife.consumes.entity.ConsumeInfo;
 
@@ -28,8 +28,14 @@ import android.widget.AdapterView.OnItemClickListener;
 import us.solife.consumes.db.ConsumeDao;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.util.ToolUtils;
-import us.solife.consumes.adapter.ConsumeItemListAdapter;
+import us.solife.consumes.adapter.ListViewConsumeItemAdapter;
 
+/**
+ * 消费记录明细
+ * @author jay (http://solife.us/resume)
+ * @version 1.0
+ * @created 2014-02-25
+ */
 public class ConsumeItem extends BaseActivity {
 	ListView listView;
 	ConsumeDao             consumeDao;
@@ -43,7 +49,6 @@ public class ConsumeItem extends BaseActivity {
 		TextView  textView_main_header = (TextView)findViewById(R.id.textView_main_header);
 		textView_main_header.setText("消费明细");
 		
-		Cursor cursor;
 		Float volue = (float)0;
 		
 		Intent intent = getIntent();
@@ -93,9 +98,30 @@ public class ConsumeItem extends BaseActivity {
 		listView = (ListView) findViewById(R.id.consume_item_list_view);
 		consumeInfos = consumeDao.getDetailRecords(day);
 		
-		listView.setAdapter(new ConsumeItemListAdapter(consumeInfos,ConsumeItem.this));
+		listView.setAdapter(new ListViewConsumeItemAdapter(consumeInfos,ConsumeItem.this));
 		listView.setClickable(false);
-
+		listView.setClickable(true);
+		listView.setOnItemClickListener(new OnItemClickListener(){
+			 @Override
+	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				//点击头部、底部栏无效
+        		if(position == 0) return;
+        		
+                ConsumeInfo consumeinfo;// = consumeInfos.get(position);
+        		//判断是否是TextView
+        		if(view instanceof TextView){
+        			consumeinfo = (ConsumeInfo)view.getTag();
+        		}else{
+        			TextView tv = (TextView)view.findViewById(R.id.TextView_item_value);
+        			consumeinfo = (ConsumeInfo)tv.getTag();
+        		}
+        		if(consumeinfo == null) return;
+        		
+                //提示消费内容
+				Toast.makeText(ConsumeItem.this, "["+consumeinfo.getMsg()+"]", 0).show();
+				
+			 }
+		});
 		listView.invalidate();
 	}
 	

@@ -1,36 +1,37 @@
 package us.solife.consumes;
 
 import java.util.ArrayList;
-import android.widget.SimpleAdapter;
 import java.util.HashMap;
-import java.util.List;
-import us.solife.consumes.adapter.ConsumeListAdapter;
-//import us.solife.consumes.adapter.Display;
+
+import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.db.ConsumeDao;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.util.NetUtils;
-import android.database.Cursor;
 import android.content.Context;
 import android.content.Intent;
-//import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import com.yyx.mconsumes.R;
 import android.widget.ArrayAdapter;
 import us.solife.consumes.parseJson.ConsumeListParse;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
-//import android.view.Display;
 
+/**
+ * 个人消费记录列表
+ * @author jay (http://solife.us/resume)
+ * @version 1.0
+ * @created 2014-02-25
+ */
 public class TabList extends BaseActivity{
 	ListView listView;
     Spinner spinner=null;  
@@ -46,7 +47,10 @@ public class TabList extends BaseActivity{
 	public void init() { // TODO Auto-generated method stub
 		setContentView(R.layout.tab_list);
 
-		//下拉列表
+		/**
+		 * 消费记录列表展示方式
+		 * 年/月/周/天
+		 */
 		spinner = (Spinner)findViewById(R.id.Spinnered);  
 		ArrayAdapter <CharSequence> adapter = ArrayAdapter.createFromResource(this,  
                 R.array.plants_array, android.R.layout.simple_spinner_item);  
@@ -55,48 +59,61 @@ public class TabList extends BaseActivity{
         spinner.setSelection(3,true);
         spinner.setPrompt("列表显示方式"); 
         spinner.setOnItemSelectedListener(new SpinnerOnItemSelectListener()); 
-		//TextView  textView_main_header = (TextView)findViewById(R.id.textView_list_header);
-		//textView_main_header.setText("消费列表");
 		
+        /**
+         * 初始化本地数据库
+         */
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
 		consumeDao = ConsumeDao.getConsumeDao(TabList.this,current_user_id);
 		
+		/**
+		 * 同步/下载数据按钮
+		 */
 		ImageButton imageButton_download = (ImageButton) findViewById(R.id.imageButton_download);		
 		ImageButton imageButton_refresh  = (ImageButton) findViewById(R.id.imageButton_refresh);
 		imageButton_download.setOnClickListener(imageButton_download_listener);
 		imageButton_refresh.setOnClickListener(imageButton_refresh_listener);
 	}
 	
+	/**
+	 * 每当跳转到该界面时加载该项
+	 */
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
 
-		//Display display = this.getWindowManager().getDefaultDisplay();
-		//int width = display.getWidth();
 		setViewList("day");
 	}
-	
+	/**
+	 * 下拉列表spinner点击响应
+	 */
 	class SpinnerOnItemSelectListener implements OnItemSelectedListener{  
-		  
+		
+		/**
+		 * 点击响应具体操作
+		 */
 	    @Override  
 	    public void onItemSelected(AdapterView<?> AdapterView, View view, int position, long arg3) {  
-	        // TODO Auto-generated method stub  
 	        String selected = AdapterView.getItemAtPosition(position).toString();  
 	        Toast.makeText(TabList.this, selected, 0).show();
 	        
 	        //点击下拉列表spinner不同选项，响应不同信息
-	        if(position == 0) {
-	        	setViewList("year");
-	        } else if(position == 1) {
-	        	setViewList("month");
-	        } else if(position == 2) {
-	        	setViewList("week");
-	        } else {
-	        	setViewList("day");
+	        switch(position) {
+	        case 0:
+	        	setViewList("year"); break;
+	        case 1:
+	        	setViewList("month"); break;
+	        case 2:
+	        	setViewList("week"); break;
+	        case 3:
+	        	setViewList("day"); break;
+	        default:
+		        setViewList("day"); break;
 	        }
 	    }
+	    
 	    @Override  
 	    public void onNothingSelected(AdapterView<?> arg0) {  
 	        // TODO Auto-generated method stub   
@@ -105,34 +122,52 @@ public class TabList extends BaseActivity{
 	      
 	}  	
 
-	
+	/**
+	 * 初始化视图控件
+	 * @param: ShowType 显示格式
+	 * year/month/week/day
+	 */
 	public void setViewList(String ShowType) {
-		listView = (ListView) findViewById(R.id.consumeListView);
-		//获取数据库的时候应该单独开一条线程  以为是耗时的操作  这个demo数据库简单  我就放在主线程了
 
-        //consumeInfos = consumeDao.getRecordsAsDay(TabList.this,ShowType,day);
+		listView = (ListView) findViewById(R.id.consumeListView);
         consumeInfos = consumeDao.getConsumeItemList(ShowType);
         
-		if (consumeInfos != null && consumeInfos.size() != 0) {
-			listView.setAdapter(new ConsumeListAdapter(consumeInfos,TabList.this));
-			listView.setClickable(true);
-			listView.setOnItemClickListener(new OnItemClickListener(){
-				 @Override
-		         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-					    //String created_at = ((TextView) view.findViewById(R.id.TextView_item_date)).getText().toString();
-                        ConsumeInfo consumeinfo = consumeInfos.get(position);
-                        
-						Toast.makeText(TabList.this, consumeinfo.getCreated_at(), 0).show();
-						// 界面切换
-						// 显示记录记录
-						Intent intent = new Intent(TabList.this, ConsumeItem.class);
-						intent.putExtra("created_at",  consumeinfo.getCreated_at());
-						startActivity(intent);
-				 }
-			});
-		} else {
+        //无消费记录时提示错误
+		if (consumeInfos == null && consumeInfos.size() == 0) {
 			Toast.makeText(TabList.this, "No Data", 0).show();
+			return;
 		}
+		
+		//listView.addFooterView(lvQuestion_footer);//添加底部视图  必须在setAdapter前
+		listView.setAdapter(new ListViewConsumeAdapter(consumeInfos,TabList.this));
+		listView.setClickable(true);
+		listView.setOnItemClickListener(new OnItemClickListener(){
+			 @Override
+	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				//点击头部、底部栏无效
+        		if(position == 0) return;
+        		
+                ConsumeInfo consumeinfo = consumeInfos.get(position);
+        		if(consumeinfo == null){
+	        		//判断是否是TextView
+	        		if(view instanceof TextView){
+	        			consumeinfo = (ConsumeInfo)view.getTag();
+	        		}else{
+	        			TextView tv = (TextView)view.findViewById(R.id.TextView_item_value);
+	        			consumeinfo = (ConsumeInfo)tv.getTag();
+	        		}
+        		}
+        		if(consumeinfo == null) return;
+        		
+                //提示消费内容
+				Toast.makeText(TabList.this, "["+consumeinfo.getCreated_at()+"]消费记录", 0).show();
+				
+				// 界面切换，显示具体记录
+				Intent intent = new Intent(TabList.this, ConsumeItem.class);
+				intent.putExtra("created_at",  consumeinfo.getCreated_at());
+				startActivity(intent);
+			 }
+		});
 		listView.invalidate();
 	}
 

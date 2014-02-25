@@ -36,8 +36,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import us.solife.androidcharts.entity.TitleValueColorEntity;
-import us.solife.consumes.adapter.ConsumeListAdapter;
-import us.solife.consumes.adapter.FriendsConsumeListAdapter;
+import us.solife.consumes.adapter.ListViewConsumeAdapter;
+import us.solife.consumes.adapter.ListViewFriendsConsumesAdapter;
 import us.solife.consumes.db.ConsumeDao;
 import us.solife.consumes.entity.ConsumeInfo;
 
@@ -103,7 +103,7 @@ public class TabChart extends BaseActivity {
         consumeInfos = consumeDao.getAllRecords(TabChart.this);
 		if (consumeInfos != null && consumeInfos.size() != 0) {
 			Toast.makeText(TabChart.this, "Data", 0).show();
-			listView.setAdapter(new FriendsConsumeListAdapter(consumeInfos,TabChart.this));
+			listView.setAdapter(new ListViewFriendsConsumesAdapter(consumeInfos,TabChart.this));
 			listView.setClickable(true);
 			listView.setOnItemClickListener(new OnItemClickListener(){
 				 @Override

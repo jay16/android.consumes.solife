@@ -398,7 +398,7 @@ public class ConsumeDao {
         	sql = "select sum(volue) as volue,strftime('%W',created_at) as created_at from consumes ";
         	sql += " where length(created_at)>=10 group by strftime('%W',created_at) order by strftime('%W',created_at) desc";
         } else {
-        	sql = "select volue,substr(created_at,0,11) as created_at from consumes ";
+        	sql = "select sum(volue) as volue,substr(created_at,0,11) as created_at from consumes ";
             sql += " where length(created_at)>=10 group by substr(created_at,0,11) order by created_at desc";
         }
 		double volue;

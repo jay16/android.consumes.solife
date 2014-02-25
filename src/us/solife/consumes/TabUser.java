@@ -7,18 +7,9 @@ import java.util.ArrayList;
 import android.content.Context;
 //import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 
 //import org.apache.http.client.methods.HttpPost; 
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-import org.json.JSONException;
 
 import us.solife.consumes.db.ConsumeDao;
 import us.solife.consumes.entity.ConsumeInfo;
@@ -30,9 +21,7 @@ import com.yyx.mconsumes.R;
 import android.widget.Toast;
 import android.os.Environment;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
