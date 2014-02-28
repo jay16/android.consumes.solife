@@ -32,8 +32,9 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import us.solife.consumes.TabList;
-import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.entity.ConsumeInfo;
+import us.solife.consumes.entity.URLs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -43,14 +44,16 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
+/**
+ * 网络相关操作
+ * @author jay (http://solife.us/resume)
+ * @version 1.0
+ * @created 2014-02-25
+ */
 public class NetUtils {
-	static String url_base_solife    = "http://solife.us/api/";
-	static String url_consume_list   = url_base_solife + "consumes/list";
-	static String url_consume_create = url_base_solife + "consumes/create";
-	static String url_user_info      = url_base_solife + "users/info";
-	
 	static String storge_base_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/solife/";
 	static String storge_gravatar_path = storge_base_path + "gravatar/";
 	static String storge_image_path    = storge_base_path + "image/";
@@ -58,7 +61,6 @@ public class NetUtils {
 	
 	/**
 	 * 与服务器发送请求，得到数据
-	 * 
 	 * @param url
 	 * @return
 	 */
@@ -80,20 +82,18 @@ public class NetUtils {
 	}
 	
 	//创建consume
-	public static String[] solife_consume_create(String login_email, String value, String created_at, String msg) {
-		// Step One 从服务器接口中获取当前账号和密码的配对情况
+	public static String[] solife_consume_create(String login_email, ConsumeInfo consume_info) {
+		// 从服务器接口中获取当前账号和密码的配对情况
 		String[] ret_array = { "0", "no return" };
-		Integer ret = 0;
-		String ret_info = "no return";
 
 		// 创建httpRequest对象
-		HttpPost httpRequest = new HttpPost(url_consume_create);
+		HttpPost httpRequest = new HttpPost(URLs.CONSUME_CREATE);
 		// HttpGet httpRequest =new HttpGet(httpUrl);
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("email", login_email));
-		params.add(new BasicNameValuePair("consume[volue]", value));
-		params.add(new BasicNameValuePair("consume[created_at]", created_at));
-		params.add(new BasicNameValuePair("consume[msg]", msg));
+		params.add(new BasicNameValuePair("consume[volue]", consume_info.get_volue()+""));
+		params.add(new BasicNameValuePair("consume[created_at]", consume_info.get_created_at()));
+		params.add(new BasicNameValuePair("consume[msg]", consume_info.get_msg()));
 
 		try {
 			// 设置字符集
@@ -110,10 +110,49 @@ public class NetUtils {
 				String strResult = EntityUtils.toString(httpResponse.getEntity());
 				JSONObject jsonObject = new JSONObject(strResult);
 				// 获取返回值
-				ret = jsonObject.getInt("ret");
-				ret_info = jsonObject.getString("ret_info");
-				ret_array[0] = ret.toString();
-				ret_array[1] = ret_info;
+				ret_array[0] = jsonObject.getInt("ret")+"";
+				ret_array[1] = jsonObject.getString("ret_info");
+			}
+		} catch (Exception e) {
+			ret_array[1] = e.getMessage().toString();
+			return ret_array;
+		}
+		return ret_array;
+	}
+
+	
+	//创建consume
+	public static String[] solife_consume_update(String login_email, ConsumeInfo consume_info) {
+		// 从服务器接口中获取当前账号和密码的配对情况
+		String[] ret_array = { "0", "no return" };
+
+		// 创建httpRequest对象
+		HttpPost httpRequest = new HttpPost(URLs.CONSUME_UPDATE);
+		// HttpGet httpRequest =new HttpGet(httpUrl);
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("email", login_email));
+		params.add(new BasicNameValuePair("id",consume_info.get_consume_id()+""));
+		params.add(new BasicNameValuePair("consume[volue]", consume_info.get_volue()+""));
+		params.add(new BasicNameValuePair("consume[created_at]", consume_info.get_created_at()));
+		params.add(new BasicNameValuePair("consume[msg]", consume_info.get_msg()));
+
+		try {
+			// 设置字符集
+			HttpEntity httpentity = new UrlEncodedFormEntity(params, "utf-8");
+			// 请求httpRequest
+			httpRequest.setEntity(httpentity);
+			// 取得HttpClinet对象
+			HttpClient httpclient = new DefaultHttpClient();
+			// 请求HttpClient,取得HttpResponse
+			HttpResponse httpResponse = httpclient.execute(httpRequest);
+			// 请求成功
+			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				// 取得返回的字符串
+				String strResult = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject jsonObject = new JSONObject(strResult);
+				// 获取返回值
+				ret_array[0] = jsonObject.getInt("ret")+"";
+				ret_array[1] = jsonObject.getString("ret_info");
 			}
 		} catch (Exception e) {
 			ret_array[1] = e.getMessage().toString();
@@ -122,49 +161,118 @@ public class NetUtils {
 		return ret_array;
 	}
 	
-	public static void sync_unupload_consumes(Context context,String login_email,long current_user_id) {
-		    ArrayList<ConsumeInfo> consumeInfos;
-		    ConsumeDao             consumeDao;
-		    
 
+	//创建consume
+	public static String[] solife_consume_delete(String login_email, ConsumeInfo consume_info) {
+		// 从服务器接口中获取当前账号和密码的配对情况
+		String[] ret_array = { "0", "no return" };
 
-		    consumeDao = ConsumeDao.getConsumeDao(context,current_user_id);
-		    consumeInfos = consumeDao.getUnSyncRecords();
+		// 创建httpRequest对象
+		HttpPost httpRequest = new HttpPost(URLs.CONSUME_DELETE);
+		// HttpGet httpRequest =new HttpGet(httpUrl);
+		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("email", login_email));
+		params.add(new BasicNameValuePair("id",consume_info.get_consume_id()+""));
+
+		try {
+			// 设置字符集
+			HttpEntity httpentity = new UrlEncodedFormEntity(params, "utf-8");
+			// 请求httpRequest
+			httpRequest.setEntity(httpentity);
+			// 取得HttpClinet对象
+			HttpClient httpclient = new DefaultHttpClient();
+			// 请求HttpClient,取得HttpResponse
+			HttpResponse httpResponse = httpclient.execute(httpRequest);
+			// 请求成功
+			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				// 取得返回的字符串
+				String strResult = EntityUtils.toString(httpResponse.getEntity());
+				JSONObject jsonObject = new JSONObject(strResult);
+				// 获取返回值
+				ret_array[0] = jsonObject.getInt("ret")+"";
+				ret_array[1] = jsonObject.getString("ret_info");
+			}
+		} catch (Exception e) {
+			ret_array[1] = e.getMessage().toString();
+			return ret_array;
+		}
+		return ret_array;
+	}
+	
+	/**
+	 * 独立处理未同步数据
+	 * @param context
+	 * @param login_email
+	 */
+	public static void sync_unupload_consumes(Context context,String login_email) {
+		    ArrayList<ConsumeInfo> consume_infos;
+		    ConsumeTb             consumeDao;
 		    
-			Integer un_sync_count = consumeInfos.size();
+		    consumeDao = ConsumeTb.getConsumeTb(context);
+		    consume_infos = consumeDao.get_unsync_records();
+		    
+			Integer un_sync_count = consume_infos.size();
 			
 			if(un_sync_count>0){
-				for(int i = 0; i < consumeInfos.size(); i++) {
-					ConsumeInfo info = consumeInfos.get(i);
+				for(int i = 0; i < consume_infos.size(); i++) {
+					ConsumeInfo consume_info = consume_infos.get(i);
 					String sync_state = "成功";
-					String[] ret_array = NetUtils.solife_consume_create(login_email, Double.toString(info.getVolue()), info.getCreated_at(), info.getMsg());
-					if (ret_array[0].equals("1")) {
-						consumeDao.updateUnSyncRecordByRowId(info.getId(),info.getUser_id(),info.getConsume_id());
-						sync_state = "成功";
+					String[] ret_array = {"0",""};
+					if(consume_info.get_state().equals("create")){
+					  ret_array = NetUtils.solife_consume_create(login_email, consume_info);
+						if (ret_array[0].equals("1")) {
+							//同步成功则修改数据库内容
+							consume_info.set_sync((long)1);
+							consume_info.set_state("");
+							consumeDao.update_record(consume_info);
+                            Log.w("NetUtils","Action:"+consume_info.get_state()+"-YES");
+						} else {
+							//同步失败则不做任何动作
+                            Log.w("NetUtils","Action:"+consume_info.get_state()+"-NO");
+						}	
+					} else if(consume_info.get_state().equals("update")){
+					  ret_array = NetUtils.solife_consume_update(login_email, consume_info);
+						if (ret_array[0].equals("1")) {
+							consume_info.set_sync((long)1);
+							consume_info.set_state("");
+							consumeDao.update_record(consume_info);
+                            Log.w("NetUtils","Action:"+consume_info.get_state()+"-YES");
+						} else {
+                            Log.w("NetUtils","Action:"+consume_info.get_state()+"-NO");
+						}	
+					} else if(consume_info.get_state().equals("delete")) {
+					  ret_array = NetUtils.solife_consume_delete(login_email, consume_info);
+						if (ret_array[0].equals("1")) {
+							consumeDao.delete_record_with_rowid(consume_info.get_id());
+                            Log.w("NetUtils","Action:"+consume_info.get_state()+"-YES");
+						} else {
+                            Log.w("NetUtils","Action:"+consume_info.get_state()+"-NO");
+						}	
 					} else {
-						sync_state = "失败";
-					}	
+						Log.e("NetUtils","Action Not Found:["+consume_info.get_state()+"]");
+					}
 				}	
 			}
 
     }
 	
-	public static void upload_unsync_consumes_background(final Context context,final String login_email,final long current_user_id) {
+	public static void upload_unsync_consumes_background(final Context context,final String login_email) {
 		 new Thread() {
 			 public void run() {
-				sync_unupload_consumes(context, login_email,current_user_id);
+				sync_unupload_consumes(context, login_email);
 			 };
 		 }.start();
 	}
 	
+
 	public static String [] get_user_info(SharedPreferences preferences,String email) {
     	String [] ret_array = {"0","更新成功"};
-        Integer ret     = 0;
+        Integer ret     = 0; 
         String ret_info = "no return";
         
 	    Editor Editor = preferences.edit();
         //httpGet 连接对象
-        HttpGet httpRequest =new HttpGet(url_user_info+"?email="+email);
+        HttpGet httpRequest =new HttpGet(URLs.USR_VALIDATE+"?email="+email);
 
         try {
             //取得HttpClinet对象
@@ -174,25 +282,25 @@ public class NetUtils {
             //请求成功
             if(httpResponse.getStatusLine().getStatusCode()==HttpStatus.SC_OK)
             {
-     //取得返回的字符串
-     String strResult=EntityUtils.toString(httpResponse.getEntity());
-     
-     JSONObject jsonObject = new JSONObject(strResult) ;
-     //获取返回值,并判断是否正确
-     //actionResult=jsonObject.getBoolean("ActionResult");
-     ret      = jsonObject.getInt("ret");
-     ret_info = jsonObject.getString("ret_info");
-     ret_array[0] = ret.toString();
-     ret_array[1] = ret_info;
-     if(ret.toString().equals("1")) {
-         //Integer user_id      = jsonObject.getInt("user_id");
-         String user_name     = jsonObject.getString("user_name");
-         String user_email    = jsonObject.getString("user_email");
-         String user_province = jsonObject.getString("user_province");
-         String user_register = jsonObject.getString("user_register");
-         String user_gravatar = jsonObject.getString("user_gravatar");
-         int user_id = jsonObject.getInt("user_id");
-         
+			     //取得返回的字符串
+			     String strResult=EntityUtils.toString(httpResponse.getEntity());
+			     
+			     JSONObject jsonObject = new JSONObject(strResult) ;
+			     //获取返回值,并判断是否正确
+			     //actionResult=jsonObject.getBoolean("ActionResult");
+			     ret      = jsonObject.getInt("ret");
+			     ret_info = jsonObject.getString("ret_info");
+			     ret_array[0] = ret.toString();
+			     ret_array[1] = ret_info;
+			     if(ret.toString().equals("1")) {
+			         //Integer user_id      = jsonObject.getInt("user_id");
+			         String user_name     = jsonObject.getString("user_name");
+			         String user_email    = jsonObject.getString("user_email");
+			         String user_province = jsonObject.getString("user_province");
+			         String user_register = jsonObject.getString("user_register");
+			         String user_gravatar = jsonObject.getString("user_gravatar");
+			         int user_id = jsonObject.getInt("user_id");
+			         
 					//Editor.putInt("current_user_id", user_id);
 					Editor.putString("current_user_name", user_name);
 					Editor.putString("current_user_email", user_email);
@@ -202,24 +310,24 @@ public class NetUtils {
 					Editor.putLong("current_user_id", user_id);
 					Editor.putBoolean("is_login", true);
 					ret_array[1] = user_gravatar;
-
+					
 					String picDirStr = Environment.getExternalStorageDirectory().getAbsolutePath() + "/solife/"; 
-			    	File picDir = new File(picDirStr);
-			        if(!picDir.exists()){
-			            picDir.mkdir();
-			        }
-			        picDirStr += "gravatar/";
+					File picDir = new File(picDirStr);
+					if(!picDir.exists()){
+					    picDir.mkdir();
+					}
+					picDirStr += "gravatar/";
 					download_image_with_url(user_gravatar,picDirStr,user_email.replace("@", "_")+".jpg");
 					Editor.commit();
-     }
-            }
-        }
-        catch(Exception e) {
-        	ret_array[1] = e.getMessage().toString();
-			Editor.commit();
-        }
-        
-	    return ret_array;
+			     }
+			            }
+			        }
+			        catch(Exception e) {
+			        	ret_array[1] = e.getMessage().toString();
+						Editor.commit();
+			        }
+			        
+				    return ret_array;
 	}
 	
 	public static void download_image_with_url(String image_url,String path,String fileName) {    

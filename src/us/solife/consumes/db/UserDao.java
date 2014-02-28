@@ -50,12 +50,12 @@ public class UserDao {
 		database.beginTransaction();
 
 		ContentValues values = new ContentValues();
-		values.put("user_id", user_info.getUser_id());
-		values.put("name", user_info.getName());
-		values.put("email", user_info.getEmail());
-		values.put("gravatar", user_info.getGravatar());
-		values.put("created_at", user_info.getCreated_at());
-		values.put("updated_at", user_info.getUpdated_at());
+		values.put("user_id", user_info.get_user_id());
+		values.put("name", user_info.get_name());
+		values.put("email", user_info.get_email());
+		values.put("gravatar", user_info.get_gravatar());
+		values.put("created_at", user_info.get_created_at());
+		values.put("updated_at", user_info.get_updated_at());
 		//是否与服务器数据已同步
 		long rowid = database.insert("users", "created_at", values);
 

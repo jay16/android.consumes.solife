@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.os.Message;
 
 import android.widget.Toast;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 //import android.widget.AdapterView.OnItemClickListener;
@@ -167,7 +168,9 @@ public abstract class BaseActivity extends Activity {
 					if (statusCode == HttpStatus.SC_OK) {
 						String responseBody = httpGet.getResponseBodyAsString();
 						Object object = baseParse.parseJSON(responseBody);
-
+                        
+						//Log.w("BaseActivity",responseBody);
+						
 						message.what = 1000;
 						message.obj = object;
 						handler.sendMessage(message);

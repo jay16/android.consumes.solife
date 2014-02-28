@@ -11,12 +11,12 @@ import android.graphics.Bitmap;
 
 //import org.apache.http.client.methods.HttpPost; 
 
-import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.R;
+import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.util.NetUtils;
 import us.solife.consumes.util.ToolUtils;
 
-import com.yyx.mconsumes.R;
 
 import android.widget.Toast;
 import android.os.Environment;
@@ -29,7 +29,7 @@ import java.text.ParseException;
 
 public class TabUser extends BaseActivity {
 	SharedPreferences sharedPreferences;
-	ConsumeDao             consumeDao;
+	CurrentUser       current_user;
 
 	@Override
 	public void init(){
@@ -102,43 +102,43 @@ public class TabUser extends BaseActivity {
 
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-		consumeDao = ConsumeDao.getConsumeDao(TabUser.this,current_user_id);
+		current_user = CurrentUser.getCurrentUser(getApplication(),current_user_id);
 		
-		ArrayList<ConsumeInfo> consumeinfos = consumeDao.user_consume_list();
+		ArrayList<ConsumeInfo> consumeinfos = current_user.consume_info_list();
 		ConsumeInfo consumeInfo = new ConsumeInfo();
 		
 		TextView  consume_day_number = (TextView)findViewById(R.id.consume_day_number); 
 		consumeInfo = consumeinfos.get(0);
-		consume_day_number.setText((int)consumeInfo.getVolue()+"╠ь");
+		consume_day_number.setText((int)consumeInfo.get_volue()+"╠ь");
 		
 		TextView  consume_max_value_by_once = (TextView)findViewById(R.id.consume_max_value_by_once); 
 		consumeInfo = consumeinfos.get(1);
-	    volue = new BigDecimal(consumeInfo.getVolue()).setScale(1, BigDecimal.ROUND_HALF_UP);
+	    volue = new BigDecimal(consumeInfo.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);
 		consume_max_value_by_once.setText("гд"+volue);
 		
 		TextView  consume_max_value_by_day = (TextView)findViewById(R.id.consume_max_value_by_day); 
 		consumeInfo = consumeinfos.get(2);
-		volue = new BigDecimal(consumeInfo.getVolue()).setScale(1, BigDecimal.ROUND_HALF_UP);
+		volue = new BigDecimal(consumeInfo.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);
 		consume_max_value_by_day.setText("гд"+volue);
 		
 		TextView  consume_accumulate_value_by_week = (TextView)findViewById(R.id.consume_accumulate_value_by_week); 
 		consumeInfo = consumeinfos.get(3);
-		volue = new BigDecimal(consumeInfo.getVolue()).setScale(1, BigDecimal.ROUND_HALF_UP);
+		volue = new BigDecimal(consumeInfo.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);
 		consume_accumulate_value_by_week.setText("гд"+volue);
 		
 		TextView  consume_accumulate_value_by_month = (TextView)findViewById(R.id.consume_accumulate_value_by_month);
 		consumeInfo = consumeinfos.get(4);
-		volue = new BigDecimal(consumeInfo.getVolue()).setScale(1, BigDecimal.ROUND_HALF_UP);
+		volue = new BigDecimal(consumeInfo.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);
 		consume_accumulate_value_by_month.setText("гд"+volue);
 		
 		TextView  consume_accumulate_value_by_year = (TextView)findViewById(R.id.consume_accumulate_value_by_year);
 		consumeInfo = consumeinfos.get(5);
-		volue = new BigDecimal(consumeInfo.getVolue()).setScale(1, BigDecimal.ROUND_HALF_UP);
+		volue = new BigDecimal(consumeInfo.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);
 		consume_accumulate_value_by_year.setText("гд"+volue);
 		
 		TextView  consume_accumulate_value_by_all = (TextView)findViewById(R.id.consume_accumulate_value_by_all);
 		consumeInfo = consumeinfos.get(6);
-		volue = new BigDecimal(consumeInfo.getVolue()).setScale(1, BigDecimal.ROUND_HALF_UP);
+		volue = new BigDecimal(consumeInfo.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);
 		consume_accumulate_value_by_all.setText("гд"+volue);
 		
 		ImageButton imageButton_refresh  = (ImageButton) findViewById(R.id.imageButton_user_info_refresh);

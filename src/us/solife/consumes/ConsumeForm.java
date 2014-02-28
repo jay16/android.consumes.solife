@@ -16,17 +16,20 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.R;
+import us.solife.consumes.db.CurrentUser;
+import us.solife.consumes.entity.ConsumeInfo;
 
-import com.yyx.mconsumes.R;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 //import android.content.SharedPreferences.Editor;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 //import android.widget.CalendarView;
@@ -40,35 +43,78 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import us.solife.consumes.util.NetUtils;
+import us.solife.consumes.util.UIHelper;
 
-public class TabConsume extends BaseActivity {
-	SharedPreferences sharedPreferences;
-
+public class ConsumeForm extends BaseActivity {
+	private SharedPreferences shared_preferences;
+	private CurrentUser       current_user;
+	private TextView  textView_main_header;
+	private EditText editText_consume_form_value;
+	private EditText editText_consume_form_created_at;
+	private EditText editText_consume_form_msg;
+	private Button button_consume_form_submit;
+	private Button button_date_add;
+	private Button button_date_plus;
+	private Button mBack;
+	private Integer row_id = -1;
+	private String action  = "create" ;
+	
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
 		setContentView(R.layout.tab_consume);
 		
-		TextView  textView_main_header = (TextView)findViewById(R.id.textView_main_header);
-		textView_main_header.setText("创建记录");
-
-		// 初始化创建日期时间
-		EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		editText_consume_form_created_at.setText(dateFormat.format(new Date()));
-		// consume_form
-		Button button_consume_form_submit = (Button) findViewById(R.id.button_consume_form_submit);
-		button_consume_form_submit
-				.setOnClickListener(button_consume_form_submit_listener);
-		Button button_date_add = (Button) findViewById(R.id.button_date_add);
-		button_date_add.setOnClickListener(button_date_add_listener);
-		Button button_date_plus = (Button) findViewById(R.id.button_date_plus);
-		button_date_plus.setOnClickListener(button_date_plus_listener);
-		
-		EditText editText_consume_form_msg = (EditText) findViewById(R.id.editText_consume_form_msg);
+		textView_main_header = (TextView)findViewById(R.id.textView_main_header);
+		editText_consume_form_value      = (EditText) findViewById(R.id.editText_consume_form_value);
+		editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
+		editText_consume_form_msg = (EditText) findViewById(R.id.editText_consume_form_msg);
 		editText_consume_form_msg.addTextChangedListener(text_watcher);
 
+		// consume_form
+		button_date_add = (Button) findViewById(R.id.button_date_add);
+		button_date_add.setOnClickListener(button_date_add_listener);
+		button_date_plus = (Button) findViewById(R.id.button_date_plus);
+		button_date_plus.setOnClickListener(button_date_plus_listener);
+		button_consume_form_submit = (Button) findViewById(R.id.button_consume_form_submit);
+		button_consume_form_submit.setOnClickListener(button_consume_form_submit_listener);
+		//返回主界面
+    	mBack = (Button)findViewById(R.id.menu_btn_back);
+    	mBack.setOnClickListener(UIHelper.finish(this));
+
+		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+	    long current_user_id = shared_preferences.getLong("current_user_id", -1);
+	    current_user = CurrentUser.getCurrentUser(getApplication(),current_user_id);
+
+		//跳转至该界面状态
+		//创建/编辑
+		Intent intent = getIntent();
+	    action = intent.getStringExtra("action");
+	    row_id = intent.getIntExtra("row_id",0);
+	    
+	    if(action.equals("update")){
+	    	init_update_consume(row_id);
+	    } else {
+			init_create_consume();
+	    }
+
 	}
+	
+	private void init_create_consume() {
+		// 初始化创建日期时间
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		editText_consume_form_created_at.setText(dateFormat.format(new Date()));
+		textView_main_header.setText("创建记录");
+		button_consume_form_submit.setText("提交");
+	}
+
+	private void init_update_consume(Integer row_id) {		
+		ConsumeInfo consume_info = current_user.get_record_with_rowid(row_id);
+		editText_consume_form_created_at.setText(consume_info.get_created_at());
+		editText_consume_form_msg.setText(consume_info.get_msg());
+		textView_main_header.setText("编辑记录");
+		button_consume_form_submit.setText("更新");
+	}
+	
 	
 	private TextWatcher text_watcher = new TextWatcher(){
 		 
@@ -117,43 +163,45 @@ public class TabConsume extends BaseActivity {
 			EditText editText_consume_form_msg = (EditText) findViewById(R.id.editText_consume_form_msg);
 
 			String volue = editText_consume_form_value.getText().toString();
-			String created_at = editText_consume_form_created_at.getText()
-					.toString();
 			String msg = editText_consume_form_msg.getText().toString();
+			String created_at = editText_consume_form_created_at.getText().toString();
 			Integer user_id = -1;
-			Integer consume_id = -1;
 			// 登陆用户密码及密码
 			// String created_at = "2013-12-29 9:1:1";
 			String login_email = "";
 			String[] ret_array = { "0", "login email is empty!" };
 
-			Toast.makeText(TabConsume.this, "this is three", 0).show();
 			// login email不存在则提示用户无登陆
 			sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 			if (sharedPreferences.contains("current_user_email")
 					&& !sharedPreferences.getString("current_user_email", "").equals("")) {
 				login_email = sharedPreferences.getString("current_user_email", "");
 				
-				sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-				long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-				ConsumeDao consumeDao = ConsumeDao.getConsumeDao(TabConsume.this,current_user_id);
 				try {
-					//先创建
-					consumeDao.insertRecord(user_id, consume_id,  Double.parseDouble(volue),
-							msg, created_at,created_at, false);
+					if(action.equals("create")){
+						Log.w("ConsumeForm","volue:["+volue+"] msg:["+msg+"] created_at:["+created_at+"]");
+						current_user.insert_record(Double.parseDouble(volue), msg, created_at);
+						Log.e("ConsumeForm","Action:["+action+"]");
+					} else if(action.equals("update")){
+						current_user.update_record(row_id,Double.parseDouble(volue), msg, created_at);
+						Log.e("ConsumeForm","Action:["+action+"]");
+					} else {
+						Log.e("ConsumeForm","Action Not Found:["+action+"]");
+						Toast.makeText(ConsumeForm.this, "Action Not Found:["+action+"]", 0).show();
+					}
 
 					//后台同步
-					NetUtils.upload_unsync_consumes_background(TabConsume.this,login_email,current_user_id);
+					NetUtils.upload_unsync_consumes_background(ConsumeForm.this,login_email);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				// 界面切换
 				// 显示记录记录
-				Intent intent = new Intent(TabConsume.this, ConsumeItem.class);
+				Intent intent = new Intent(ConsumeForm.this, ConsumeItem.class);
 				intent.putExtra("created_at", created_at.substring(0,10));
 				startActivity(intent);
 			} else {
-				Toast.makeText(TabConsume.this, "Email Is Empty!", 0).show();
+				Toast.makeText(ConsumeForm.this, "Email Is Empty!", 0).show();
 			}
 
 		}
@@ -197,53 +245,6 @@ public class TabConsume extends BaseActivity {
 				* 24 * 60 * 60 * 1000));
 		return ret_string;
 	}
-
-	/*
-	public static String[] consume_create(String login_email, String value,
-			String created_at, String msg) {
-		// Step One 从服务器接口中获取当前账号和密码的配对情况
-		String[] ret_array = { "0", "no return" };
-		Integer ret = 0;
-		String ret_info = "no return";
-
-		String http_url = "http://solife.us/api/consumes/create?";
-		// 创建httpRequest对象
-		HttpPost httpRequest = new HttpPost(http_url);
-		// HttpGet httpRequest =new HttpGet(httpUrl);
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("email", login_email));
-		params.add(new BasicNameValuePair("consume[volue]", value));
-		params.add(new BasicNameValuePair("consume[created_at]", created_at));
-		params.add(new BasicNameValuePair("consume[msg]", msg));
-
-		try {
-			// 设置字符集
-			HttpEntity httpentity = new UrlEncodedFormEntity(params, "utf-8");
-			// 请求httpRequest
-			httpRequest.setEntity(httpentity);
-			// 取得HttpClinet对象
-			HttpClient httpclient = new DefaultHttpClient();
-			// 请求HttpClient,取得HttpResponse
-			HttpResponse httpResponse = httpclient.execute(httpRequest);
-			// 请求成功
-			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				// 取得返回的字符串
-				String strResult = EntityUtils.toString(httpResponse
-						.getEntity());
-				JSONObject jsonObject = new JSONObject(strResult);
-				// 获取返回值
-				ret = jsonObject.getInt("ret");
-				ret_info = jsonObject.getString("ret_info");
-				ret_array[0] = ret.toString();
-				ret_array[1] = ret_info;
-			}
-		} catch (Exception e) {
-			ret_array[1] = e.getMessage().toString();
-			return ret_array;
-		}
-		return ret_array;
-	}
-	*/
 
 
 }

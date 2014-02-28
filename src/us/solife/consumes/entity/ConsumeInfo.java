@@ -7,79 +7,80 @@ public class ConsumeInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int id, consume_id, user_id;
-	private double volue;
-	private String  msg, created_at, updated_at,user_name;
-	private Long sync; //Boolean 存放为Long，true => 1, flase => 0
+	public int id, consume_id, user_id;
+	public double volue;
+	public String  msg, created_at, updated_at,state;
+	public Long sync; //Boolean 存放为Long，true => 1, flase => 0
 
-	public int getId() {
+	public int get_id() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void set_id(int id) {
 		this.id = id;
 	}
-	public int getUser_id() {
+	public int get_user_id() {
 		return user_id;
 	}
 
-	public void setUser_id(int user_id) {
+	public void set_user_id(int user_id) {
 		this.user_id = user_id;
 	}
 
-	public int getConsume_id() {
+	public int get_consume_id() {
 		return consume_id;
 	}
 
-	public void setConsume_id(int consume_id) {
+	public void set_consume_id(int consume_id) {
 		
 		this.consume_id = consume_id;
 	}
-	public double getVolue() {
+	public double get_volue() {
 		return volue;
 	}
 
-	public void setVolue(double volue) {
+	public void set_volue(double volue) {
 		this.volue = volue;
 	}
 
-	public String getMsg() {
+	public String get_msg() {
 		return msg;
 	}
 
-	public void setMsg(String msg) {
+	public void set_msg(String msg) {
 		this.msg = msg;
 	}
 
 
-	public Long getSync() {
+	public Long get_sync() {
 		return sync;
 	}
 
-	public void setSync(Long sync) {
+	public void set_sync(Long sync) {
 		this.sync = sync;
 	}
 
-	public String getCreated_at() {
+
+	public String get_state() {
+		return this.state;
+	}
+
+	public void set_state(String state) {
+		this.state = state;
+	}
+	public String get_created_at() {
 		return created_at;
 	}
 
-	public void setCreated_at(String created_at) {
+	public void set_created_at(String created_at) {
 		this.created_at = created_at;
 	}
 
-	public String getUpdated_at() {
+	public String get_updated_at() {
 		return updated_at;
 	}
-	public void setUserName(String user_name) {
-		this.user_name = user_name;
-	}
 
-	public String getUserName() {
-        return user_name.length()==0 ? "unset" : user_name;
-	}
-
-	public void setUpdated_at(String updated_at) {
+	public void set_updated_at(String updated_at) {
 		this.updated_at = updated_at;
 	}
 	

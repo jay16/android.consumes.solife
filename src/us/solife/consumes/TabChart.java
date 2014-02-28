@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.yyx.mconsumes.R;
 
 
 import us.solife.androidcharts.entity.LineEntity;
@@ -36,9 +35,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import us.solife.androidcharts.entity.TitleValueColorEntity;
+import us.solife.consumes.R;
 import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.adapter.ListViewFriendsConsumesAdapter;
-import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.entity.ConsumeInfo;
 
 public class TabChart extends BaseActivity {
@@ -57,7 +57,7 @@ public class TabChart extends BaseActivity {
 	ListView listView;
 	SharedPreferences      preferences;
 	ArrayList<ConsumeInfo> consumeInfos;
-	ConsumeDao             consumeDao;
+	ConsumeTb             consumeDao;
 	
 	@Override
 	public void init() {
@@ -67,7 +67,7 @@ public class TabChart extends BaseActivity {
 		TextView  textView_main_header = (TextView)findViewById(R.id.textView_main_header);
 		textView_main_header.setText("消费圈");
 		
-		Button btn_back = (Button)findViewById(R.id.btn_back);
+		Button btn_back = (Button)findViewById(R.id.menu_btn_back);
 		btn_back.setVisibility(View.GONE);
 		/*
         initVOL();
@@ -99,8 +99,8 @@ public class TabChart extends BaseActivity {
 
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-		consumeDao = ConsumeDao.getConsumeDao(TabChart.this,current_user_id);
-        consumeInfos = consumeDao.getAllRecords(TabChart.this);
+		consumeDao = ConsumeTb.getConsumeTb(TabChart.this);
+        consumeInfos = consumeDao.get_all_records(TabChart.this);
 		if (consumeInfos != null && consumeInfos.size() != 0) {
 			Toast.makeText(TabChart.this, "Data", 0).show();
 			listView.setAdapter(new ListViewFriendsConsumesAdapter(consumeInfos,TabChart.this));
@@ -111,7 +111,7 @@ public class TabChart extends BaseActivity {
 					    ConsumeInfo consumeinfo = consumeInfos.get(position);
 					    //String consume_id = ((TextView) view.findViewById(R.id.consume_id)).getText().toString();
 
-						Toast.makeText(TabChart.this, consumeinfo.getMsg(), 0).show();
+						Toast.makeText(TabChart.this, consumeinfo.get_msg(), 0).show();
 						// 界面切换
 						// 显示记录记录
 						//Intent intent = new Intent(TabChart.this, ConsumeItem.class);

@@ -6,7 +6,7 @@
     android:background="#eee" >
     
     <include layout="@layout/main_header" />
-        
+    
     <RelativeLayout
         android:id="@+id/RelativeLayout_item"
            android:layout_marginTop="5dp"
@@ -77,10 +77,8 @@
 
         <ListView
             android:id="@+id/consume_item_list_view"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:cacheColorHint="#00000000" >
-        </ListView>
+	       style="@style/widget_listview"/>
+        
     </LinearLayout>
 
 

@@ -2,9 +2,10 @@ package us.solife.consumes.adapter;
 
 import java.util.ArrayList;
 import java.math.BigDecimal;
+
+import us.solife.consumes.R;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.util.ToolUtils;
-import com.yyx.mconsumes.R;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,14 +61,15 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 			convertView.setTag(holder);
 		}
 		//消费值四舍五入，保留一位小数
-		BigDecimal volue = new BigDecimal(consumeInfo.getVolue()).setScale(1, BigDecimal.ROUND_HALF_UP);
-		msg = consumeInfo.getMsg().toString();
+		BigDecimal volue = new BigDecimal(consumeInfo.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);
+		msg = consumeInfo.get_msg().toString();
 		if(msg.length()>17)
 			msg = msg.substring(0,18);
-		date = consumeInfo.getCreated_at().toString();
+		date = consumeInfo.get_created_at().toString();
 		if(date.length()>15)
 			date = date.substring(0,16);
-			
+		
+		holder.name.setText(consumeInfo.get_user_id()+"-"+consumeInfo.get_sync()+"-"+consumeInfo.get_state());
 		holder.desc.setText("￥"+volue + " - " + msg.toString().replace("\n","-")+"...");
 		holder.date.setText(date);
 		//holder.name.setText(consumeInfo.getUserName());

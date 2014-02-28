@@ -1,16 +1,14 @@
 package us.solife.consumes;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-
-import us.solife.consumes.adapter.ListViewConsumeAdapter;
-import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.R;
+import us.solife.consumes.TabList.SpinnerOnItemSelectListener;
+import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
 
-import com.yyx.mconsumes.R;
 import android.database.Cursor;
 
 import android.content.Context;
@@ -18,16 +16,22 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ParseException;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import us.solife.consumes.db.ConsumeDao;
+import android.widget.AdapterView.OnItemSelectedListener;
 import us.solife.consumes.entity.ConsumeInfo;
+import us.solife.consumes.util.SPManager;
 import us.solife.consumes.util.ToolUtils;
+import us.solife.consumes.util.UIHelper;
 import us.solife.consumes.adapter.ListViewConsumeItemAdapter;
 
 /**
@@ -37,10 +41,13 @@ import us.solife.consumes.adapter.ListViewConsumeItemAdapter;
  * @created 2014-02-25
  */
 public class ConsumeItem extends BaseActivity {
-	ListView listView;
-	ConsumeDao             consumeDao;
-	ArrayList<ConsumeInfo> consumeInfos;
-	SharedPreferences sharedPreferences;
+	ListView  listView;
+	ConsumeInfo            consume_info;
+	CurrentUser            current_user;
+	ArrayList<ConsumeInfo> consume_infos;
+	SharedPreferences      shared_preferences;
+	Spinner                spinner;
+	private Button mBack;
 	
 	@Override
 	public void init() {
@@ -54,14 +61,14 @@ public class ConsumeItem extends BaseActivity {
 		Intent intent = getIntent();
 	    String day = intent.getStringExtra("created_at");
 
-		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-		consumeDao = ConsumeDao.getConsumeDao(ConsumeItem.this,current_user_id);
-		consumeInfos = consumeDao.getDetailRecords(day);
+		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+		long current_user_id = shared_preferences.getLong("current_user_id", -1);
+		current_user = CurrentUser.getCurrentUser(ConsumeItem.this,current_user_id);
+		consume_infos = current_user.get_consume_items_with_date(day);
 		
-		for(int i=0; i<consumeInfos.size(); i++ ) {
-			ConsumeInfo  consumeInfo = consumeInfos.get(i);
-			volue = volue + (float)consumeInfo.getVolue();
+		for(int i=0; i<consume_infos.size(); i++ ) {
+			consume_info = consume_infos.get(i);
+			volue = volue + (float)consume_info.get_volue();
 		}
 		
 		TextView consume_item_value = (TextView) findViewById(R.id.consume_item_value);
@@ -77,12 +84,26 @@ public class ConsumeItem extends BaseActivity {
 		consume_item_created_at_week.setText(week);
 		
 		//显示明细
-		setViewList(day);
+		init_view_list(day);
 		
-		Button button_back = (Button) findViewById(R.id.btn_back);
-		button_back.setOnClickListener(button_back_listener);
+		mBack = (Button) findViewById(R.id.menu_btn_back);
+    	mBack.setOnClickListener(UIHelper.finish(this));
+		//button_back.setOnClickListener(button_back_listener);
 	}
 
+	/**
+	 * 初始化视图控件
+	 * @param day
+	 */
+	public void init_view_list(String day) {
+		consume_infos = current_user.get_consume_items_with_date(day);
+		
+		listView = (ListView) findViewById(R.id.consume_item_list_view);
+		listView.setAdapter(new ListViewConsumeItemAdapter(consume_infos,ConsumeItem.this));
+		//listView.setClickable(true);
+
+	}
+	
 	/*
 	 * 创建consume submit监听对象
 	 */
@@ -94,41 +115,28 @@ public class ConsumeItem extends BaseActivity {
 
 		}
 	};
-	public void setViewList(String day) {
-		listView = (ListView) findViewById(R.id.consume_item_list_view);
-		consumeInfos = consumeDao.getDetailRecords(day);
+	
+	/**
+	 * 编辑/删除消费记录
+	 * 点击消费明细时响应
+	 * @param view
+	 */
+	public void consume_item_onclick(View view) {
+		//判断是否是TextView
+		if(view instanceof TextView){
+			consume_info = (ConsumeInfo)view.getTag();
+		}else{
+			TextView tv = (TextView)view.findViewById(R.id.consume_item_msg);
+			consume_info = (ConsumeInfo)tv.getTag();
+		}
+		if(consume_info == null) return;
+
 		
-		listView.setAdapter(new ListViewConsumeItemAdapter(consumeInfos,ConsumeItem.this));
-		listView.setClickable(false);
-		listView.setClickable(true);
-		listView.setOnItemClickListener(new OnItemClickListener(){
-			 @Override
-	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				//点击头部、底部栏无效
-        		if(position == 0) return;
-        		
-                ConsumeInfo consumeinfo;// = consumeInfos.get(position);
-        		//判断是否是TextView
-        		if(view instanceof TextView){
-        			consumeinfo = (ConsumeInfo)view.getTag();
-        		}else{
-        			TextView tv = (TextView)view.findViewById(R.id.TextView_item_value);
-        			consumeinfo = (ConsumeInfo)tv.getTag();
-        		}
-        		if(consumeinfo == null) return;
-        		
-                //提示消费内容
-				Toast.makeText(ConsumeItem.this, "["+consumeinfo.getMsg()+"]", 0).show();
-				
-			 }
-		});
-		listView.invalidate();
+        //提示消费内容
+		Toast.makeText(ConsumeItem.this, "["+consume_info.get_volue()+"]", 0).show();
+		//TextView consume_item_msg = (TextView) v.findViewById(R.id.consume_item_msg);
+		//Toast.makeText(ConsumeItem.this, consume_item_msg.getText(), 0).show();
 	}
 	
-	public void consume_item_edit(View v) {
-		TextView consume_item_msg = (TextView) v.findViewById(R.id.consume_item_msg);
-		
-		Toast.makeText(ConsumeItem.this, consume_item_msg.getText(), 0).show();
-	}
 	
 }

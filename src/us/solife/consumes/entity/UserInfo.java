@@ -7,61 +7,85 @@ public class UserInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private int id, user_id;
-	private String  name, email,gravatar;
-	private String created_at,updated_at;
+	private long id, user_id, sync;
+	private String  name, email,gravatar,area;
+	private String created_at,updated_at,state;
 
-	public int getId() {
+	public long get_id() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void set_id(long id) {
 		this.id = id;
 	}
-	public int getUser_id() {
+	public long get_user_id() {
 		return user_id;
 	}
 
-	public void setUser_id(int user_id) {
+	public void set_user_id(long user_id) {
 		this.user_id = user_id;
 	}
 
-    public void setName(String name) {
+    public void set_name(String name) {
     	this.name = name;
     }
-    public String getName(){
+    public String get_name(){
     	return this.name;
     }
     
-    public void setEmail(String email){
+    public void set_email(String email){
     	this.email = email;
     }
     
-    public String getEmail(){
+    public String get_email(){
     	return this.email;
     }
+
+    public void set_area(String area){
+    	this.area = area;
+    }
     
-    public void setUpdated_at(String created_at){
+    public String get_area(){
+    	return this.area;
+    }
+    
+    public void set_updated_at(String created_at){
     	this.updated_at = updated_at;
     }
     
-    public String getUpdated_at(){
+    public String get_updated_at(){
     	return this.updated_at;
     }
     
-    public void setCreated_at(String created_at){
+    public void set_created_at(String created_at){
     	this.created_at = created_at;
     }
     
-    public String getCreated_at(){
+    public String get_created_at(){
     	return this.created_at;
     }
     
-    public void setGravatar(String gravatar) {
+    public void set_gravatar(String gravatar) {
     	this.gravatar = gravatar;
     }
     
-    public String getGravatar(){
+    public String get_gravatar(){
     	return this.gravatar;
+    }
+    
+    public void set_sync(Long sync){
+    	this.sync = sync;
+    }
+    
+    public Long get_sync(){
+    	return this.sync;
+    }
+    
+    public void set_state(String state){
+        this.state = state;
+    }
+    
+    public String get_state(){
+    	return this.state;
     }
 }

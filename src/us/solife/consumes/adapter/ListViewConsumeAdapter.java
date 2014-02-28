@@ -2,9 +2,10 @@ package us.solife.consumes.adapter;
 
 import java.util.ArrayList;
 import java.math.BigDecimal;
+
+import us.solife.consumes.R;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.util.ToolUtils;
-import com.yyx.mconsumes.R;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,15 +80,15 @@ public class ListViewConsumeAdapter extends BaseAdapter{
 		ConsumeInfo consumeInfo = consumeInfos.get(position);
 
 		//消费值四舍五入，保留一位小数
-		BigDecimal volue = new BigDecimal(consumeInfo.getVolue()).setScale(1, BigDecimal.ROUND_HALF_UP);
+		BigDecimal volue = new BigDecimal(consumeInfo.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);
 		holder.item_value.setText(volue + "元");
 		holder.item_value.setTag(consumeInfo);//设置隐藏参数(实体类)
-		holder.item_date.setText(consumeInfo.getCreated_at());
+		holder.item_date.setText(consumeInfo.get_created_at());
 		
 		//如果消费日期详细内容至少2014-02-12长度
 		//可以解析消费日期所在周
-		if(consumeInfo.getCreated_at().length()>=10){
-			String week_name = ToolUtils.getWeekName(consumeInfo.getCreated_at());
+		if(consumeInfo.get_created_at().length()>=10){
+			String week_name = ToolUtils.getWeekName(consumeInfo.get_created_at());
 			holder.item_week.setText(week_name);
 		}
 

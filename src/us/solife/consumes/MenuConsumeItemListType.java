@@ -1,6 +1,6 @@
 package us.solife.consumes;
 
-import com.yyx.mconsumes.R;
+import us.solife.consumes.R;
 
 import android.app.Activity;
 import android.os.Bundle;

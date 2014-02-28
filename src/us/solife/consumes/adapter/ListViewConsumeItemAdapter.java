@@ -1,19 +1,13 @@
 package us.solife.consumes.adapter;
 
-/**
- * 显示消费记录明细Adapter类
- * @author jay (http://solife.us/resume)
- * @version 1.0
- * @created 2014-02-25
- */
 import java.util.ArrayList;
 import java.math.BigDecimal;
 
+import us.solife.consumes.R;
 import us.solife.consumes.TabList;
 import us.solife.consumes.adapter.ListViewConsumeAdapter.ViewHolder;
 import us.solife.consumes.entity.ConsumeInfo;
 
-import com.yyx.mconsumes.R;
 
 import android.content.Context;
 import android.view.View;
@@ -28,9 +22,17 @@ import java.util.Calendar;
 import java.text.SimpleDateFormat;
 //import java.sql.Date;
 import java.util.Date;
+
+import us.solife.consumes.util.UIHelper;
 import android.net.ParseException;
 import android.widget.RelativeLayout;
 
+/**
+ * 显示消费记录明细Adapter类
+ * @author jay (http://solife.us/resume)
+ * @version 1.0
+ * @created 2014-02-25
+ */
 public class ListViewConsumeItemAdapter extends BaseAdapter{
 	ArrayList<ConsumeInfo> consumeInfos;
 	private Context        context;
@@ -70,7 +72,6 @@ public class ListViewConsumeItemAdapter extends BaseAdapter{
 	public View getView(int position, View convertView, ViewGroup parent) {
 		//自定义视图
 		ViewHolder holder = null;
-
 		if (convertView == null) {
 			holder        = new ViewHolder();
 			convertView   = View.inflate(context, R.layout.consume_item_listview, null);
@@ -84,15 +85,16 @@ public class ListViewConsumeItemAdapter extends BaseAdapter{
 			holder = (ViewHolder) convertView.getTag();
 		}
 
-		//设置消费记录数据
+		//取得消费记录数据
         ConsumeInfo consumeInfo = consumeInfos.get(position);
         
-		holder.created_at.setText(consumeInfo.getCreated_at().substring(10, 16));
-		holder.msg.setText(consumeInfo.getMsg());
+		holder.created_at.setText(consumeInfo.get_created_at().substring(10, 16));
+		holder.msg.setText(consumeInfo.get_msg());
 		holder.msg.setTag(consumeInfo);//设置隐藏参数(实体类)
+		holder.msg.setOnClickListener(msgClickListener);
 		
 		//同步状态
-		if(String.valueOf(consumeInfo.getSync()).toString().equals("1")) {
+		if(String.valueOf(consumeInfo.get_sync()).toString().equals("1")) {
 		    holder.sync.setText("^_^");
 		} else {
 			holder.sync.setText("!_!");
@@ -104,5 +106,12 @@ public class ListViewConsumeItemAdapter extends BaseAdapter{
 	class ViewHolder {
 		private TextView  msg, created_at, sync;
 	}
+	
+	private View.OnClickListener msgClickListener = new View.OnClickListener(){
+		public void onClick(View v) {
+			ConsumeInfo comment_info = (ConsumeInfo)v.getTag();
+			UIHelper.showCommentInfoOptionDialog(v.getContext(), comment_info);
+		}
+	};
 
 }

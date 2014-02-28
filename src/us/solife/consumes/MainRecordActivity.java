@@ -2,8 +2,9 @@ package us.solife.consumes;
 
 import java.util.ArrayList;
 
+import us.solife.consumes.R;
 import us.solife.consumes.adapter.ListViewConsumeAdapter;
-import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.entity.ConsumeInfo;
 
 import android.content.Context;
@@ -17,7 +18,6 @@ import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.yyx.mconsumes.R;
 
 public class MainRecordActivity extends BaseActivity {
 

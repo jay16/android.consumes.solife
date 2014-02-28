@@ -17,4 +17,15 @@
 	<color name="grassgreen">#FF009600</color>
 	<color name="lightgray">#FFD3D3D3</color>
 	<color name="darkgray">#00535252</color>
+	
+	
+    
+    <color name="listitem_transparent">#00000000</color>
+    <color name="listitem_black">#ff000000</color>
+    <color name="listitem_white">#ffffffff</color>
+    <color name="listitem_blue">#0e5986</color>
+    <color name="listitem_gray">#ff9da19e</color>
+    <color name="listitem_green">#ffe3ffc6</color>
+    <color name="listitem_greenyellow">#ff87b869</color>
+    <color name="listitem_yellow">#fffaffbf</color>  
 </resources>

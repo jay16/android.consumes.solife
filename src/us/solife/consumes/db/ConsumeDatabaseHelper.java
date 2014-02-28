@@ -19,7 +19,8 @@ public class ConsumeDatabaseHelper extends SQLiteOpenHelper {
 			"msg varchar(200) DEFAULT ''," +
 			"created_at varchar(100)," +
 			"updated_at varchar(100) DEFAULT ''," +
-			"sync boolean DEFAULT false)";
+			"sync boolean DEFAULT false," +
+			"state varchar(100) DEFAULT '')";
 	
 	//user用户记录表
 	String tb_users = "create table "+ DATABASE_TABLE_USER +"(" +
@@ -29,7 +30,9 @@ public class ConsumeDatabaseHelper extends SQLiteOpenHelper {
 			"email varchar(100) DEFAULT ''," +
 			"gravatar varchar(200) DEFAULT ''," +
 			"created_at varchar(100)," +
-			"updated_at varchar(100) DEFAULT '')";
+			"updated_at varchar(100) DEFAULT '',"+
+			"sync boolean DEFAULT false," +
+			"state varchar(100) DEFAULT '')";
 
 	public ConsumeDatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);

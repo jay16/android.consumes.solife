@@ -3,9 +3,12 @@ package us.solife.consumes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import us.solife.consumes.R;
 import us.solife.consumes.adapter.ListViewConsumeAdapter;
-import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.db.ConsumeTb;
+import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
+import us.solife.consumes.entity.URLs;
 import us.solife.consumes.util.NetUtils;
 import android.content.Context;
 import android.content.Intent;
@@ -17,10 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
-import com.yyx.mconsumes.R;
 import android.widget.ArrayAdapter;
 import us.solife.consumes.parseJson.ConsumeListParse;
 import android.widget.Spinner;
@@ -34,13 +37,14 @@ import android.widget.AdapterView.OnItemSelectedListener;
  */
 public class TabList extends BaseActivity{
 	ListView listView;
-    Spinner spinner=null;  
+    Spinner  spinner=null;  
 	int      precursor;
 	int      index;
-	String url = "http://solife.us/api/consumes/list";
+	//String url = "http://solife.us/api/consumes/list";
 	SharedPreferences      preferences;
 	ArrayList<ConsumeInfo> consumeInfos;
-	ConsumeDao             consumeDao;
+	ConsumeTb             consumeDao;
+	CurrentUser           current_user;
 	SharedPreferences sharedPreferences;
 
 	@Override
@@ -53,7 +57,7 @@ public class TabList extends BaseActivity{
 		 */
 		spinner = (Spinner)findViewById(R.id.Spinnered);  
 		ArrayAdapter <CharSequence> adapter = ArrayAdapter.createFromResource(this,  
-                R.array.plants_array, android.R.layout.simple_spinner_item);  
+                R.array.consume_item_list_view_array, android.R.layout.simple_spinner_item);  
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);  
         spinner.setSelection(3,true);
@@ -65,8 +69,8 @@ public class TabList extends BaseActivity{
          */
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-		consumeDao = ConsumeDao.getConsumeDao(TabList.this,current_user_id);
-		
+		consumeDao = ConsumeTb.getConsumeTb(getApplication());
+		current_user = CurrentUser.getCurrentUser(getApplication(), current_user_id);
 		/**
 		 * 同步/下载数据按钮
 		 */
@@ -84,53 +88,18 @@ public class TabList extends BaseActivity{
 		// TODO Auto-generated method stub
 		super.onResume();
 
-		setViewList("day");
+		init_view_list("day");
 	}
-	/**
-	 * 下拉列表spinner点击响应
-	 */
-	class SpinnerOnItemSelectListener implements OnItemSelectedListener{  
-		
-		/**
-		 * 点击响应具体操作
-		 */
-	    @Override  
-	    public void onItemSelected(AdapterView<?> AdapterView, View view, int position, long arg3) {  
-	        String selected = AdapterView.getItemAtPosition(position).toString();  
-	        Toast.makeText(TabList.this, selected, 0).show();
-	        
-	        //点击下拉列表spinner不同选项，响应不同信息
-	        switch(position) {
-	        case 0:
-	        	setViewList("year"); break;
-	        case 1:
-	        	setViewList("month"); break;
-	        case 2:
-	        	setViewList("week"); break;
-	        case 3:
-	        	setViewList("day"); break;
-	        default:
-		        setViewList("day"); break;
-	        }
-	    }
-	    
-	    @Override  
-	    public void onNothingSelected(AdapterView<?> arg0) {  
-	        // TODO Auto-generated method stub   
-	        Toast.makeText(TabList.this, "NothingSelected", 0).show();
-	    }  
-	      
-	}  	
 
 	/**
 	 * 初始化视图控件
 	 * @param: ShowType 显示格式
 	 * year/month/week/day
 	 */
-	public void setViewList(String ShowType) {
+	public void init_view_list(String show_type) {
 
 		listView = (ListView) findViewById(R.id.consumeListView);
-        consumeInfos = consumeDao.getConsumeItemList(ShowType);
+        consumeInfos = current_user.get_all_consume_item(show_type);
         
         //无消费记录时提示错误
 		if (consumeInfos == null && consumeInfos.size() == 0) {
@@ -144,9 +113,6 @@ public class TabList extends BaseActivity{
 		listView.setOnItemClickListener(new OnItemClickListener(){
 			 @Override
 	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				//点击头部、底部栏无效
-        		if(position == 0) return;
-        		
                 ConsumeInfo consumeinfo = consumeInfos.get(position);
         		if(consumeinfo == null){
 	        		//判断是否是TextView
@@ -160,27 +126,60 @@ public class TabList extends BaseActivity{
         		if(consumeinfo == null) return;
         		
                 //提示消费内容
-				Toast.makeText(TabList.this, "["+consumeinfo.getCreated_at()+"]消费记录", 0).show();
+				Toast.makeText(TabList.this, "["+consumeinfo.get_created_at()+"]消费记录", 0).show();
 				
 				// 界面切换，显示具体记录
 				Intent intent = new Intent(TabList.this, ConsumeItem.class);
-				intent.putExtra("created_at",  consumeinfo.getCreated_at());
+				intent.putExtra("created_at",  consumeinfo.get_created_at());
 				startActivity(intent);
 			 }
 		});
 		listView.invalidate();
 	}
+	
+	/**
+	 * 下拉列表spinner点击响应
+	 */
+	class SpinnerOnItemSelectListener implements OnItemSelectedListener{  
+	    @Override  
+	    public void onItemSelected(AdapterView<?> AdapterView, View view, int position, long arg3) {  
+	        String selected = AdapterView.getItemAtPosition(position).toString();  
+	        Toast.makeText(TabList.this, selected, 0).show();
+	        
+	        //点击下拉列表spinner不同选项，响应不同信息
+	        switch(position) {
+	        case 0:
+	        	init_view_list("year"); break;
+	        case 1:
+	        	init_view_list("month"); break;
+	        case 2:
+	        	init_view_list("week"); break;
+	        case 3:
+	        	init_view_list("day"); break;
+	        default:
+		        init_view_list("day"); break;
+	        }
+	    }
+	    
+	    @Override  
+	    public void onNothingSelected(AdapterView<?> arg0) {  
+	        // TODO Auto-generated method stub   
+	        Toast.makeText(TabList.this, "NothingSelected", 0).show();
+	    }  
+	      
+	}
 
 	// 句柄-数据插入
 		Handler handler = new Handler() {
-			public void handleMessage(android.os.Message msg) {
-				switch (msg.what) {
+			public void handleMessage(android.os.Message message) {
+				switch (message.what) {
 				case 1000:
+					Toast.makeText(TabList.this, "同步数据"+ ((ArrayList<ConsumeInfo>)message.obj).size(), 0).show();
 					Toast.makeText(TabList.this, "数据库同步成功", 0).show();
 					break;
 				case 2000:
-					Toast.makeText(TabList.this, "数据库同步失败！", 0).show();
-					Toast.makeText(TabList.this, msg.obj.toString(), 0).show();
+					//Toast.makeText(TabList.this, "数据库同步失败！", 0).show();
+					Toast.makeText(TabList.this, message.obj.toString(), 0).show();
 
 					break;
 				case 3000:
@@ -198,41 +197,27 @@ public class TabList extends BaseActivity{
 				// TODO Auto-generated method stub
 				boolean result = (Boolean) paramObject.get("result");
 				if (result) {
-					final ArrayList<ConsumeInfo> arrayList = (ArrayList<ConsumeInfo>) paramObject.get("consumeInfos");
+					final ArrayList<ConsumeInfo> consume_infos = (ArrayList<ConsumeInfo>) paramObject.get("consume_infos");
 					
-					if (arrayList != null && arrayList.size() != 0) {
-						Toast.makeText(TabList.this, "同步数据"+arrayList.size(), 0).show();
+					if (consume_infos != null && consume_infos.size() != 0) {
+						Toast.makeText(TabList.this, "同步数据"+consume_infos.size(), 0).show();
 						
-						/*String tmp = "";
-						for(int i = 0;i < arrayList.size(); i ++){
-							tmp = tmp + arrayList.get(i).to_string();
+						Message message = new Message();
+						try {
+							Toast.makeText(TabList.this, "开始同步数据2", 0).show();
+							//log调试用
+				            Log.w("TabList callback","消费列表数量:"+consume_infos.size());
+							consumeDao.insert_all_record(TabList.this, consume_infos);
+				            Log.w("TabList callback","消费列表插入数据库完毕");
+							message.what = 1000;
+							message.obj  = consume_infos;
+							handler.sendMessage(message);
+						} catch (Exception e) {
+							message.what = 2000;
+							message.obj = e;
+							handler.sendMessage(message);
+							e.printStackTrace();
 						}
-						TextView textView1 = (TextView) findViewById(R.id.textView1);		
-						textView1.setText(tmp);*/
-						
-						//new Thread() {
-						//	public void run() {
-
-								//Looper.prepare();  
-								Message message = new Message();
-								try {
-									Toast.makeText(TabList.this, "开始同步数据2", 0).show();
-									sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-									long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-									ConsumeDao consumeDao = ConsumeDao.getConsumeDao(TabList.this,current_user_id);
-									consumeDao.insertAllRecord(TabList.this, arrayList);
-									message.what = 1000;
-									message.obj  = arrayList;
-									handler.sendMessage(message);
-								} catch (Exception e) {
-									message.what = 2000;
-									message.obj = e;
-									handler.sendMessage(message);
-									e.printStackTrace();
-								}
-								//Looper.loop(); 
-						//	};
-						//}.start();
 
 					} else {
 						//ConsumeDao consumeDao = ConsumeDao.getConsumeDao(TabList.this);
@@ -252,14 +237,14 @@ public class TabList extends BaseActivity{
 				Toast.makeText(TabList.this, "开始同步数据1", 0).show();
 				
 				ConsumeListParse consumeListParse = new ConsumeListParse();
-				getDataFromServer(getApplicationContext(), consumeListParse, url, callback);
-				setViewList("day");
+				getDataFromServer(getApplicationContext(), consumeListParse, URLs.CONSUME_LIST, callback);
+				init_view_list("day");
 			}
 		};
 		//同步本地数据至服务器
 		Button.OnClickListener imageButton_refresh_listener = new Button.OnClickListener(){//创建监听对象  
 			public void onClick(View v){  
-				consumeInfos = consumeDao.getUnSyncRecords();
+				consumeInfos = consumeDao.get_unsync_records();
 				sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 				
 		    	//Toast.makeText(TabList.this, "更新未同步数据", 0).show();
@@ -272,9 +257,9 @@ public class TabList extends BaseActivity{
 
 			    	Toast.makeText(TabList.this, "更新数据", 0).show();
 					//后台同步更新未同步的数据
-					NetUtils.upload_unsync_consumes_background(TabList.this,login_email,current_user_id);
+					NetUtils.upload_unsync_consumes_background(TabList.this,login_email);
 					Toast.makeText(TabList.this, "更新完毕", 0).show();
-					setViewList("day");
+					init_view_list("day");
 			    } else {
 			    	Toast.makeText(TabList.this, "更新失败", 0).show();
 			    }

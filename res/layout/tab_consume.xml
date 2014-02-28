@@ -7,7 +7,8 @@
         <include layout="@layout/main_header" />
         
     <EditText
-        android:id="@+id/editText_consume_form_value"
+        android:id="@+id/editText_consume_form_value"  
+		android:background="@drawable/login_input"  
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="消费值"
@@ -23,6 +24,7 @@
 
         <EditText
             android:id="@+id/editText_consume_form_created_at"
+		    android:background="@drawable/login_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="8"
@@ -31,6 +33,7 @@
         <Button
             android:id="@+id/button_date_add"
             style="?android:attr/buttonStyleSmall"
+		    android:background="@drawable/btn_style_white"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -39,6 +42,7 @@
         <Button
             android:id="@+id/button_date_plus"
             style="?android:attr/buttonStyleSmall"
+		    android:background="@drawable/btn_style_white"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -47,6 +51,7 @@
 
     <EditText
         android:id="@+id/editText_consume_form_msg"
+		android:background="@drawable/login_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.72"
@@ -61,6 +66,8 @@
         android:id="@+id/button_consume_form_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+		android:background="@drawable/btn_style_white"
+        android:textSize="20sp"
         android:text="提交" />
 
 </LinearLayout>

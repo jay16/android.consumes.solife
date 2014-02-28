@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#eee"
+    android:orientation="vertical" 
+    android:gravity="center_horizontal">
+
+    
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:fadingEdge="none"
+        android:scrollbars="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical" >
+		    
+		   <ImageView
+		       android:layout_width="100dip"
+		       android:layout_height="100dip"
+		       android:layout_gravity="center_horizontal"
+		       android:scaleType="centerInside"
+		       android:src="@drawable/login_logo" />
+		
+		   <TextView
+		       android:layout_width="220dip"
+		       android:layout_height="20dip"
+		       android:layout_gravity="center_horizontal"
+		       android:layout_marginBottom="20dip"
+		       android:scaleType="centerInside"
+		       android:src="@drawable/login_slogan"
+		       android:text="http://solife.us/consumes  Ctrl+F9" />
+		            
+			<EditText 
+			    android:id="@+id/user_info_email"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_below="@+id/login_top_layout"
+			    android:textColor="#000"
+			    android:textSize="15sp"
+			    android:layout_marginTop="25dp"
+			    android:layout_marginLeft="20dp"
+			    android:layout_marginRight="20dp"
+			    android:singleLine="true"
+		        android:background="@drawable/login_input"
+		        android:drawableLeft="@drawable/login_icon_account"
+		        android:drawablePadding="25dip"
+			    android:hint="注册邮邮箱"/>
+			
+			<EditText 
+			    android:id="@+id/user_info_pwd"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_below="@+id/user_info_email"
+			    android:textColor="#000"
+			    android:textSize="15sp"
+			    android:layout_marginTop="15dp"
+			    android:layout_marginLeft="20dp"
+			    android:layout_marginRight="20dp"
+		        android:background="@drawable/login_input"
+		        android:drawableLeft="@drawable/login_icon_password"
+		        android:drawablePadding="25dip"
+			    android:password="true"
+			    android:singleLine="true"
+			    android:hint="登陆密码"/>
+		
+
+		     <Button
+		         android:id="@+id/login_login_btn"
+		         android:layout_width="match_parent"
+			     android:layout_marginTop="20dp"
+			     android:layout_marginLeft="20dp"
+			     android:layout_marginRight="20dp"
+		         android:layout_height="40dp"
+		         android:layout_alignParentLeft="true"
+		         android:layout_alignParentTop="true"
+		         android:background="@drawable/btn_style_blue"
+		         android:onClick="login_mainweixin"
+		         android:text="登录"
+		         android:textColor="#ffffff"
+		         android:textSize="18sp" />
+		
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

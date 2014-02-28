@@ -3,13 +3,13 @@ package us.solife.consumes;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import us.solife.consumes.R;
 import us.solife.consumes.BaseActivity.DataCallback;
-import us.solife.consumes.db.ConsumeDao;
+import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.parseJson.ConsumeListParse;
 
 //引用consume自定义的类包
-import com.yyx.mconsumes.R;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -75,7 +75,7 @@ public class splashActivity extends BaseActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
+		//getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
 	}
 
@@ -93,8 +93,8 @@ public class splashActivity extends BaseActivity {
 						public void run() {
 							Message message = new Message();
 							try {
-								ConsumeDao consumeDao = ConsumeDao.getConsumeDao(splashActivity.this,(long)-1);
-								consumeDao.insertAllRecord(splashActivity.this, arrayList);
+								ConsumeTb consumeDao = ConsumeTb.getConsumeTb(splashActivity.this);
+								consumeDao.insert_all_record(splashActivity.this, arrayList);
 								message.what = 1000;
 								message.obj = arrayList;
 								handler.sendMessage(message);
@@ -109,7 +109,7 @@ public class splashActivity extends BaseActivity {
 					}.start();
 
 				} else {
-					ConsumeDao consumeDao = ConsumeDao.getConsumeDao(splashActivity.this,(long)-1);
+					//ConsumeTb consumeDao = ConsumeTb.getConsumeDao(splashActivity.this,(long)-1);
 				}
 
 			} else {
