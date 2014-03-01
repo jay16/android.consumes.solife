@@ -56,7 +56,7 @@ public class ConsumeForm extends BaseActivity {
 	private Button button_date_add;
 	private Button button_date_plus;
 	private Button mBack;
-	private Integer row_id = -1;
+	private Long row_id = (long)-1;
 	private String action  = "create" ;
 	
 	@Override
@@ -83,13 +83,13 @@ public class ConsumeForm extends BaseActivity {
 
 		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 	    long current_user_id = shared_preferences.getLong("current_user_id", -1);
-	    current_user = CurrentUser.getCurrentUser(getApplication(),current_user_id);
+	    current_user = CurrentUser.getCurrentUser(getApplication(),Integer.parseInt(String.valueOf(current_user_id)));
 
 		//跳转至该界面状态
 		//创建/编辑
 		Intent intent = getIntent();
 	    action = intent.getStringExtra("action");
-	    row_id = intent.getIntExtra("row_id",0);
+	    row_id = intent.getLongExtra("row_id",0);
 	    
 	    if(action.equals("update")){
 	    	init_update_consume(row_id);
@@ -107,8 +107,8 @@ public class ConsumeForm extends BaseActivity {
 		button_consume_form_submit.setText("提交");
 	}
 
-	private void init_update_consume(Integer row_id) {		
-		ConsumeInfo consume_info = current_user.get_record_with_rowid(row_id);
+	private void init_update_consume(Long row_id) {		
+		ConsumeInfo consume_info = current_user.get_record(row_id);
 		editText_consume_form_created_at.setText(consume_info.get_created_at());
 		editText_consume_form_msg.setText(consume_info.get_msg());
 		textView_main_header.setText("编辑记录");

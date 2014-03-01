@@ -2,7 +2,6 @@ package us.solife.consumes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import us.solife.consumes.R;
 import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.db.ConsumeTb;
@@ -13,21 +12,29 @@ import us.solife.consumes.util.NetUtils;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import us.solife.consumes.parseJson.ConsumeListParse;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.LinearLayout.LayoutParams;
 
 /**
  * 个人消费记录列表
@@ -36,25 +43,32 @@ import android.widget.AdapterView.OnItemSelectedListener;
  * @created 2014-02-25
  */
 public class TabList extends BaseActivity{
+	private Context mContext;
 	ListView listView;
     Spinner  spinner=null;  
 	int      precursor;
 	int      index;
 	//String url = "http://solife.us/api/consumes/list";
 	SharedPreferences      preferences;
-	ArrayList<ConsumeInfo> consumeInfos;
+	ArrayList<ConsumeInfo> consume_infos;
 	ConsumeTb             consumeDao;
 	CurrentUser           current_user;
 	SharedPreferences sharedPreferences;
 
+	private LinearLayout mTopLayout;
+	private TextView mTopText;
+	PopupWindow mPopupWindow;
+
 	@Override
 	public void init() { // TODO Auto-generated method stub
 		setContentView(R.layout.tab_list);
-
+		mContext = context;
+		mTopText = (TextView)findViewById(R.id.home_top_text);
+		mTopLayout = (LinearLayout)findViewById(R.id.menu_consume_item_list);
+	
 		/**
 		 * 消费记录列表展示方式
 		 * 年/月/周/天
-		 */
 		spinner = (Spinner)findViewById(R.id.Spinnered);  
 		ArrayAdapter <CharSequence> adapter = ArrayAdapter.createFromResource(this,  
                 R.array.consume_item_list_view_array, android.R.layout.simple_spinner_item);  
@@ -63,14 +77,15 @@ public class TabList extends BaseActivity{
         spinner.setSelection(3,true);
         spinner.setPrompt("列表显示方式"); 
         spinner.setOnItemSelectedListener(new SpinnerOnItemSelectListener()); 
-		
+		 */
+
         /**
          * 初始化本地数据库
          */
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
 		consumeDao = ConsumeTb.getConsumeTb(getApplication());
-		current_user = CurrentUser.getCurrentUser(getApplication(), current_user_id);
+		current_user = CurrentUser.getCurrentUser(getApplication(),Integer.parseInt(String.valueOf(current_user_id)));
 		/**
 		 * 同步/下载数据按钮
 		 */
@@ -89,8 +104,38 @@ public class TabList extends BaseActivity{
 		super.onResume();
 
 		init_view_list("day");
+		setListener();
 	}
 
+
+	private void setListener() {
+		mTopLayout.setOnClickListener(new OnClickListener() {
+
+			public void onClick(View v) {
+				// 显示菜单
+				//Intent intent = new Intent (getApplication(),TabListMenu.class);			
+				//startActivity(intent);	
+				Context context = TabList.this;
+				LayoutInflater mLayoutInflater = (LayoutInflater) context  
+	                    .getSystemService(LAYOUT_INFLATER_SERVICE);  
+	            View mPopView = mLayoutInflater.inflate(  
+	                    R.layout.main_top_right_dialog, null); 
+
+	    		if (mPopupWindow == null) {
+					mPopupWindow = new PopupWindow(mPopView, LayoutParams.FILL_PARENT,
+							LayoutParams.WRAP_CONTENT);
+					//mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+	    		}
+				if (mPopupWindow.isShowing()) {
+					mPopupWindow.dismiss();
+				} else {
+					mPopupWindow.showAsDropDown(mTopLayout, 0, -10);
+				}
+				Log.w("TabList","mTopLayout");
+			}
+		});
+	}
+	
 	/**
 	 * 初始化视图控件
 	 * @param: ShowType 显示格式
@@ -99,21 +144,21 @@ public class TabList extends BaseActivity{
 	public void init_view_list(String show_type) {
 
 		listView = (ListView) findViewById(R.id.consumeListView);
-        consumeInfos = current_user.get_all_consume_item(show_type);
+        consume_infos = current_user.get_all_consume_item(show_type);
         
         //无消费记录时提示错误
-		if (consumeInfos == null && consumeInfos.size() == 0) {
+		if (consume_infos == null && consume_infos.size() == 0) {
 			Toast.makeText(TabList.this, "No Data", 0).show();
 			return;
 		}
 		
 		//listView.addFooterView(lvQuestion_footer);//添加底部视图  必须在setAdapter前
-		listView.setAdapter(new ListViewConsumeAdapter(consumeInfos,TabList.this));
+		listView.setAdapter(new ListViewConsumeAdapter(consume_infos,TabList.this));
 		listView.setClickable(true);
 		listView.setOnItemClickListener(new OnItemClickListener(){
 			 @Override
 	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ConsumeInfo consumeinfo = consumeInfos.get(position);
+                ConsumeInfo consumeinfo = consume_infos.get(position);
         		if(consumeinfo == null){
 	        		//判断是否是TextView
 	        		if(view instanceof TextView){
@@ -244,7 +289,7 @@ public class TabList extends BaseActivity{
 		//同步本地数据至服务器
 		Button.OnClickListener imageButton_refresh_listener = new Button.OnClickListener(){//创建监听对象  
 			public void onClick(View v){  
-				consumeInfos = consumeDao.get_unsync_records();
+				consume_infos = consumeDao.get_unsync_records();
 				sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 				
 		    	//Toast.makeText(TabList.this, "更新未同步数据", 0).show();
@@ -268,10 +313,4 @@ public class TabList extends BaseActivity{
 	
 	};
 	
-	//设置标题栏右侧按钮的作用
-	public void btnmainright(View v) {  
-		Intent intent = new Intent (TabList.this,MenuConsumeItemListType.class);			
-		startActivity(intent);	
-		//Toast.makeText(getApplicationContext(), "点击了功能按钮", Toast.LENGTH_LONG).show();
-      }  
 }

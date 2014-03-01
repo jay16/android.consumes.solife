@@ -147,7 +147,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener,OnIt
 			Intent intent;
 			intent = new Intent(getApplicationContext(), ConsumeForm.class);
 			intent.putExtra("action",  "create");
-			intent.putExtra("row_id",  -1);
+			intent.putExtra("row_id",  (long)-1);
 			startActivity(intent);
 			break;
 			

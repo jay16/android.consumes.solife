@@ -16,7 +16,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.widget.Toast;
 import us.solife.consumes.util.NetUtils;
-import us.solife.consumes.util.SPManager;
 import us.solife.consumes.util.ToolUtils;
 
 import java.util.Calendar;
@@ -104,33 +103,15 @@ public class ConsumeTb {
 	public ArrayList<ConsumeInfo> get_all_records(Context context) {
 		// public Integer getAllRecords(Context context) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		String sql = "select * from consumes where user_id not null and state <> 'delete' " +
-				" order by created_at desc";
+		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
+		String sql = "select * from consumes order by created_at desc";
 		Cursor cursor = database.rawQuery(sql, null);
 	
 		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
 		if (cursor.getCount() > 0) {
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-				ConsumeInfo consumeInfo = new ConsumeInfo();
-				
-				int id = cursor.getInt(cursor.getColumnIndex("id"));
-				int user_id    = cursor.getInt(cursor.getColumnIndex("user_id"));
-				int consume_id = cursor.getInt(cursor.getColumnIndex("consume_id"));
-				double volue = cursor.getDouble(cursor.getColumnIndex("volue"));
-				String msg = cursor.getString(cursor.getColumnIndex("msg")).toString();
-				String created_at = cursor.getString(cursor.getColumnIndex("created_at")).toString();
-			    String updated_at = cursor.getString(cursor.getColumnIndex("updated_at"));
-			    Long sync         = cursor.getLong(cursor.getColumnIndex("sync"));
-			    
-				consumeInfo.set_id(id);
-				consumeInfo.set_user_id(user_id);
-				consumeInfo.set_consume_id(consume_id);
-				consumeInfo.set_volue(volue);
-				consumeInfo.set_msg(msg);
-				consumeInfo.set_created_at(created_at);
-				consumeInfo.set_updated_at(updated_at);
-				consumeInfo.set_sync(sync);
-				consumeInfos.add(consumeInfo);
+	
+				consumeInfos.add(get_consume_info_from_cursor(cursor));
 			}
 		}
 		cursor.close();
@@ -190,7 +171,7 @@ public class ConsumeTb {
 		return db.update(DATABASE_TABLE, cv, "id=?",args);
 	}
 
-	public void delete_record_with_rowid(Integer row_id) {		
+	public void delete_record_with_rowid(long row_id) {		
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		database.beginTransaction();
 		database.execSQL("delete from consumes where id = "+row_id);

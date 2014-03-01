@@ -6,6 +6,7 @@ import us.solife.consumes.ConsumeItem;
 import us.solife.consumes.R;
 import us.solife.consumes.ConsumeForm;
 import us.solife.consumes.TabList;
+import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -62,7 +63,7 @@ public class UIHelper {
 						context.startActivity(intent);
 						break;
 					case 1://删除
-						UIHelper.showFavoriteOptionDialog(context);
+						UIHelper.deleteConsumeOptionDialog(context,consume_info);
 						break;
 				}				
 			}
@@ -89,26 +90,35 @@ public class UIHelper {
 	 * 删除消费记录对话框
 	 * @param context
 	 */
-	public static void showFavoriteOptionDialog(final Context context)
+	public static void deleteConsumeOptionDialog(final Context context, final ConsumeInfo consume_info)
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setIcon(R.drawable.ic_dialog_menu);
-		builder.setTitle(context.getString(R.string.select));
-		builder.setItems(R.array.favorite_options,new DialogInterface.OnClickListener(){
+		builder.setTitle(context.getString(R.string.delete)+"[￥"+consume_info.get_volue()+"]");
+		builder.setItems(R.array.delete_options,new DialogInterface.OnClickListener(){
 			public void onClick(DialogInterface arg0, int arg1) {
+				/*
 				switch (arg1) {
 					case 0://删除
-						//thread.start();
-						Log.w("UIHelper","showFavoriteOptionDialog");
+						Log.w("UIHelper","deleteConsumeOptionDialog YES");
 						break;
-				}				
+					case 1://取消
+						Log.w("UIHelper","deleteConsumeOptionDialog NO");
+						break;
+				}
+				*/				
 			}
 		});
 
 		builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int arg1) {
+				CurrentUser current_user = CurrentUser.getCurrentUser(context, consume_info.get_user_id());
+				current_user.destroy_record(consume_info.get_id());
 				Log.w("UIHelper","Delete YES");
+				Intent intent = new Intent(context, ConsumeItem.class);
+				intent.putExtra("created_at",  consume_info.get_created_at().subSequence(1,10));
+				context.startActivity(intent);
 				dialog.dismiss();
 			}
 		});

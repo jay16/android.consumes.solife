@@ -49,9 +49,9 @@
             android:layout_toRightOf="@+id/RelativeLayout_SYNC"
             android:background="@drawable/chatfrom_bg"
             android:clickable="true"
+            android:onClick="consume_item_onclick" 
             android:text="消费备注" />
         
-            <!-- android:onClick="consume_item_onclick" -->
 
     </RelativeLayout>
 

@@ -26,19 +26,31 @@
             
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="101dp"
-            android:layout_height="match_parent" >
+		<LinearLayout
+                android:id="@+id/menu_consume_item_list"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginLeft="20dip"
+                android:layout_marginRight="20dip"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:gravity="center"
+                android:orientation="horizontal" >
 
-	        
-            <Spinner
-                android:id="@+id/Spinnered"
-                android:layout_width="102dp"
-                android:layout_height="match_parent"
-			    android:gravity="center_vertical"
-			    android:orientation="vertical" 
-                android:text="TextView" />
-            
+                <TextView
+                    android:id="@+id/home_top_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dip"
+                    android:text="消费列表[天]"
+                    android:textColor="#ffffff"
+                    android:textSize="18sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:duplicateParentState="true"
+                    android:src="@drawable/title_bar_arrow_down_bg" />
         </LinearLayout>
 
         <LinearLayout
@@ -56,6 +68,22 @@
                 <!-- 设置背景透明 -->
 
         </LinearLayout>
+    </LinearLayout>
+    
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center|center_vertical" >
+    
+            <ListView
+                android:id="@+id/home_display"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:cacheColorHint="#00000000"
+                android:divider="@null"
+                android:listSelector="#00000000" >
+            </ListView>
     </LinearLayout>
 
 </LinearLayout>

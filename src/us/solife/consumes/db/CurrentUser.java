@@ -24,18 +24,18 @@ public class CurrentUser {
 	public static final String KEY_ROWID = "id";
 	private static final String DT_CONSUME = "consumes";
 
-	private long    user_id;
+	private int    user_id;
 	private Context context;
 	public ConsumeDatabaseHelper consumeDatabaseHelper;
 	static CurrentUser consume_user;
 	
-	private CurrentUser(Context context,Long user_id) {
+	private CurrentUser(Context context,int user_id) {
 		this.user_id = user_id;
 		this.context = context;
 		this.consumeDatabaseHelper = new ConsumeDatabaseHelper(context);
 	}
 
-	public static CurrentUser getCurrentUser(Context context,Long user_id) {
+	public static CurrentUser getCurrentUser(Context context,int user_id) {
 		if (consume_user != null) {
 		} else {
 			consume_user = new CurrentUser(context,user_id);
@@ -44,9 +44,30 @@ public class CurrentUser {
 		return consume_user;
 	}
 	
+    /**
+     * 根据row_id获取消费信息
+     * 编辑消费消费时使用
+     * @param row_id
+     * @return
+     */
+	public ConsumeInfo get_record(long row_id) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		Cursor cursor = database.rawQuery("select * from consumes where id= "+row_id + " and user_id = "+ user_id, null);
+        ConsumeInfo consume_info = new ConsumeInfo();
+		if (cursor != null) {
+			cursor.moveToFirst();
+			consume_info = get_consume_info_from_cursor(cursor);
+		}
+		return consume_info;
+	}
 
-
-	// 当前登陆用户新建一笔消费记录
+	/**
+	 *  创建消费记录
+	 * @param volue
+	 * @param msg
+	 * @param created_at
+	 * @return
+	 */
 	public long insert_record(Double volue, String msg, String created_at) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		database.beginTransaction();
@@ -67,18 +88,19 @@ public class CurrentUser {
 		 * sync:false state: update 待同步更新
 		 * sync:false state: delete 待同步删除
 		 */
-		long rowid = database.insert("consumes", null, values);
-		
-		//log调试用
-        Log.w("ConsumeDao","插入数据库动作完成id:["+rowid+"]");
+		long row_id = database.insert("consumes", null, values);
+
 		database.setTransactionSuccessful();
 		database.endTransaction();
 		database.close();
-
-		return rowid;
+		
+		ConsumeInfo consume_info = get_record(row_id);
+        Log.w("CurrentUser","创建数据:"+consume_info.to_string());
+        
+		return row_id;
 	}
 	
-	public long update_record(Integer row_id, Double volue, String msg,String created_at){
+	public long update_record(long row_id, Double volue, String msg,String created_at){
 		SQLiteDatabase db = consumeDatabaseHelper.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("user_id", user_id);
@@ -89,7 +111,67 @@ public class CurrentUser {
 		cv.put("state", "update");
 		String[] args = {String.valueOf(row_id)};
 
-		return db.update(DT_CONSUME, cv, "id=?",args);
+        db.update(DT_CONSUME, cv, "id=?",args);
+        
+		ConsumeInfo consume_info = get_record(row_id);
+        Log.w("CurrentUser","更新数据1:"+consume_info.to_string());
+        
+        return row_id;
+	}
+	
+	public long update_record(ConsumeInfo consume_info){
+		SQLiteDatabase db = consumeDatabaseHelper.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("user_id", user_id);
+		cv.put("volue", consume_info.get_volue());
+		cv.put("msg", consume_info.get_msg());
+		cv.put("created_at", consume_info.get_msg());
+		cv.put("sync", consume_info.get_sync());
+		cv.put("state", consume_info.get_state());
+		String[] args = {String.valueOf(consume_info.get_id())};
+		//log调试用
+
+		long row_id = db.update(DT_CONSUME, cv, "id=?",args);
+		
+		consume_info = get_record(consume_info.get_id());
+        Log.w("CurrentUser","更新数据2:"+consume_info.to_string());
+		return row_id;
+	}
+	/**
+	 * 直接删除
+	 * @param row_id
+	 */
+	public void delete_record(long row_id) {	
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		database.beginTransaction();
+		database.execSQL("delete from consumes where id = "+row_id + " and user_id = " + user_id);
+		database.setTransactionSuccessful();
+		database.endTransaction();
+		database.close();
+		//log调试用
+        Log.w("CurrentUser","删除数据:"+row_id);
+	}
+	
+	/**
+	 * 通过状态判断
+	 * 删除或修改状态
+	 * @param row_id
+	 */
+	public void destroy_record(long row_id) {	
+		ConsumeInfo consume_info = get_record(row_id);
+		long sync = consume_info.get_sync();
+		//未同步时直接删除即可
+		if(sync == (long)0) {
+			delete_record(row_id);
+	        Log.w("CurrentUser","删除数据:"+consume_info.to_string());
+		//同步时修改状态
+		//sync: false, state: "delete"
+		} else {
+		  consume_info.set_sync((long)0);
+		  consume_info.set_state("delete");
+		  update_record(consume_info);
+	      Log.w("CurrentUser","修改状态:"+consume_info.to_string());
+		}
 	}
 	//取得所有消费记录
 	public ArrayList<ConsumeInfo> get_all_records(Context context) {
@@ -178,22 +260,7 @@ public class CurrentUser {
 		return consumeInfos;
 	}
 
-    /**
-     * 根据row_id获取消费信息
-     * 编辑消费消费时使用
-     * @param row_id
-     * @return
-     */
-	public ConsumeInfo get_record_with_rowid(Integer row_id) {
-		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		Cursor cursor = database.rawQuery("select * from consumes where id="+row_id, null);
-        ConsumeInfo consume_info = new ConsumeInfo();
-		if (cursor != null) {
-			cursor.moveToFirst();
-			consume_info = get_consume_info_from_cursor(cursor);
-		}
-		return consume_info;
-	}
+
 	
 	/**
 	 * cursor内容存入consumeInfo
@@ -201,23 +268,19 @@ public class CurrentUser {
 	 * @return
 	 */
 	public ConsumeInfo get_consume_info_from_cursor(Cursor cursor){
-		ConsumeInfo consumeInfo = new ConsumeInfo();
+		ConsumeInfo consume_info = new ConsumeInfo();
 		
-		int id = cursor.getInt(cursor.getColumnIndex("id"));
-		double volue = cursor.getDouble(cursor.getColumnIndex("volue"));
-		String msg = cursor.getString(cursor.getColumnIndex("msg")).toString();
-		String created_at = cursor.getString(cursor.getColumnIndex("created_at")).toString();
-	    String updated_at = cursor.getString(cursor.getColumnIndex("updated_at"));
-	    Long sync         = cursor.getLong(cursor.getColumnIndex("sync"));
-	    
-	    consumeInfo.set_id(id);
-		consumeInfo.set_volue(volue);
-		consumeInfo.set_msg(msg);
-		consumeInfo.set_created_at(created_at);
-		consumeInfo.set_updated_at(updated_at);
-		consumeInfo.set_sync(sync);
+	    consume_info.set_id(cursor.getInt(cursor.getColumnIndex("id")));
+	    consume_info.set_user_id(cursor.getInt(cursor.getColumnIndex("user_id")));
+	    consume_info.set_consume_id(cursor.getInt(cursor.getColumnIndex("consume_id")));
+		consume_info.set_volue(cursor.getDouble(cursor.getColumnIndex("volue")));
+		consume_info.set_msg(cursor.getString(cursor.getColumnIndex("msg")).toString());
+		consume_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")).toString());
+		consume_info.set_updated_at(cursor.getString(cursor.getColumnIndex("updated_at"))); 
+		consume_info.set_sync(cursor.getLong(cursor.getColumnIndex("sync")));
+		consume_info.set_state(cursor.getString(cursor.getColumnIndex("state")));
 		
-		return consumeInfo;
+		return consume_info;
 	}
 	
 	/**

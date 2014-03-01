@@ -7,16 +7,17 @@ public class ConsumeInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public int id, consume_id, user_id;
+	public long id;
+	public int consume_id, user_id;
 	public double volue;
 	public String  msg, created_at, updated_at,state;
 	public Long sync; //Boolean ´æ·ÅÎªLong£¬true => 1, flase => 0
 
-	public int get_id() {
+	public long get_id() {
 		return id;
 	}
 
-	public void set_id(int id) {
+	public void set_id(long id) {
 		this.id = id;
 	}
 	public int get_user_id() {
@@ -85,11 +86,14 @@ public class ConsumeInfo implements Serializable {
 	}
 	
 	public String to_string() {
-		return "user_id:" + this.user_id + 
-				",consume_id:" + this.consume_id + 
-				",volue:" + this.volue + 
-				",msg:" + this.msg + 
-				",created_at:" + this.created_at + 
-				",updated_at:" + this.updated_at;
+		return "id:" + this.id +
+	    "user_id:" + this.user_id + 
+		",consume_id:" + this.consume_id + 
+		",volue:" + this.volue + 
+		",msg:" + this.msg + 
+		",created_at:" + this.created_at + 
+		",updated_at:" + this.updated_at +
+		",sync:" + this.sync +
+		",state:" + this.state;
 	}
 }

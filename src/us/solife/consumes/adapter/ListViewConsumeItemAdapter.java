@@ -3,6 +3,7 @@ package us.solife.consumes.adapter;
 import java.util.ArrayList;
 import java.math.BigDecimal;
 
+import us.solife.consumes.ConsumeItem;
 import us.solife.consumes.R;
 import us.solife.consumes.TabList;
 import us.solife.consumes.adapter.ListViewConsumeAdapter.ViewHolder;
@@ -91,7 +92,7 @@ public class ListViewConsumeItemAdapter extends BaseAdapter{
 		holder.created_at.setText(consumeInfo.get_created_at().substring(10, 16));
 		holder.msg.setText(consumeInfo.get_msg());
 		holder.msg.setTag(consumeInfo);//设置隐藏参数(实体类)
-		holder.msg.setOnClickListener(msgClickListener);
+		holder.msg.setOnLongClickListener(msgLongClickListener);
 		
 		//同步状态
 		if(String.valueOf(consumeInfo.get_sync()).toString().equals("1")) {
@@ -109,8 +110,16 @@ public class ListViewConsumeItemAdapter extends BaseAdapter{
 	
 	private View.OnClickListener msgClickListener = new View.OnClickListener(){
 		public void onClick(View v) {
+		}
+	};
+	
+	private View.OnLongClickListener msgLongClickListener = new View.OnLongClickListener(){
+
+		@Override
+		public boolean onLongClick(View v) {
 			ConsumeInfo comment_info = (ConsumeInfo)v.getTag();
 			UIHelper.showCommentInfoOptionDialog(v.getContext(), comment_info);
+			return false;
 		}
 	};
 

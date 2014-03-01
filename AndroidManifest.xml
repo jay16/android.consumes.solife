@@ -52,7 +52,7 @@
         </activity>
         <activity android:name="us.solife.consumes.ConsumeItem" >
         </activity>
-        <activity android:name="us.solife.consumes.MenuConsumeItemListType" >
+        <activity android:name="us.solife.consumes.TabListMenu" >
         </activity>
     </application>
 

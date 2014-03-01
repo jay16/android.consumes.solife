@@ -7,7 +7,8 @@ public class UserInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private long id, user_id, sync;
+	private long id, sync;
+	private int user_id;
 	private String  name, email,gravatar,area;
 	private String created_at,updated_at,state;
 
@@ -18,11 +19,11 @@ public class UserInfo implements Serializable {
 	public void set_id(long id) {
 		this.id = id;
 	}
-	public long get_user_id() {
+	public int get_user_id() {
 		return user_id;
 	}
 
-	public void set_user_id(long user_id) {
+	public void set_user_id(int user_id) {
 		this.user_id = user_id;
 	}
 

@@ -32,8 +32,8 @@
     <string-array name="comment_options_1">
 	    <item>回复</item>
     </string-array>
-    <string-array name="favorite_options">
-	    <item>取消收藏</item>
+    <string-array name="delete_options">
+	    <item>确定删除？</item>
     </string-array>
     <string-array name="post_pub_options">
 	    <item>提问</item>

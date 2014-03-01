@@ -29,7 +29,6 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import us.solife.consumes.entity.ConsumeInfo;
-import us.solife.consumes.util.SPManager;
 import us.solife.consumes.util.ToolUtils;
 import us.solife.consumes.util.UIHelper;
 import us.solife.consumes.adapter.ListViewConsumeItemAdapter;
@@ -63,7 +62,7 @@ public class ConsumeItem extends BaseActivity {
 
 		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = shared_preferences.getLong("current_user_id", -1);
-		current_user = CurrentUser.getCurrentUser(ConsumeItem.this,current_user_id);
+		current_user = CurrentUser.getCurrentUser(ConsumeItem.this,Integer.parseInt(String.valueOf(current_user_id)));
 		consume_infos = current_user.get_consume_items_with_date(day);
 		
 		for(int i=0; i<consume_infos.size(); i++ ) {
@@ -133,7 +132,7 @@ public class ConsumeItem extends BaseActivity {
 
 		
         //提示消费内容
-		Toast.makeText(ConsumeItem.this, "["+consume_info.get_volue()+"]", 0).show();
+		Toast.makeText(ConsumeItem.this, "长按可编辑[￥"+consume_info.get_volue()+"]", 0).show();
 		//TextView consume_item_msg = (TextView) v.findViewById(R.id.consume_item_msg);
 		//Toast.makeText(ConsumeItem.this, consume_item_msg.getText(), 0).show();
 	}
