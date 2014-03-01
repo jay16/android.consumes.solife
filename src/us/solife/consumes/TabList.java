@@ -56,6 +56,10 @@ public class TabList extends BaseActivity{
 	SharedPreferences sharedPreferences;
 
 	private LinearLayout mTopLayout;
+	private LinearLayout tablist_1;
+	private LinearLayout tablist_2;
+	private LinearLayout tablist_3;
+	private LinearLayout tablist_4;
 	private TextView mTopText;
 	PopupWindow mPopupWindow;
 
@@ -110,7 +114,6 @@ public class TabList extends BaseActivity{
 
 	private void setListener() {
 		mTopLayout.setOnClickListener(new OnClickListener() {
-
 			public void onClick(View v) {
 				// œ‘ æ≤Àµ•
 				//Intent intent = new Intent (getApplication(),TabListMenu.class);			
@@ -125,6 +128,19 @@ public class TabList extends BaseActivity{
 					mPopupWindow = new PopupWindow(mPopView, LayoutParams.FILL_PARENT,
 							LayoutParams.WRAP_CONTENT);
 					//mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+					tablist_1 = (LinearLayout)mPopView.findViewById(R.id.tablist_1);
+					tablist_2 = (LinearLayout)mPopView.findViewById(R.id.tablist_2);
+					tablist_3 = (LinearLayout)mPopView.findViewById(R.id.tablist_3);
+					tablist_4 = (LinearLayout)mPopView.findViewById(R.id.tablist_4);
+					
+					tablist_1.setOnClickListener(new OnClickListener() {
+						public void onClick(View v) {				
+						if (mPopupWindow.isShowing()) {
+							mPopupWindow.dismiss();
+						}
+							Log.w("TabList","tablist_1");
+						}
+					});
 	    		}
 				if (mPopupWindow.isShowing()) {
 					mPopupWindow.dismiss();
@@ -134,6 +150,7 @@ public class TabList extends BaseActivity{
 				Log.w("TabList","mTopLayout");
 			}
 		});
+		
 	}
 	
 	/**
