@@ -8,13 +8,17 @@ import us.solife.consumes.BaseActivity.DataCallback;
 import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.parseJson.ConsumeListParse;
+import us.solife.consumes.service.TimerService;
 
 //引用consume自定义的类包
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -138,10 +142,23 @@ public class splashActivity extends BaseActivity {
 				&& sharedPreferences.getBoolean("is_login", false)) {
 			intent = new Intent(splashActivity.this, MainTabActivity.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
+			
+			
+			//循环定时执行
+			Intent intent1 =new Intent(getApplication(), TimerService.class);
+		    intent1.setAction(sharedPreferences.getString("current_user_email", ""));
+		    PendingIntent sender=PendingIntent.getBroadcast(getApplication(), 0, intent1, 0);
+		        //开始时间
+		    long now =SystemClock.elapsedRealtime();
+		    //long now = System.currentTimeMillis();  
+
+		    AlarmManager am=(AlarmManager)getSystemService(ALARM_SERVICE);//5秒一个周期，不停的发送广播
+		    am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, now, 600000, sender);
 		} else {
 			intent = new Intent(splashActivity.this, Login.class);
 		}
-		
+
+	    
 		startActivity(intent);
 		finish();
 		// boolean isDownLoad = sharedPreferences.getBoolean("isDownLoad",

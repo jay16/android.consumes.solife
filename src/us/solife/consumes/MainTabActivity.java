@@ -65,6 +65,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener,OnIt
 				.setContent(new Intent(this, TabUser.class)));
 		tabHost.addTab(tabHost.newTabSpec("TabAbout").setIndicator("TabAbout")
 				.setContent(new Intent(this, TabAbout.class)));
+		setDefaultTab(1);
 		//tabHost.addTab(tabHost.newTabSpec("TabConsume").setIndicator("TabConsume")
 		//		.setContent(new Intent(this, TabConsume.class)));
 		aBt = (RadioButton) findViewById(R.id.main_footbar_chart);
@@ -82,7 +83,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener,OnIt
 		cBt.setOnClickListener(this);
 		dBt.setOnClickListener(this);
 		eBt.setOnClickListener(this);
-		aBt.setChecked(true);
+		bBt.setChecked(true);
 	}
 
 	@Override

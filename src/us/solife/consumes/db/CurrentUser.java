@@ -125,7 +125,7 @@ public class CurrentUser {
 		cv.put("user_id", user_id);
 		cv.put("volue", consume_info.get_volue());
 		cv.put("msg", consume_info.get_msg());
-		cv.put("created_at", consume_info.get_msg());
+		cv.put("created_at", consume_info.get_created_at());
 		cv.put("sync", consume_info.get_sync());
 		cv.put("state", consume_info.get_state());
 		String[] args = {String.valueOf(consume_info.get_id())};

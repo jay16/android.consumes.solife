@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import us.solife.consumes.TabList;
 import us.solife.consumes.db.ConsumeTb;
+import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.URLs;
 
@@ -84,7 +85,7 @@ public class NetUtils {
 	//创建consume
 	public static String[] solife_consume_create(String login_email, ConsumeInfo consume_info) {
 		// 从服务器接口中获取当前账号和密码的配对情况
-		String[] ret_array = { "0", "no return" };
+		String[] ret_array = { "0", "no return","-1" };
 
 		// 创建httpRequest对象
 		HttpPost httpRequest = new HttpPost(URLs.CONSUME_CREATE);
@@ -112,6 +113,7 @@ public class NetUtils {
 				// 获取返回值
 				ret_array[0] = jsonObject.getInt("ret")+"";
 				ret_array[1] = jsonObject.getString("ret_info");
+				ret_array[2] = jsonObject.getInt("consume_id")+"";
 			}
 		} catch (Exception e) {
 			ret_array[1] = e.getMessage().toString();
@@ -216,15 +218,16 @@ public class NetUtils {
 			if(un_sync_count>0){
 				for(int i = 0; i < consume_infos.size(); i++) {
 					ConsumeInfo consume_info = consume_infos.get(i);
-					String sync_state = "成功";
-					String[] ret_array = {"0",""};
+					CurrentUser current_user = CurrentUser.getCurrentUser(context, consume_info.get_user_id());
+					String[] ret_array = {"0","","-1"};
 					if(consume_info.get_state().equals("create")){
 					  ret_array = NetUtils.solife_consume_create(login_email, consume_info);
 						if (ret_array[0].equals("1")) {
 							//同步成功则修改数据库内容
+							consume_info.set_consume_id(Integer.valueOf(ret_array[2]));
 							consume_info.set_sync((long)1);
 							consume_info.set_state("");
-							consumeDao.update_record(consume_info);
+							current_user.update_record(consume_info);
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-YES");
 						} else {
 							//同步失败则不做任何动作
@@ -235,7 +238,7 @@ public class NetUtils {
 						if (ret_array[0].equals("1")) {
 							consume_info.set_sync((long)1);
 							consume_info.set_state("");
-							consumeDao.update_record(consume_info);
+							current_user.update_record(consume_info);
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-YES");
 						} else {
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-NO");
@@ -243,7 +246,7 @@ public class NetUtils {
 					} else if(consume_info.get_state().equals("delete")) {
 					  ret_array = NetUtils.solife_consume_delete(login_email, consume_info);
 						if (ret_array[0].equals("1")) {
-							consumeDao.delete_record_with_rowid(consume_info.get_id());
+							current_user.destroy_record(consume_info.get_id());
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-YES");
 						} else {
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-NO");

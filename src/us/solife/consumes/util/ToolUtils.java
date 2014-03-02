@@ -48,5 +48,11 @@ public class ToolUtils {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String y_m_d = df.format(new Date());
 		return y_m_d;
+	}	
+	
+	public static String getStandardDetailDate() {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String y_m_d = df.format(new Date());
+		return y_m_d;
 	}
 }

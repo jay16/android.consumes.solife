@@ -54,6 +54,8 @@
         </activity>
         <activity android:name="us.solife.consumes.TabListMenu" >
         </activity>
+        <receiver android:name="us.solife.consumes.service.TimerService" >
+        </receiver>
     </application>
 
 </manifest>

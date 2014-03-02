@@ -135,10 +135,34 @@ public class TabList extends BaseActivity{
 					
 					tablist_1.setOnClickListener(new OnClickListener() {
 						public void onClick(View v) {				
-						if (mPopupWindow.isShowing()) {
-							mPopupWindow.dismiss();
-						}
+							if (mPopupWindow.isShowing()) 
+								mPopupWindow.dismiss();
 							Log.w("TabList","tablist_1");
+							init_view_list("year");
+						}
+					});
+					tablist_2.setOnClickListener(new OnClickListener() {
+						public void onClick(View v) {				
+							if (mPopupWindow.isShowing()) 
+								mPopupWindow.dismiss();
+							Log.w("TabList","tablist_2");
+							init_view_list("month");
+						}
+					});
+					tablist_3.setOnClickListener(new OnClickListener() {
+						public void onClick(View v) {				
+							if (mPopupWindow.isShowing()) 
+								mPopupWindow.dismiss();
+							Log.w("TabList","tablist_3");
+							init_view_list("week");
+						}
+					});
+					tablist_4.setOnClickListener(new OnClickListener() {
+						public void onClick(View v) {				
+							if (mPopupWindow.isShowing()) 
+								mPopupWindow.dismiss();
+							Log.w("TabList","tablist_4");
+							init_view_list("day");
 						}
 					});
 	    		}
@@ -162,6 +186,18 @@ public class TabList extends BaseActivity{
 
 		listView = (ListView) findViewById(R.id.consumeListView);
         consume_infos = current_user.get_all_consume_item(show_type);
+        String top_text = "天";
+        if(show_type.equals("year"))
+        	top_text = "年";
+        else if(show_type.equals("month"))
+        	top_text = "月";
+        else if(show_type.equals("week"))
+        	top_text = "周";
+        else if(show_type.equals("day"))
+        	top_text = "天";
+        else
+        	top_text = "天";
+        mTopText.setText("消费列表["+top_text+"]");
         
         //无消费记录时提示错误
 		if (consume_infos == null && consume_infos.size() == 0) {
@@ -201,7 +237,6 @@ public class TabList extends BaseActivity{
 	
 	/**
 	 * 下拉列表spinner点击响应
-	 */
 	class SpinnerOnItemSelectListener implements OnItemSelectedListener{  
 	    @Override  
 	    public void onItemSelected(AdapterView<?> AdapterView, View view, int position, long arg3) {  
@@ -231,6 +266,7 @@ public class TabList extends BaseActivity{
 	      
 	}
 
+	 */
 	// 句柄-数据插入
 		Handler handler = new Handler() {
 			public void handleMessage(android.os.Message message) {
@@ -328,6 +364,12 @@ public class TabList extends BaseActivity{
 		};
 	
 	
+	};
+	
+	public void chk_list_click() {
+		if (mPopupWindow.isShowing()) {
+			mPopupWindow.dismiss();
+		}
 	};
 	
 }
