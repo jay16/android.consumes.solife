@@ -1,6 +1,11 @@
 package us.solife.consumes;
 
+import java.util.ArrayList;
+
 import us.solife.consumes.R;
+import us.solife.consumes.api.Gravatar;
+import us.solife.consumes.db.UserTb;
+import us.solife.consumes.entity.UserInfo;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,6 +25,18 @@ public class TabAbout extends BaseActivity implements OnClickListener {
 
 		TextView  textView_main_header = (TextView)findViewById(R.id.textView_main_header);
 		textView_main_header.setText("…Ë÷√");
+		
+		UserTb user_table = UserTb.getUserTb(TabAbout.this);
+		ArrayList<Integer> usre_ids = user_table.get_unsync_user_list();
+		
+		String id = "";
+		if(usre_ids.size()>0) 
+		for(int i=0; i<usre_ids.size(); i++ ) {
+			id += "["+usre_ids.get(i)+"]";
+		}
+		TextView gravatar_chk  = (TextView)findViewById(R.id.gravatar_chk);
+		gravatar_chk.setText(id);
+		
 
 		Button btn_back = (Button)findViewById(R.id.menu_btn_back);
 		btn_back.setVisibility(View.GONE);

@@ -19,7 +19,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 
 import us.solife.consumes.api.ApiClient;
-import us.solife.consumes.parser.BaseParse;
+import us.solife.consumes.parse.BaseParse;
 import us.solife.consumes.util.AppManager;
 import us.solife.consumes.util.NetUtils;
 import us.solife.consumes.util.ThreadPoolManager;
@@ -161,7 +161,7 @@ public abstract class BaseActivity extends Activity {
 			try {
 				//检测当前环境是否有网络
 				if (NetUtils.hasNetWork(context)) {
-					HashMap<String, Object> http_get = ApiClient.http_get(context,url+"?email="+email);
+					HashMap<String, Object> http_get = ApiClient._get(context,url+"?email="+email);
 					if ((Integer)http_get.get("statusCode")==HttpStatus.SC_OK) {
 						String responseBody = (String)http_get.get("json_str");
 						Object object = baseParse.parseJSON(responseBody);

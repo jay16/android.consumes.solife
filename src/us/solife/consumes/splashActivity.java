@@ -9,7 +9,7 @@ import us.solife.consumes.BaseActivity.DataCallback;
 import us.solife.consumes.api.URLs;
 import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.entity.ConsumeInfo;
-import us.solife.consumes.parser.ConsumeListParse;
+import us.solife.consumes.parse.ConsumeListParse;
 import us.solife.consumes.recevier.TimerService;
 
 //引用consume自定义的类包

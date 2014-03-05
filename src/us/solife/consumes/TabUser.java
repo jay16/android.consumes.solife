@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 //import org.apache.http.client.methods.HttpPost; 
 
 import us.solife.consumes.R;
+import us.solife.consumes.api.Gravatar;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
 import us.solife.consumes.util.NetUtils;
@@ -73,11 +74,8 @@ public class TabUser extends BaseActivity {
 
 	        
 		ImageView image_view = (ImageView)findViewById(R.id.imageView_current_user_gravatar_image);
-		//String picDirStr = Environment.getExternalStorageDirectory().getAbsolutePath();
-		String picDirStr = Environment.getExternalStorageDirectory()+File.separator;
-		picDirStr += "solife"+File.separator+ current_user_email.replace("@","_")+".jpg";
-		 
-		//textView_current_date.setText(picDirStr);
+
+		String picDirStr = Gravatar.gravatar_path(current_user_email);
 		File picDir = new File(picDirStr);
         if(!picDir.exists()){
         	Toast.makeText(TabUser.this, "图片不存在", 0).show();
@@ -86,13 +84,12 @@ public class TabUser extends BaseActivity {
     		image_view.setImageBitmap(bitmap); //设置Bitmap
         	Toast.makeText(TabUser.this, "图片存在", 0).show();
         }
-		
 	    //login
 		TextView  textView_user_name     = (TextView)findViewById(R.id.textView_current_user_name); 
 		TextView  textView_user_email    = (TextView)findViewById(R.id.textView_current_user_email); 
 		TextView  textView_user_register = (TextView)findViewById(R.id.textView_current_user_registeration_time); 
 		TextView  textView_user_area     = (TextView)findViewById(R.id.textView_current_user_area); 
-		textView_user_name.setText(current_user_name+"["+current_user_id+"]");
+		textView_user_name.setText(current_user_name);
 		textView_user_email.setText(current_user_email);
 		textView_user_register.setText("注册日期:"+current_user_register);
 		textView_user_area.setText(current_user_area);

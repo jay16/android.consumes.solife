@@ -40,7 +40,10 @@ import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.adapter.ListViewFriendsConsumesAdapter;
 import us.solife.consumes.api.Gravatar;
 import us.solife.consumes.db.ConsumeTb;
+import us.solife.consumes.db.UserTb;
 import us.solife.consumes.entity.ConsumeInfo;
+import us.solife.consumes.entity.CurrentUser;
+import us.solife.consumes.entity.UserInfo;
 
 public class TabChart extends BaseActivity {
 	
@@ -70,7 +73,8 @@ public class TabChart extends BaseActivity {
 		
 		Button btn_back = (Button)findViewById(R.id.menu_btn_back);
 		btn_back.setVisibility(View.GONE);
-		//Toast.makeText(context,Gravatar.get_url("jay_li@solife.us"),0).show();
+		
+
 		/*
         initVOL();
         initOHLC();
@@ -90,7 +94,6 @@ public class TabChart extends BaseActivity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		
 		setViewList();
 	}
 	public void setViewList() {
@@ -103,9 +106,13 @@ public class TabChart extends BaseActivity {
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
 		consumeDao = ConsumeTb.getConsumeTb(TabChart.this);
         consumeInfos = consumeDao.get_all_records(TabChart.this);
+
+		UserTb user_table = UserTb.getUserTb(TabChart.this);
+		ArrayList<UserInfo> user_infos = user_table.get_user_list();
+		
 		if (consumeInfos != null && consumeInfos.size() != 0) {
 			Toast.makeText(TabChart.this, "œ˚∑—≈Û”—»¶", 0).show();
-			listView.setAdapter(new ListViewFriendsConsumesAdapter(consumeInfos,TabChart.this));
+			listView.setAdapter(new ListViewFriendsConsumesAdapter(consumeInfos,user_infos,TabChart.this));
 			listView.setClickable(true);
 			listView.setOnItemClickListener(new OnItemClickListener(){
 				 @Override

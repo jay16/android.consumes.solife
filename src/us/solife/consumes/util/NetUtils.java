@@ -1,41 +1,38 @@
 package us.solife.consumes.util;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
-import org.apache.http.HttpEntity;
+import org.apache.commons.httpclient.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import us.solife.consumes.TabList;
+import us.solife.consumes.TabAbout;
+import us.solife.consumes.api.ApiClient;
+import us.solife.consumes.api.Gravatar;
 import us.solife.consumes.api.URLs;
 import us.solife.consumes.db.ConsumeTb;
+import us.solife.consumes.db.UserTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
+import us.solife.consumes.entity.UserInfo;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -79,121 +76,81 @@ public class NetUtils {
 	}
 	
 	//创建consume
-	public static String[] solife_consume_create(String login_email, ConsumeInfo consume_info) {
+	public static String[] solife_consume_create(String login_email, ConsumeInfo consume_info) 
+			throws HttpException, IOException, JSONException {
 		// 从服务器接口中获取当前账号和密码的配对情况
-		String[] ret_array = { "0", "no return","-1" };
+		String[] ret_array = { "0", "return null","-1" };
 
-		// 创建httpRequest对象
-		HttpPost httpRequest = new HttpPost(URLs.CONSUME_CREATE);
-		// HttpGet httpRequest =new HttpGet(httpUrl);
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("email", login_email));
-		params.add(new BasicNameValuePair("consume[volue]", consume_info.get_volue()+""));
-		params.add(new BasicNameValuePair("consume[created_at]", consume_info.get_created_at()));
-		params.add(new BasicNameValuePair("consume[msg]", consume_info.get_msg()));
+		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
+		  new org.apache.commons.httpclient.NameValuePair("email", login_email),
+		  new org.apache.commons.httpclient.NameValuePair("consume[volue]", consume_info.get_volue()+""),
+		  new org.apache.commons.httpclient.NameValuePair("consume[created_at]", consume_info.get_created_at()),
+		  new org.apache.commons.httpclient.NameValuePair("consume[msg]", consume_info.get_msg())
+		};
 
-		try {
-			// 设置字符集
-			HttpEntity httpentity = new UrlEncodedFormEntity(params, "utf-8");
-			// 请求httpRequest
-			httpRequest.setEntity(httpentity);
-			// 取得HttpClinet对象
-			HttpClient httpclient = new DefaultHttpClient();
-			// 请求HttpClient,取得HttpResponse
-			HttpResponse httpResponse = httpclient.execute(httpRequest);
+		HashMap<String, Object> hash_map = ApiClient._post(URLs.CONSUME_CREATE, params);
+		int statusCode  = (Integer)hash_map.get("statusCode");
+		String response = (String)hash_map.get("response");
 			// 请求成功
-			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				// 取得返回的字符串
-				String strResult = EntityUtils.toString(httpResponse.getEntity());
-				JSONObject jsonObject = new JSONObject(strResult);
-				// 获取返回值
-				ret_array[0] = jsonObject.getInt("ret")+"";
-				ret_array[1] = jsonObject.getString("ret_info");
-				ret_array[2] = jsonObject.getInt("consume_id")+"";
-			}
-		} catch (Exception e) {
-			ret_array[1] = e.getMessage().toString();
-			return ret_array;
+		if (statusCode == HttpStatus.SC_OK) {
+			JSONObject jsonObject = new JSONObject(response);
+			// 获取返回值
+			ret_array[0] = jsonObject.getInt("ret")+"";
+			ret_array[1] = jsonObject.getString("ret_info");
+			ret_array[2] = jsonObject.getInt("consume_id")+"";
 		}
 		return ret_array;
 	}
 
 	
 	//创建consume
-	public static String[] solife_consume_update(String login_email, ConsumeInfo consume_info) {
+	public static String[] solife_consume_update(String login_email, ConsumeInfo consume_info) 
+			throws HttpException, IOException, JSONException {
 		// 从服务器接口中获取当前账号和密码的配对情况
-		String[] ret_array = { "0", "no return" };
+		String[] ret_array = { "0", "return null" };
 
-		// 创建httpRequest对象
-		HttpPost httpRequest = new HttpPost(URLs.CONSUME_UPDATE);
-		// HttpGet httpRequest =new HttpGet(httpUrl);
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("email", login_email));
-		params.add(new BasicNameValuePair("id",consume_info.get_consume_id()+""));
-		params.add(new BasicNameValuePair("consume[volue]", consume_info.get_volue()+""));
-		params.add(new BasicNameValuePair("consume[created_at]", consume_info.get_created_at()));
-		params.add(new BasicNameValuePair("consume[msg]", consume_info.get_msg()));
+		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
+		  new org.apache.commons.httpclient.NameValuePair("email", login_email),
+		  new org.apache.commons.httpclient.NameValuePair("id",consume_info.get_consume_id()+""),
+		  new org.apache.commons.httpclient.NameValuePair("consume[volue]", consume_info.get_volue()+""),
+		  new org.apache.commons.httpclient.NameValuePair("consume[created_at]", consume_info.get_created_at()),
+		  new org.apache.commons.httpclient.NameValuePair("consume[msg]", consume_info.get_msg())
+		};
 
-		try {
-			// 设置字符集
-			HttpEntity httpentity = new UrlEncodedFormEntity(params, "utf-8");
-			// 请求httpRequest
-			httpRequest.setEntity(httpentity);
-			// 取得HttpClinet对象
-			HttpClient httpclient = new DefaultHttpClient();
-			// 请求HttpClient,取得HttpResponse
-			HttpResponse httpResponse = httpclient.execute(httpRequest);
-			// 请求成功
-			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				// 取得返回的字符串
-				String strResult = EntityUtils.toString(httpResponse.getEntity());
-				JSONObject jsonObject = new JSONObject(strResult);
-				// 获取返回值
-				ret_array[0] = jsonObject.getInt("ret")+"";
-				ret_array[1] = jsonObject.getString("ret_info");
-			}
-		} catch (Exception e) {
-			ret_array[1] = e.getMessage().toString();
-			return ret_array;
+		HashMap<String, Object> hash_map = ApiClient._post(URLs.CONSUME_UPDATE, params);
+		int statusCode  = (Integer)hash_map.get("statusCode");
+		String response = (String)hash_map.get("response");
+		if (statusCode == HttpStatus.SC_OK) {
+			JSONObject jsonObject = new JSONObject(response);
+			ret_array[0] = jsonObject.getInt("ret")+"";
+			ret_array[1] = jsonObject.getString("ret_info");
 		}
 		return ret_array;
 	}
 	
 
 	//创建consume
-	public static String[] solife_consume_delete(String login_email, ConsumeInfo consume_info) {
-		// 从服务器接口中获取当前账号和密码的配对情况
-		String[] ret_array = { "0", "no return" };
+	public static String[] solife_consume_delete(String login_email, ConsumeInfo consume_info) 
+			throws HttpException, IOException, JSONException {
+		String[] ret_array = { "0", "return null" };
 
-		// 创建httpRequest对象
-		HttpPost httpRequest = new HttpPost(URLs.CONSUME_DELETE);
-		// HttpGet httpRequest =new HttpGet(httpUrl);
-		List<NameValuePair> params = new ArrayList<NameValuePair>();
-		params.add(new BasicNameValuePair("email", login_email));
-		params.add(new BasicNameValuePair("id",consume_info.get_consume_id()+""));
+		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
+		  new org.apache.commons.httpclient.NameValuePair("email", login_email),
+		  new org.apache.commons.httpclient.NameValuePair("id",consume_info.get_consume_id()+"")
+		};
 
-		try {
-			// 设置字符集
-			HttpEntity httpentity = new UrlEncodedFormEntity(params, "utf-8");
-			// 请求httpRequest
-			httpRequest.setEntity(httpentity);
-			// 取得HttpClinet对象
-			HttpClient httpclient = new DefaultHttpClient();
-			// 请求HttpClient,取得HttpResponse
-			HttpResponse httpResponse = httpclient.execute(httpRequest);
-			// 请求成功
-			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-				// 取得返回的字符串
-				String strResult = EntityUtils.toString(httpResponse.getEntity());
-				JSONObject jsonObject = new JSONObject(strResult);
-				// 获取返回值
-				ret_array[0] = jsonObject.getInt("ret")+"";
-				ret_array[1] = jsonObject.getString("ret_info");
-			}
-		} catch (Exception e) {
-			ret_array[1] = e.getMessage().toString();
-			return ret_array;
+		HashMap<String, Object> hash_map = ApiClient._post(URLs.CONSUME_DELETE, params);
+		int statusCode  = (Integer)hash_map.get("statusCode");
+		String response = (String)hash_map.get("response");
+		
+		// 请求成功
+		if (statusCode == HttpStatus.SC_OK) {;
+			JSONObject jsonObject = new JSONObject(response);
+			// 获取返回值
+			ret_array[0] = jsonObject.getInt("ret")+"";
+			ret_array[1] = jsonObject.getString("ret_info");
 		}
+
 		return ret_array;
 	}
 	
@@ -201,8 +158,12 @@ public class NetUtils {
 	 * 独立处理未同步数据
 	 * @param context
 	 * @param login_email
+	 * @throws JSONException 
+	 * @throws IOException 
+	 * @throws HttpException 
 	 */
-	public static void sync_unupload_consumes(Context context,String login_email) {
+	public static void sync_unupload_consumes(Context context,String login_email) 
+			throws HttpException, IOException, JSONException {
 		    ArrayList<ConsumeInfo> consume_infos;
 		    ConsumeTb             consumeDao;
 		    
@@ -258,10 +219,84 @@ public class NetUtils {
 
     }
 	
+	public static UserInfo get_user_info_with_user_id(Context context,Integer user_id) 
+			throws JSONException {
+        UserInfo user_info = new UserInfo();
+        String [] ret_array = {"0","更新成功"};
+        Integer ret     = 0; 
+        String ret_info = "no return";
+        HashMap<String, Object> hash_map = ApiClient._get(context,URLs.USR_INFO+"?id="+user_id);
+		int statusCode  = (Integer)hash_map.get("statusCode");
+		String response = (String)hash_map.get("json_str");
+		
+	    if(statusCode==HttpStatus.SC_OK)
+	    {
+		     JSONObject jsonObject = new JSONObject(response);
+		     ret      = jsonObject.getInt("ret");
+		     ret_info = jsonObject.getString("ret_info");
+		     ret_array[0] = ret.toString();
+		     ret_array[1] = ret_info;
+		     if(ret.toString().equals("1")) {
+		    	 user_info.set_user_id(jsonObject.getInt("id"));
+		         user_info.set_name(jsonObject.getString("name"));
+		         user_info.set_email(jsonObject.getString("email"));
+		         user_info.set_created_at(jsonObject.getString("created_at"));
+		         user_info.set_updated_at(jsonObject.getString("updated_at"));
+		     }
+	    }
+	    return user_info;
+	}
+	
+	public static void sync_user_list(Context context) 
+			throws JSONException {
+		UserTb user_table = UserTb.getUserTb(context);
+		ArrayList<Integer> user_ids = user_table.get_unsync_user_list();
+		if(user_ids.size()>0) 
+		for(int i=0; i<user_ids.size(); i++ ) {
+			UserInfo user_info = get_user_info_with_user_id(context,user_ids.get(i));
+			if(user_info.get_user_id()>0) {
+			    user_table.insert_record(user_info);
+				Log.w("NetUtils","Insert User:"+user_info.to_string());
+			}
+		}
+	}
+	
+	public static void chk_user_gravatar(Context context)
+			throws JSONException {
+		UserTb user_table = UserTb.getUserTb(context);
+		ArrayList<UserInfo> user_infos = user_table.get_user_list();
+		if(user_infos.size()>0) 
+		for(int i=0; i<user_infos.size(); i++ ) {
+			UserInfo user_info = get_user_info_with_user_id(context,user_infos.get(i).get_user_id());
+			if(user_info.get_user_id()>0) {
+				String email = user_info.get_email();
+				File gravatar_path = new File(Gravatar.gravatar_path(email));
+				String gravatar_url  = Gravatar.gravatar_url(email);
+				if(!gravatar_path.exists()) {
+					download_image_with_url(email);
+				}
+			}
+		}
+		
+	}
+	
 	public static void upload_unsync_consumes_background(final Context context,final String login_email) {
 		 new Thread() {
 			 public void run() {
-				sync_unupload_consumes(context, login_email);
+				try {
+					sync_unupload_consumes(context, login_email);
+					sync_user_list(context);
+					chk_user_gravatar(context);
+				} catch (HttpException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			 };
 		 }.start();
 	}
@@ -313,7 +348,7 @@ public class NetUtils {
 					Editor.putBoolean("is_login", true);
 					ret_array[1] = user_gravatar;
 					
-					download_image_with_url(user_gravatar,URLs.STORAGE_GRAVATAR,user_email.replace("@", "_")+".jpg");
+					download_image_with_url(user_email);
 					Editor.commit();
 			     }
 			            }
@@ -326,17 +361,16 @@ public class NetUtils {
 				    return ret_array;
 	}
 	
-	public static void download_image_with_url(String image_url,String path,String fileName) {    
-    	File picDir = new File(path);
-        if(!picDir.exists()){
-            picDir.mkdir();
-        }
-        try {
+	public static void download_image_with_url(String email) {    
+		
+		if(email.length() == 0) return;
 
-		     String picName = path + fileName;
-		     File myCaptureFile = new File(picName);
+		String gravatar_url = Gravatar.gravatar_url(email);
+        try {
+		     String gravatar_path = Gravatar.gravatar_path(email);
+		     File myCaptureFile = new File(gravatar_path);
 		     if(!myCaptureFile.exists()) {
-		         Bitmap bitmap = getHttpBitmap(image_url);
+		         Bitmap bitmap = getHttpBitmap(gravatar_url);
 			     BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(myCaptureFile));
 			     bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
 			     bos.flush();

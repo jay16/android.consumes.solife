@@ -17,6 +17,8 @@ import us.solife.consumes.util.StringUtils;
  */
 public class URLs implements Serializable {
 	
+	public final static String GRAVATAR_BASE_URL = "http://gravatar.com/avatar/";
+	
 	public final static String HOST = "solife.us";
 	public final static String HTTP = "http://";
 	public final static String HTTPS = "https://";
@@ -27,6 +29,7 @@ public class URLs implements Serializable {
 	private final static String URL_API_HOST = HTTP + HOST + URL_SPLITTER;
 	//users
 	public final static String USR_VALIDATE  = URL_API_HOST + "api/users/validate";
+	public final static String USR_INFO  = URL_API_HOST + "api/users/info";
 	//consumes
 	public final static String CONSUME_LIST   = URL_API_HOST + "api/consumes/list";
 	public final static String CONSUME_CREATE = URL_API_HOST + "api/consumes/create";

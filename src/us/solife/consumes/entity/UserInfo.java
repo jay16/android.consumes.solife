@@ -7,8 +7,8 @@ public class UserInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private long id, sync;
-	private int user_id;
+	private long id = (long) -1, sync;
+	private int user_id = -1;
 	private String  name, email,gravatar,area;
 	private String created_at,updated_at,state;
 
@@ -88,5 +88,14 @@ public class UserInfo implements Serializable {
     
     public String get_state(){
     	return this.state;
+    }
+    
+    public String to_string() {
+    	return "user:"+
+        "id:" + this.id +
+        "name:" + this.name +
+        "email:" + this.email + 
+        "created_at:" + this.created_at;
+        
     }
 }

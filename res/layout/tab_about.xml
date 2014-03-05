@@ -10,7 +10,7 @@
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1.04"
+        android:layout_weight="0.02"
         android:scrollbarStyle="outsideOverlay" >
 
         <LinearLayout
@@ -125,6 +125,13 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/gravatar_chk"
+        android:layout_width="302dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.01"
+        android:text="TextView" />
 
     <Button
         android:layout_width="fill_parent"

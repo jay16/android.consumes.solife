@@ -31,7 +31,7 @@ import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import us.solife.consumes.parser.ConsumeListParse;
+import us.solife.consumes.parse.ConsumeListParse;
 import android.widget.Spinner;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.LinearLayout.LayoutParams;

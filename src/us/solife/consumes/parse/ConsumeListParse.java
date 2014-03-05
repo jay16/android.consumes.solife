@@ -1,4 +1,4 @@
-package us.solife.consumes.parser;
+package us.solife.consumes.parse;
 
 import java.util.ArrayList;
 import java.util.HashMap;

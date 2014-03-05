@@ -1,4 +1,4 @@
-package us.solife.consumes.parser;
+package us.solife.consumes.parse;
 
 import org.json.JSONException;
 

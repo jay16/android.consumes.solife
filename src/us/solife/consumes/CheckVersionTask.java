@@ -13,8 +13,7 @@ import us.solife.consumes.R;
 import us.solife.consumes.api.ApiClient;
 import us.solife.consumes.api.URLs;
 import us.solife.consumes.entity.UpdateInfo;
-import us.solife.consumes.parser.UpdateInfoParse;
-import us.solife.consumes.parser.UpdateInfoParser;
+import us.solife.consumes.parse.UpdateInfoParse;
 import us.solife.consumes.util.DownloadProgressListener;
 import us.solife.consumes.util.FileDownloader;
 import us.solife.consumes.util.NetUtils;
@@ -187,7 +186,7 @@ public class CheckVersionTask implements Runnable {
 		try {
 			//检测当前环境是否有网络
 			if (NetUtils.hasNetWork(context)) {
-				HashMap<String, Object> http_get = ApiClient.http_get(context,path);
+				HashMap<String, Object> http_get = ApiClient._get(context,path);
 				if ((Integer)http_get.get("statusCode")==HttpStatus.SC_OK) {
 					String responseBody = (String)http_get.get("json_str");
 					HashMap<String, Object> hash_map = UpdateInfoParse.getInstance().parseJSON(responseBody);
