@@ -138,4 +138,16 @@ public class UIHelper {
 		});
 		builder.create().show();
 	}
+	/**
+	 * Ïû·ÑÈ¦Ã÷Ï¸
+	 * @param context
+	 */
+	public static void FriendsConsumeItemDialog(final Context context, final ConsumeInfo consume_info)
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setIcon(R.drawable.ic_dialog_menu);
+		builder.setTitle(consume_info.get_user_name()+"[£¤"+consume_info.get_volue()+"]");
+		builder.setMessage(consume_info.get_msg());
+		builder.create().show();
+	}
 }

@@ -10,7 +10,7 @@ public class ConsumeInfo implements Serializable {
 	public long id;
 	public int consume_id, user_id;
 	public double volue;
-	public String  msg, created_at, updated_at,state;
+	public String  msg, created_at, updated_at,state,user_name;
 	public Long sync; //Boolean ´æ·ÅÎªLong£¬true => 1, flase => 0
 
 	public long get_id() {
@@ -84,7 +84,14 @@ public class ConsumeInfo implements Serializable {
 	public void set_updated_at(String updated_at) {
 		this.updated_at = updated_at;
 	}
-	
+
+	public String get_user_name() {
+		return this.user_name;
+	}
+
+	public void set_user_name(String user_name) {
+		this.user_name = user_name;
+	}
 	public String to_string() {
 		return "id:" + this.id +
 	    "user_id:" + this.user_id + 

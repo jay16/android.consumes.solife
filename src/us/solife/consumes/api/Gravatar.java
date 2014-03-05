@@ -4,9 +4,8 @@ import java.io.*;
 import java.security.*;
 
 /**
- * String email = "someone@somewhere.com";
- * String hash = Gravatar.get_url(email);
- * @author Administrator
+ * Gravatar.gravatar_path(email)
+ * Gravatar.gravatar_url(email)
  *
  */
 public class Gravatar {
@@ -37,6 +36,4 @@ public class Gravatar {
 	  
 	  return URLs.STORAGE_GRAVATAR + "/" + get_md5(email) + ".jpg";
   }
-  
-  
 }

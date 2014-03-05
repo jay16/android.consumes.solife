@@ -13,9 +13,12 @@ import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.UserInfo;
 import us.solife.consumes.util.NetUtils;
 import us.solife.consumes.util.ToolUtils;
+import us.solife.consumes.util.UIHelper;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -86,20 +89,24 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 	    		Bitmap bitmap = NetUtils.getLoacalBitmap(picDirStr); 
 	    		holder.gravatar.setImageBitmap(bitmap); //设置Bitmap
 	        }
+	        consume_info.set_user_name(user_info.get_name());
 		} else {
 			holder.name.setText(consume_info.get_user_id()+"-"+consume_info.get_consume_id()+"-"+consume_info.get_sync()+"-"+consume_info.get_state());
+	        consume_info.set_user_name(user_info.get_user_id()+"");
 		}
 
 		//消费值四舍五入，保留一位小数
 		BigDecimal volue = new BigDecimal(consume_info.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);	
 		msg = consume_info.get_msg().toString();	
-		holder.desc.setText("￥"+volue + " - " + msg.toString().replace("\n","-")+"...");
 		if(msg.length()>17)
 			msg = msg.substring(0,18);
 		date = consume_info.get_created_at().toString();
 		if(date.length()>15)
 			date = date.substring(0,16);
 		holder.date.setText(date);
+		holder.desc.setTag(consume_info);//设置隐藏参数(实体类)
+		holder.desc.setText("￥"+volue + " - " + msg.toString().replace("\n","-")+"...");
+		holder.desc.setOnClickListener(figClickListener);
 		/*
 		if(consumeInfo.getCreated_at().length()>=10){
 			String week_name = ToolUtils.getWeekName(consumeInfo.getCreated_at());
@@ -112,6 +119,16 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 	class ViewHolder {
 		private TextView head,name,date,desc;
 		private ImageView gravatar;
-	}
+	}	
+	
+	private View.OnClickListener figClickListener = new View.OnClickListener(){
+
+		@Override
+		public void onClick(View v) {
+			ConsumeInfo consume_info = (ConsumeInfo)v.getTag();
+			Log.w("ListViewFriendsConsumeAAdapter",consume_info.to_string());
+			UIHelper.FriendsConsumeItemDialog(v.getContext(), consume_info);
+		}
+	};
 
 }
