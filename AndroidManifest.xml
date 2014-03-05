@@ -46,7 +46,7 @@
         </activity>
         <activity android:name="us.solife.consumes.TabAbout" >
         </activity>
-        <activity android:name="us.solife.consumes.MainTabActivity" >
+        <activity android:name="us.solife.consumes.Main" >
         </activity>
         <activity android:name="us.solife.consumes.Login" >
         </activity>

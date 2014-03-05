@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/mainweixin"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
     android:background="#eee"
     android:orientation="vertical" >
-
-    <TabHost
+  <TabHost
         android:id="@android:id/tabhost"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
@@ -29,9 +28,117 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
-
-            <include layout="@layout/main_footer" />
+		            
+		    <RelativeLayout
+		        android:id="@+id/main_bottom"
+		        android:layout_width="wrap_content"
+		        android:layout_height="50dp"
+		        android:layout_alignParentBottom="true"
+		        android:background="@drawable/bottom_bar"
+		        android:orientation="vertical" >
+		
+		        <ImageView
+		            android:id="@+id/img_tab_now"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentBottom="true"
+		            android:layout_gravity="bottom"
+		            android:scaleType="matrix"
+		            android:src="@drawable/tab_bg" />
+		
+		        <LinearLayout
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_alignParentBottom="true"
+		            android:paddingBottom="2dp" >
+		
+		            <LinearLayout
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:gravity="center_horizontal"
+		                android:orientation="vertical" >
+		
+		                <ImageView
+		                    android:id="@+id/main_footbar_chart"
+		                    android:layout_width="wrap_content"
+		                    android:layout_height="wrap_content"
+		                    android:clickable="true"
+		                    android:scaleType="matrix"
+		                    android:src="@drawable/widget_bar_chart" />
+		
+		            </LinearLayout>
+		
+		            <LinearLayout
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:gravity="center_horizontal"
+		                android:orientation="vertical" >
+		
+		                <ImageView
+		                    android:id="@+id/main_footbar_list"
+		                    android:layout_width="wrap_content"
+		                    android:layout_height="wrap_content"
+		                    android:clickable="true"
+		                    android:scaleType="matrix"
+		                    android:src="@drawable/widget_bar_list" />
+		
+		            </LinearLayout>
+		
+		            <LinearLayout
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:gravity="center_horizontal"
+		                android:orientation="vertical" >
+		
+		                <ImageView
+		                    android:id="@+id/main_footbar_add"
+		                    android:layout_width="wrap_content"
+		                    android:layout_height="wrap_content"
+		                    android:clickable="true"
+		                    android:scaleType="matrix"
+		                    android:src="@drawable/widget_bar_add" />
+		
+		            </LinearLayout>
+		
+		            <LinearLayout
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:gravity="center_horizontal"
+		                android:orientation="vertical" >
+		
+		                <ImageView
+		                    android:id="@+id/main_footbar_user"
+		                    android:layout_width="wrap_content"
+		                    android:layout_height="wrap_content"
+		                    android:clickable="true"
+		                    android:scaleType="matrix"
+		                    android:src="@drawable/widget_bar_user" />
+		
+		            </LinearLayout>
+		
+		            <LinearLayout
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_weight="1"
+		                android:gravity="center_horizontal"
+		                android:orientation="vertical" >
+		
+		                <ImageView
+		                    android:id="@+id/main_footbar_more"
+		                    android:layout_width="wrap_content"
+		                    android:layout_height="wrap_content"
+		                    android:clickable="true"
+		                    android:scaleType="matrix"
+		                    android:src="@drawable/widget_bar_more" />
+		
+		            </LinearLayout>
+		        </LinearLayout>
+		    </RelativeLayout>
         </LinearLayout>
     </TabHost>
 
-</LinearLayout>
+</RelativeLayout>

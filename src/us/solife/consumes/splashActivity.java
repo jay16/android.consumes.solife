@@ -46,7 +46,7 @@ public class splashActivity extends BaseActivity {
 		public void handleMessage(android.os.Message msg) {
 			// intent解决Android应用的各项组件之间的通讯
 			// 专门提供组件互相调用的相关信息，实现调用者与被调用者之间的解耦
-			Intent intent = new Intent(splashActivity.this, MainTabActivity.class);
+			Intent intent = new Intent(splashActivity.this, Main.class);
 			switch (msg.what) {
 			case 1000:
 				Toast.makeText(splashActivity.this, "数据库插入成功", 0).show();
@@ -142,7 +142,7 @@ public class splashActivity extends BaseActivity {
 		Intent intent;
 		if (sharedPreferences.contains("is_login")
 				&& sharedPreferences.getBoolean("is_login", false)) {
-			intent = new Intent(splashActivity.this, MainTabActivity.class);
+			intent = new Intent(splashActivity.this, Main.class);
 			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
 			
 			

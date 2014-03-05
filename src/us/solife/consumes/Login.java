@@ -67,7 +67,7 @@ public class Login extends BaseActivity {
 	        String ret_str;
 	        if(ret_array[0].equals("1")){
 	            ret_str = "µÇÂ½³É¹¦";	
-				startActivity(new Intent(Login.this,MainTabActivity.class));
+				startActivity(new Intent(Login.this,Main.class));
 	        } else {
 	            ret_str = "µÇÂ½Ê§°Ü:" +ret_array[1];
 	        }

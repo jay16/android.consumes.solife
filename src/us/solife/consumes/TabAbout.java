@@ -95,6 +95,6 @@ public class TabAbout extends BaseActivity implements OnClickListener {
 	
 	public void exit_application(View v) {  
     	this.finish();
-    	MainTabActivity.instance.finish();//关闭Main 这个Activity
+    	Main.instance.finish();//关闭Main 这个Activity
     }
 }

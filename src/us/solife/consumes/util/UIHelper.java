@@ -3,7 +3,7 @@ package us.solife.consumes.util;
 import java.io.File;
 
 import us.solife.consumes.ConsumeItem;
-import us.solife.consumes.MainTabActivity;
+import us.solife.consumes.Main;
 import us.solife.consumes.R;
 import us.solife.consumes.ConsumeForm;
 import us.solife.consumes.TabList;
@@ -84,7 +84,7 @@ public class UIHelper {
 			public void onClick(View v) {
 				//activity.finish();
 
-				Intent intent = new Intent(activity, MainTabActivity.class);
+				Intent intent = new Intent(activity, Main.class);
 				activity.startActivity(intent);
 			}
 		};

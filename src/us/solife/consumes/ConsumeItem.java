@@ -108,7 +108,7 @@ public class ConsumeItem extends BaseActivity {
 	Button.OnClickListener button_back_listener = new Button.OnClickListener() {
 		public void onClick(View v) {
 			
-			startActivity(new Intent(ConsumeItem.this, MainTabActivity.class));
+			startActivity(new Intent(ConsumeItem.this, Main.class));
 			//ConsumeItem.this.finish();
 
 		}

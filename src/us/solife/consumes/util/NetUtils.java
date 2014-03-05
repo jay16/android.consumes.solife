@@ -286,7 +286,7 @@ public class NetUtils {
 				try {
 					sync_unupload_consumes(context, login_email);
 					sync_user_list(context);
-					chk_user_gravatar(context);
+					//chk_user_gravatar(context);
 				} catch (HttpException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
