@@ -1,13 +1,23 @@
-package us.solife.consumes.util;
+package us.solife.consumes;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
+
+import org.apache.commons.httpclient.HttpStatus;
 
 import us.solife.consumes.R;
+import us.solife.consumes.api.ApiClient;
+import us.solife.consumes.api.URLs;
 import us.solife.consumes.entity.UpdateInfo;
+import us.solife.consumes.parser.UpdateInfoParse;
+import us.solife.consumes.parser.UpdateInfoParser;
+import us.solife.consumes.util.DownloadProgressListener;
+import us.solife.consumes.util.FileDownloader;
+import us.solife.consumes.util.NetUtils;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,7 +40,7 @@ import android.widget.Toast;
 public class CheckVersionTask implements Runnable {
 	private static final String TAG = "CheckVersionTask";
 	private Context context;
-	private UpdateInfo info;
+	private UpdateInfo update_info;
 	private ProgressBar pb;
 	private TextView resultView;
 	private Thread downloadThread;
@@ -74,10 +84,9 @@ public class CheckVersionTask implements Runnable {
 	};
 	/*调用系统安装界面*/
 	private void install() {
-		File file = new File(Environment.getExternalStorageDirectory(),"mobilesafe.apk");
+		File file = new File(URLs.STORAGE_APK,update_info.get_apk_name());
 		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setDataAndType(Uri.fromFile(file),
-				"application/vnd.android.package-archive");
+		intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
 		context.startActivity(intent);
 	}
 	
@@ -94,7 +103,7 @@ public class CheckVersionTask implements Runnable {
 		case 2:	//版本不同，需要更新
 			new AlertDialog.Builder(context)
 			.setTitle(R.string.please_update)
-			.setMessage(info.getDescription())
+			.setMessage(update_info.get_description())
 			.setPositiveButton(R.string.ok, new OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();
@@ -135,7 +144,7 @@ public class CheckVersionTask implements Runnable {
 	 private void download(){
 	    	if(Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
 	    		try {
-					download(info.getUrl(),Environment.getExternalStorageDirectory());
+					download(update_info.get_url(),new File(URLs.STORAGE_APK));
 				} catch (IOException e) {
 					Log.e(TAG, e.getMessage());
 				}
@@ -152,7 +161,7 @@ public class CheckVersionTask implements Runnable {
 	    public void download(final String path,final File saveFile) throws IOException{
 	    	downloadThread = new Thread(new Runnable() {			
 				public void run() {
-					FileDownloader loader = new FileDownloader(context, path, saveFile, 3);
+					FileDownloader loader = new FileDownloader(context, path, saveFile, 3, update_info.get_apk_name());
 					pb.setMax(loader.getFileSize());//设置进度条的最大刻度为文件的长度
 					try {
 						loader.download(new DownloadProgressListener() {
@@ -173,31 +182,39 @@ public class CheckVersionTask implements Runnable {
 	    }
 	public void run() {
 		//更新服务器路径
-		String path = context.getApplicationContext().getResources().getString(
-				R.string.server_url);
+		String path = URLs.VERSION_UPDATE;
+		
 		try {
-
-			final URL url = new URL(path);
-			final HttpURLConnection conn = (HttpURLConnection) url
-					.openConnection();
-			conn.setConnectTimeout(5000);
-			final InputStream is = conn.getInputStream();
-			if (null == is) {
+			//检测当前环境是否有网络
+			if (NetUtils.hasNetWork(context)) {
+				HashMap<String, Object> http_get = ApiClient.http_get(context,path);
+				if ((Integer)http_get.get("statusCode")==HttpStatus.SC_OK) {
+					String responseBody = (String)http_get.get("json_str");
+					HashMap<String, Object> hash_map = UpdateInfoParse.getInstance().parseJSON(responseBody);
+					if((Boolean)hash_map.get("result")) {
+						update_info = (UpdateInfo) hash_map.get("update_info");
+						Log.w("CheckVersionTash",update_info.to_string());
+					}
+				} else {
+					Log.w("CheckVersionTash","Parase Error");
+					return ;
+				}
+			} else {
+				Toast.makeText(context, "没有网络，版本更新失败", 0).show();
+				Log.w("CheckVersionTash","没有网络，版本更新失败");
 				return;
 			}
-			info = UpdateInfoParser.getInstance().getUpdateInfo(is);
-			conn.disconnect();
-			is.close();
+			
 			final PackageManager pm = context.getPackageManager();
-			final PackageInfo packInfo = pm.getPackageInfo("com.mobilesafe",
-					PackageManager.GET_ACTIVITIES);
+			final PackageInfo packInfo = pm.getPackageInfo("us.solife.consumes", PackageManager.GET_ACTIVITIES);
 			final String version = packInfo.versionName;
+			Log.w(TAG,"Version :"+version);
+			
 			/*版本相同无需下载*/
-			if (version.equals(info.getVersoin())) {
+			if (version.equals(update_info.get_version())) {
 				handler.obtainMessage(0).sendToTarget();
 			} else {
 				Log.i(TAG, "版本不同");
-				
 				handler.obtainMessage(2).sendToTarget();
 			}
 		} catch (Exception e) {

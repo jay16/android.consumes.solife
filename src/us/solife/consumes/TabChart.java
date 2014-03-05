@@ -38,6 +38,7 @@ import us.solife.androidcharts.entity.TitleValueColorEntity;
 import us.solife.consumes.R;
 import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.adapter.ListViewFriendsConsumesAdapter;
+import us.solife.consumes.api.Gravatar;
 import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.entity.ConsumeInfo;
 
@@ -69,6 +70,7 @@ public class TabChart extends BaseActivity {
 		
 		Button btn_back = (Button)findViewById(R.id.menu_btn_back);
 		btn_back.setVisibility(View.GONE);
+		//Toast.makeText(context,Gravatar.get_url("jay_li@solife.us"),0).show();
 		/*
         initVOL();
         initOHLC();
@@ -102,7 +104,7 @@ public class TabChart extends BaseActivity {
 		consumeDao = ConsumeTb.getConsumeTb(TabChart.this);
         consumeInfos = consumeDao.get_all_records(TabChart.this);
 		if (consumeInfos != null && consumeInfos.size() != 0) {
-			Toast.makeText(TabChart.this, "Data", 0).show();
+			Toast.makeText(TabChart.this, "œ˚∑—≈Û”—»¶", 0).show();
 			listView.setAdapter(new ListViewFriendsConsumesAdapter(consumeInfos,TabChart.this));
 			listView.setClickable(true);
 			listView.setOnItemClickListener(new OnItemClickListener(){

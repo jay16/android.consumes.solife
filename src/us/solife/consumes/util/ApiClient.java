@@ -24,7 +24,7 @@ import org.apache.commons.httpclient.methods.multipart.Part;
 import org.apache.commons.httpclient.methods.multipart.StringPart;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 
-import us.solife.consumes.entity.URLs;
+import us.solife.consumes.api.URLs;
 import us.solife.consumes.entity.UserInfo;
 
 import android.content.Context;

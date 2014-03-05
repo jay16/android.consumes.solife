@@ -79,7 +79,7 @@ public class FileDownloader {
 	 * @param fileSaveDir 文件保存目录
 	 * @param threadNum 下载线程数
 	 */
-	public FileDownloader(Context context, String downloadUrl, File fileSaveDir, int threadNum) {
+	public FileDownloader(Context context, String downloadUrl, File fileSaveDir, int threadNum, String filename) {
 		try {
 			this.context = context;
 			this.downloadUrl = downloadUrl;
@@ -101,7 +101,7 @@ public class FileDownloader {
 				this.fileSize = conn.getContentLength();//根据响应获取文件大小
 				if (this.fileSize <= 0) throw new RuntimeException("Unkown file size ");
 						
-				String filename = getFileName(conn);//获取文件名称
+				//String filename = getFileName(conn);//获取文件名称
 				this.saveFile = new File(fileSaveDir, filename);//构建保存文件
 				if(this.data.size()==this.threads.length){//下面计算所有线程已经下载的数据长度
 					for (int i = 0; i < this.threads.length; i++) {

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import us.solife.consumes.R;
-import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
+import us.solife.consumes.entity.CurrentUser;
 
 import android.database.Cursor;
 

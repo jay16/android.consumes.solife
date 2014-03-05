@@ -1,4 +1,4 @@
-package us.solife.consumes.service;
+package us.solife.consumes.recevier;
 
 import us.solife.consumes.util.NetUtils;
 import us.solife.consumes.util.ToolUtils;

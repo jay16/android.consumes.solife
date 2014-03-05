@@ -1,4 +1,4 @@
-package us.solife.consumes.util;
+package us.solife.consumes.parser;
 
 import java.io.InputStream;
 
@@ -7,6 +7,8 @@ import org.xmlpull.v1.XmlPullParserException;
 
 import us.solife.consumes.entity.UpdateInfo;
 
+
+import android.util.Log;
 import android.util.Xml;
 
 
@@ -28,16 +30,17 @@ public class UpdateInfoParser {
 			switch(type){
 			case XmlPullParser.START_TAG:
 				if("version".equals(parser.getName())){
-					info.setVersoin(parser.nextText());
+					info.set_version(parser.nextText());
 				}
 				if("url".equals(parser.getName())){
-					info.setUrl(parser.nextText());
+					info.set_url(parser.nextText());
 				}
 				if("descriptoin".equals(parser.getName())){
-					info.setDescription(parser.nextText());
+					info.set_description(parser.nextText());
 				}
 			}
 			type = parser.next();
+			Log.w("UpdateInfoParser",info.to_string());
 		}
 		is.close();
 		is = null;

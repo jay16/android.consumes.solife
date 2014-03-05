@@ -1,12 +1,11 @@
-package us.solife.consumes.db;
+package us.solife.consumes.entity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import us.solife.consumes.entity.ConsumeInfo;
-import us.solife.consumes.entity.UserInfo;
+import us.solife.consumes.db.ConsumeDatabaseHelper;
 import us.solife.consumes.util.ToolUtils;
 import android.content.ContentValues;
 import android.content.Context;
@@ -123,6 +122,7 @@ public class CurrentUser {
 		SQLiteDatabase db = consumeDatabaseHelper.getWritableDatabase();
 		ContentValues cv = new ContentValues();
 		cv.put("user_id", user_id);
+		cv.put("consume_id", consume_info.get_consume_id());
 		cv.put("volue", consume_info.get_volue());
 		cv.put("msg", consume_info.get_msg());
 		cv.put("created_at", consume_info.get_created_at());

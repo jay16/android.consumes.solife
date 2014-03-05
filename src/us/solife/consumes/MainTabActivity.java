@@ -1,6 +1,5 @@
 package us.solife.consumes;
 
-
 import us.solife.consumes.R;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -23,11 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.TabHost;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.Button;
 
 public class MainTabActivity extends TabActivity implements OnClickListener,OnItemClickListener {
 	public static MainTabActivity instance = null;
@@ -156,60 +151,6 @@ public class MainTabActivity extends TabActivity implements OnClickListener,OnIt
 			break;
 		}
 	}
-	
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-    	if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {  //获取 back键
-        	if(menu_display){         //如果 Menu已经打开 ，先关闭Menu
-        		menuWindow.dismiss();
-        		menu_display = false;
-        	} else {
-        		Intent intent = new Intent();
-            	intent.setClass(getApplication(),Exit.class);
-            	startActivity(intent);
-        	}
-    	} else if(keyCode == KeyEvent.KEYCODE_MENU){   //获取 Menu键			
-			if(!menu_display){
-				//获取LayoutInflater实例
-				inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-				//这里的main布局是在inflate中加入的哦，以前都是直接this.setContentView()的吧？呵呵
-				//该方法返回的是一个View的对象，是布局中的根
-				layout = inflater.inflate(R.layout.menu_exit, null);
-				
-				//下面我们要考虑了，我怎样将我的layout加入到PopupWindow中呢？？？很简单
-				menuWindow = new PopupWindow(layout,LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT); //后两个参数是width和height
-				//menuWindow.showAsDropDown(layout); //设置弹出效果
-				//menuWindow.showAsDropDown(null, 0, layout.getHeight());
-				menuWindow.showAtLocation(this.findViewById(R.id.main), Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL, 0, 0); //设置layout在PopupWindow中显示的位置
-				//如何获取我们main中的控件呢？也很简单
-				mClose = (LinearLayout)layout.findViewById(R.id.menu_close);
-				mCloseBtn = (LinearLayout)layout.findViewById(R.id.menu_close_btn);
-				
-				
-				//下面对每一个Layout进行单击事件的注册吧。。。
-				//比如单击某个MenuItem的时候，他的背景色改变
-				//事先准备好一些背景图片或者颜色
-				mCloseBtn.setOnClickListener (new View.OnClickListener() {					
-					@Override
-					public void onClick(View arg0) {						
-						//Toast.makeText(Main.this, "退出", Toast.LENGTH_LONG).show();
-						Intent intent = new Intent();
-			        	intent.setClass(getApplication(),Exit.class);
-			        	startActivity(intent);
-			        	menuWindow.dismiss(); //响应点击事件之后关闭Menu
-					}
-				});				
-				menu_display = true;				
-			}else{
-				//如果当前已经为显示状态，则隐藏起来
-				menuWindow.dismiss();
-				menu_display = false;
-				}
-			
-			return false;
-		}
-    	return false;
-    }
     
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -225,7 +166,7 @@ public class MainTabActivity extends TabActivity implements OnClickListener,OnIt
 		final int itemId = item.getItemId();
 		switch(itemId){
 		case R.id.menu_update_version:
-			//new Thread(new CheckVersionTask(this)).start();
+			new Thread(new CheckVersionTask(this)).start();
 			break;
 		case R.id.menu_exit:
 			showDialog(DIALOG_EXIT);
@@ -238,7 +179,6 @@ public class MainTabActivity extends TabActivity implements OnClickListener,OnIt
     @Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-	
 		case DIALOG_EXIT:
 			return new AlertDialog.Builder(this)
 			.setTitle(R.string.prompt_ts)
@@ -263,6 +203,13 @@ public class MainTabActivity extends TabActivity implements OnClickListener,OnIt
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 		switch (position) {
 		}
+	}
+	/**
+	 * 退出到Home窗口
+	 */
+	@Override
+	public void onBackPressed() {
+		Toast.makeText(getApplication(),"back", 0).show();
 	}
 
 }

@@ -3,6 +3,7 @@ package us.solife.consumes;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
@@ -17,7 +18,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.message.BasicNameValuePair;
 
-import us.solife.consumes.parseJson.BaseParse;
+import us.solife.consumes.api.ApiClient;
+import us.solife.consumes.parser.BaseParse;
 import us.solife.consumes.util.AppManager;
 import us.solife.consumes.util.NetUtils;
 import us.solife.consumes.util.ThreadPoolManager;
@@ -153,23 +155,16 @@ public abstract class BaseActivity extends Activity {
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			HttpClient client = getHttpClient();
 			sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 			String email = sharedPreferences.getString("current_user_email", "");
-			GetMethod httpGet = new GetMethod(url+"?email="+email);
-			httpGet.getParams().setSoTimeout(TIMEOUT_SOCKET);
 			Message message = new Message();
 			try {
 				//检测当前环境是否有网络
 				if (NetUtils.hasNetWork(context)) {
-					int statusCode = client.executeMethod(httpGet);
-					if (statusCode == HttpStatus.SC_OK) {
-						String responseBody = httpGet.getResponseBodyAsString();
+					HashMap<String, Object> http_get = ApiClient.http_get(context,url+"?email="+email);
+					if ((Integer)http_get.get("statusCode")==HttpStatus.SC_OK) {
+						String responseBody = (String)http_get.get("json_str");
 						Object object = baseParse.parseJSON(responseBody);
-                        
-						//Log.w("BaseActivity",responseBody);
 						
 						message.what = 1000;
 						message.obj = object;

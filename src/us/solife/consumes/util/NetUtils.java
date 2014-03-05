@@ -32,10 +32,10 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import us.solife.consumes.TabList;
+import us.solife.consumes.api.URLs;
 import us.solife.consumes.db.ConsumeTb;
-import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
-import us.solife.consumes.entity.URLs;
+import us.solife.consumes.entity.CurrentUser;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -55,10 +55,6 @@ import android.widget.Toast;
  * @created 2014-02-25
  */
 public class NetUtils {
-	static String storge_base_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/solife/";
-	static String storge_gravatar_path = storge_base_path + "gravatar/";
-	static String storge_image_path    = storge_base_path + "image/";
-	static String storge_apk_path      = storge_base_path + "apk/";
 	
 	/**
 	 * 与服务器发送请求，得到数据
@@ -227,6 +223,7 @@ public class NetUtils {
 							consume_info.set_consume_id(Integer.valueOf(ret_array[2]));
 							consume_info.set_sync((long)1);
 							consume_info.set_state("");
+							Log.w("NetUtils",consume_info.to_string());
 							current_user.update_record(consume_info);
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-YES");
 						} else {
@@ -238,6 +235,7 @@ public class NetUtils {
 						if (ret_array[0].equals("1")) {
 							consume_info.set_sync((long)1);
 							consume_info.set_state("");
+							Log.w("NetUtils",consume_info.to_string());
 							current_user.update_record(consume_info);
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-YES");
 						} else {
@@ -246,6 +244,7 @@ public class NetUtils {
 					} else if(consume_info.get_state().equals("delete")) {
 					  ret_array = NetUtils.solife_consume_delete(login_email, consume_info);
 						if (ret_array[0].equals("1")) {
+							Log.w("NetUtils",consume_info.to_string());
 							current_user.destroy_record(consume_info.get_id());
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-YES");
 						} else {
@@ -314,13 +313,7 @@ public class NetUtils {
 					Editor.putBoolean("is_login", true);
 					ret_array[1] = user_gravatar;
 					
-					String picDirStr = Environment.getExternalStorageDirectory().getAbsolutePath() + "/solife/"; 
-					File picDir = new File(picDirStr);
-					if(!picDir.exists()){
-					    picDir.mkdir();
-					}
-					picDirStr += "gravatar/";
-					download_image_with_url(user_gravatar,picDirStr,user_email.replace("@", "_")+".jpg");
+					download_image_with_url(user_gravatar,URLs.STORAGE_GRAVATAR,user_email.replace("@", "_")+".jpg");
 					Editor.commit();
 			     }
 			            }

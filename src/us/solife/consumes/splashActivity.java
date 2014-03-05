@@ -1,14 +1,16 @@
 package us.solife.consumes;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import us.solife.consumes.R;
 import us.solife.consumes.BaseActivity.DataCallback;
+import us.solife.consumes.api.URLs;
 import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.entity.ConsumeInfo;
-import us.solife.consumes.parseJson.ConsumeListParse;
-import us.solife.consumes.service.TimerService;
+import us.solife.consumes.parser.ConsumeListParse;
+import us.solife.consumes.recevier.TimerService;
 
 //引用consume自定义的类包
 
@@ -157,7 +159,14 @@ public class splashActivity extends BaseActivity {
 		} else {
 			intent = new Intent(splashActivity.this, Login.class);
 		}
-
+		
+		//创建基本目录文件夹
+		File storage_base = new File(URLs.STORAGE_BASE);
+		if(!storage_base.exists()) storage_base.mkdir(); 
+		File storage_apk = new File(URLs.STORAGE_APK);
+		if(!storage_apk.exists()) storage_apk.mkdir(); 
+		File storage_gravatar = new File(URLs.STORAGE_GRAVATAR);
+		if(!storage_gravatar.exists()) storage_gravatar.mkdir(); 
 	    
 		startActivity(intent);
 		finish();

@@ -69,7 +69,7 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 		if(date.length()>15)
 			date = date.substring(0,16);
 		
-		holder.name.setText(consumeInfo.get_user_id()+"-"+consumeInfo.get_sync()+"-"+consumeInfo.get_state());
+		holder.name.setText(consumeInfo.get_user_id()+"-"+consumeInfo.get_consume_id()+"-"+consumeInfo.get_sync()+"-"+consumeInfo.get_state());
 		holder.desc.setText("гд"+volue + " - " + msg.toString().replace("\n","-")+"...");
 		holder.date.setText(date);
 		//holder.name.setText(consumeInfo.getUserName());

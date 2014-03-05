@@ -155,30 +155,4 @@ public class ConsumeTb {
 		
 		return consume_info;
 	}
-	public int update_record(ConsumeInfo consume_info) {
-		SQLiteDatabase db = consumeDatabaseHelper.getWritableDatabase();
-		ContentValues cv = new ContentValues();
-		cv.put("user_id", consume_info.get_user_id());
-		cv.put("consume_id", consume_info.get_consume_id());
-		cv.put("msg", consume_info.get_msg());
-		cv.put("volue", consume_info.get_volue());
-		cv.put("created_at", consume_info.get_created_at());
-		cv.put("sync", consume_info.get_sync());
-		cv.put("state", consume_info.get_state());
-		
-		String[] args = {String.valueOf(consume_info.get_id())};
-
-		return db.update(DATABASE_TABLE, cv, "id=?",args);
-	}
-
-	public void delete_record_with_rowid(long row_id) {		
-		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		database.beginTransaction();
-		database.execSQL("delete from consumes where id = "+row_id);
-		database.setTransactionSuccessful();
-		database.endTransaction();
-		database.close();
-	}
-	
-	
 }

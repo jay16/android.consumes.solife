@@ -17,8 +17,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import us.solife.consumes.R;
-import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
+import us.solife.consumes.entity.CurrentUser;
 
 
 import android.content.Context;
@@ -183,7 +183,18 @@ public class ConsumeForm extends BaseActivity {
 						current_user.insert_record(Double.parseDouble(volue), msg, created_at);
 						Log.e("ConsumeForm","Action:["+action+"]");
 					} else if(action.equals("update")){
-						current_user.update_record(row_id,Double.parseDouble(volue), msg, created_at);
+						ConsumeInfo consume_info = current_user.get_record(row_id);
+						consume_info.set_volue(Double.parseDouble(volue));
+						consume_info.set_msg(msg);
+						consume_info.set_created_at(created_at);
+						
+						//修改未同步数据，无需修改sync,state
+						if(consume_info.get_sync() == (long)1) {
+							consume_info.set_sync((long)0);
+							consume_info.set_state("update");
+						}
+						
+						current_user.update_record(consume_info);
 						Log.e("ConsumeForm","Action:["+action+"]");
 					} else {
 						Log.e("ConsumeForm","Action Not Found:["+action+"]");

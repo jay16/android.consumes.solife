@@ -3,25 +3,41 @@ package us.solife.consumes.entity;
 
 public class UpdateInfo {
 
-	private String versoin;
+	private String version;
 	private String url;
 	private String description;
-	public String getVersoin() {
-		return versoin;
+	private String apk_name;
+
+	public String get_apk_name() {
+		return apk_name;
 	}
-	public void setVersoin(String versoin) {
-		this.versoin = versoin;
+	public void set_apk_name(String apk_name) {
+		this.apk_name = apk_name;
 	}
-	public String getUrl() {
+	
+	public String get_version() {
+		return version;
+	}
+	public void set_version(String versoin) {
+		this.version = versoin;
+	}
+	public String get_url() {
 		return url;
 	}
-	public void setUrl(String url) {
+	public void set_url(String url) {
 		this.url = url;
 	}
-	public String getDescription() {
+	public String get_description() {
 		return description;
 	}
-	public void setDescription(String description) {
+	public void set_description(String description) {
 		this.description = description;
+	}
+	public String to_string() {
+		return "Version-Info:"+
+	    "version:" + version +
+	    "apk_name:" + apk_name +
+	    "url:" + url +
+	    "description" + description;
 	}
 }

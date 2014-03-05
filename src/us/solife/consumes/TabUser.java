@@ -12,8 +12,8 @@ import android.graphics.Bitmap;
 //import org.apache.http.client.methods.HttpPost; 
 
 import us.solife.consumes.R;
-import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
+import us.solife.consumes.entity.CurrentUser;
 import us.solife.consumes.util.NetUtils;
 import us.solife.consumes.util.ToolUtils;
 

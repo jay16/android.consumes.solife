@@ -26,7 +26,7 @@
 
 	
     <string name="please_update">请升级</string>
-    <string name="server_url">http://mobilesafe.googlecode.com/files/mobilesafe_version.xml</string>
+    <string name="package_name">us.solife.consumes</string>
     <string name="gridchart">GridChart</string>
     <string name="machart">MAChart</string>
     <string name="stickchart">StickChart</string>

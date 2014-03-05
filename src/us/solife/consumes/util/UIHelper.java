@@ -7,8 +7,8 @@ import us.solife.consumes.MainTabActivity;
 import us.solife.consumes.R;
 import us.solife.consumes.ConsumeForm;
 import us.solife.consumes.TabList;
-import us.solife.consumes.db.CurrentUser;
 import us.solife.consumes.entity.ConsumeInfo;
+import us.solife.consumes.entity.CurrentUser;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -121,7 +121,9 @@ public class UIHelper {
 				current_user.destroy_record(consume_info.get_id());
 				Log.w("UIHelper","Delete YES");
 				Intent intent = new Intent(context, ConsumeItem.class);
-				intent.putExtra("created_at",  consume_info.get_created_at().subSequence(1,10));
+				String y_m_d = (String) consume_info.get_created_at().subSequence(0,10);
+				Log.w("UIHelper","After Delete => "+y_m_d);
+				intent.putExtra("created_at",  y_m_d);
 				context.startActivity(intent);
 				dialog.dismiss();
 			}

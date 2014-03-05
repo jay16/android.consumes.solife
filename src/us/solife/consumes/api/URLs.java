@@ -1,10 +1,12 @@
-package us.solife.consumes.entity;
+package us.solife.consumes.api;
 
 
 import java.io.Serializable;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+
+import android.os.Environment;
 import us.solife.consumes.util.StringUtils;
 
 /**
@@ -23,13 +25,23 @@ public class URLs implements Serializable {
 	private final static String URL_UNDERLINE = "_";
 	
 	private final static String URL_API_HOST = HTTP + HOST + URL_SPLITTER;
+	//users
 	public final static String USR_VALIDATE  = URL_API_HOST + "api/users/validate";
+	//consumes
 	public final static String CONSUME_LIST   = URL_API_HOST + "api/consumes/list";
 	public final static String CONSUME_CREATE = URL_API_HOST + "api/consumes/create";
 	public final static String CONSUME_UPDATE = URL_API_HOST + "api/consumes/update";
 	public final static String CONSUME_DELETE = URL_API_HOST + "api/consumes/delete";
 	public final static String CONSUME_SHOW   = URL_API_HOST + "api/consumes/show";
+	//android app
+	public final static String VERSION_UPDATE   = URL_API_HOST + "api/phone/update";
 	
+
+	public final static String STORAGE_BASE     = Environment.getExternalStorageDirectory().getAbsolutePath() 
+			+ "/solife/";
+	public final static String STORAGE_GRAVATAR = STORAGE_BASE + "gravatar";
+	public final static String STORAGE_APK      = STORAGE_BASE + "apk";
+	public final static String STORAGE_IMAGES   = STORAGE_BASE + "images";
 	
 	public final static int URL_OBJ_TYPE_OTHER = 0x000;
 	public final static int URL_OBJ_TYPE_NEWS = 0x001;
