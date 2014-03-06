@@ -25,21 +25,12 @@ public class TabAbout extends BaseActivity implements OnClickListener {
 
 		TextView  textView_main_header = (TextView)findViewById(R.id.textView_main_header);
 		textView_main_header.setText("…Ë÷√");
-		
-		UserTb user_table = UserTb.getUserTb(TabAbout.this);
-		ArrayList<Integer> usre_ids = user_table.get_unsync_user_list();
-		
-		String id = "";
-		if(usre_ids.size()>0) 
-		for(int i=0; i<usre_ids.size(); i++ ) {
-			id += "["+usre_ids.get(i)+"]";
-		}
-		TextView gravatar_chk  = (TextView)findViewById(R.id.gravatar_chk);
-		gravatar_chk.setText(id);
-		
 
 		Button btn_back = (Button)findViewById(R.id.menu_btn_back);
 		btn_back.setVisibility(View.GONE);
+		
+		UserTb user_table = UserTb.getUserTb(TabAbout.this);
+		ArrayList<Integer> usre_ids = user_table.get_unsync_user_list();
 		
 		RelativeLayout tab_about_info = (RelativeLayout)findViewById(R.id.tab_about_info);
 		RelativeLayout tab_about_msg  = (RelativeLayout)findViewById(R.id.tab_about_msg);

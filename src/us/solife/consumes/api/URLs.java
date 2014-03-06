@@ -36,6 +36,7 @@ public class URLs implements Serializable {
 	public final static String CONSUME_UPDATE = URL_API_HOST + "api/consumes/update";
 	public final static String CONSUME_DELETE = URL_API_HOST + "api/consumes/delete";
 	public final static String CONSUME_SHOW   = URL_API_HOST + "api/consumes/show";
+	public final static String CONSUME_FRIEND_NEW   = URL_API_HOST + "api/consumes/friends";
 	//android app
 	public final static String VERSION_UPDATE   = URL_API_HOST + "api/phone/update";
 	

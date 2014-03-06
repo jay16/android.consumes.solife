@@ -126,26 +126,4 @@
         </LinearLayout>
     </ScrollView>
 
-    <TextView
-        android:id="@+id/gravatar_chk"
-        android:layout_width="302dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.01"
-        android:text="TextView" />
-
-    <Button
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="14dp"
-        android:background="@drawable/btn_style_red"
-        android:gravity="center"
-        android:onClick="exit_application"
-        android:padding="4dp"
-        android:text="退出登录"
-        android:textColor="#fff"
-        android:textSize="18sp" />
-
 </LinearLayout>

@@ -305,7 +305,7 @@ public class TabList extends BaseActivity{
 							Toast.makeText(TabList.this, "开始同步数据2", 0).show();
 							//log调试用
 				            Log.w("TabList callback","消费列表数量:"+consume_infos.size());
-							consumeDao.insert_all_record(TabList.this, consume_infos);
+							consumeDao.insert_all_record(consume_infos, true);
 				            Log.w("TabList callback","消费列表插入数据库完毕");
 							message.what = 1000;
 							message.obj  = consume_infos;

@@ -26,15 +26,13 @@
         <uses-library android:name="android.test.runner" />
 
         <activity
-            android:name="us.solife.consumes.splashActivity"
+            android:name="us.solife.consumes.Loading"
             android:label="@string/title_activity_main" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity android:name="MainRecordActivity" >
         </activity>
         <activity android:name="us.solife.consumes.ConsumeForm" >
         </activity>
@@ -51,8 +49,6 @@
         <activity android:name="us.solife.consumes.Login" >
         </activity>
         <activity android:name="us.solife.consumes.ConsumeItem" >
-        </activity>
-        <activity android:name="us.solife.consumes.TabListMenu" >
         </activity>
         <receiver android:name="us.solife.consumes.recevier.TimerService" >
         </receiver>

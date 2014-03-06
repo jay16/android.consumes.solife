@@ -7,6 +7,7 @@ import java.util.Date;
 
 import android.content.Context;
 import android.net.ParseException;
+import android.os.Environment;
 
 public class ToolUtils {
 	
@@ -55,4 +56,13 @@ public class ToolUtils {
 		String y_m_d = df.format(new Date());
 		return y_m_d;
 	}
+	
+	 public static boolean hasSdcard() {
+	     String status = Environment.getExternalStorageState();
+	     if (status.equals(Environment.MEDIA_MOUNTED)) {
+	         return true;
+	     } else {
+	         return false;
+	     }
+	 }
 }

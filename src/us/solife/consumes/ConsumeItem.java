@@ -135,6 +135,12 @@ public class ConsumeItem extends BaseActivity {
 		//TextView consume_item_msg = (TextView) v.findViewById(R.id.consume_item_msg);
 		//Toast.makeText(ConsumeItem.this, consume_item_msg.getText(), 0).show();
 	}
-	
+
+	@Override
+	public void onBackPressed() {
+		Intent intent;
+		intent = new Intent(getApplicationContext(), Main.class);
+		startActivity(intent);	
+	}
 	
 }

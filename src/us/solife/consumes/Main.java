@@ -1,28 +1,25 @@
 package us.solife.consumes;
 
-import java.util.ArrayList;
-
-
 import us.solife.consumes.R;
-import android.app.Activity;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
-import android.view.LayoutInflater;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -37,13 +34,13 @@ public class Main extends TabActivity  {
 	int preIndex = 0;
 	private static final int DIALOG_EXIT = 1;
 	TabHost tabHost;
-	//这个是将xml中的布局显示在屏幕上的关键类
 	
 	@SuppressWarnings("deprecation")
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+        //启动activity时不自动弹出软键盘
+       getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); 
 		instance = this;
 		
     	tabHost = getTabHost();
@@ -51,6 +48,8 @@ public class Main extends TabActivity  {
     	.setContent(new Intent(this, TabChart.class)));
     	tabHost.addTab(tabHost.newTabSpec("TabList").setIndicator("TabList")
     	.setContent(new Intent(this, TabList.class)));
+    	tabHost.addTab(tabHost.newTabSpec("ConsumeForm").setIndicator("ConsumeForm")
+    	.setContent(new Intent(this, ConsumeForm.class)));
     	tabHost.addTab(tabHost.newTabSpec("TabUser").setIndicator("TabUser")
     	.setContent(new Intent(this, TabUser.class)));
     	tabHost.addTab(tabHost.newTabSpec("TabAbout").setIndicator("TabAbout")
@@ -76,7 +75,6 @@ public class Main extends TabActivity  {
         two = one*2;
         three = one*3;
         four = one*4;
-
 	}
 
   /**
@@ -98,6 +96,13 @@ public class Main extends TabActivity  {
 	 */
 	public void img_bg_animation(Integer arg0) {
 		Animation animation = null;
+		Log.w("img_bg_animation","arg0:"+arg0);
+		Log.w("img_bg_animation","currIndex:"+currIndex);
+		
+		if(arg0==currIndex) return;
+		
+		if(arg0<0 || arg0 >4) arg0 = 0;
+		
 		switch (arg0) {
 		case 0:
 			mTab1.setImageDrawable(getResources().getDrawable(R.drawable.widget_bar_chart));	
@@ -135,11 +140,12 @@ public class Main extends TabActivity  {
 			break;
 		case 2:
 			mTab3.setImageDrawable(getResources().getDrawable(R.drawable.widget_bar_add));
-			Intent intent;
-			intent = new Intent(getApplicationContext(), ConsumeForm.class);
-			intent.putExtra("action", "create");
-			intent.putExtra("row_id", (long)-1);	
-			startActivity(intent);	
+			tabHost.setCurrentTabByTag("ConsumeForm");
+			//Intent intent;
+			//intent = new Intent(getApplicationContext(), ConsumeForm.class);
+			//intent.putExtra("action", "create");
+			//intent.putExtra("row_id", (long)-1);	
+			//startActivity(intent);	
 			if (currIndex == 0) {
 				animation = new TranslateAnimation(zero, two, 0, 0);
 				mTab1.setImageDrawable(getResources().getDrawable(R.drawable.widget_bar_chart));
@@ -195,16 +201,15 @@ public class Main extends TabActivity  {
 		mTabImg.startAnimation(animation);
 	}
 	
-    
+
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater infalter = getMenuInflater();
 		infalter.inflate(R.menu.menu, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-	/**
-	 * open menu
-	 */
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		final int itemId = item.getItemId();
@@ -249,11 +254,37 @@ public class Main extends TabActivity  {
 		}
 	}
 	/**
-	 * 退出到Home窗口
-	 */
+           退出到Home窗口
 	@Override
 	public void onBackPressed() {
 		Toast.makeText(getApplication(),"back", 0).show();
 	}
+	 */
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if(event.getKeyCode() == KeyEvent.KEYCODE_BACK){  
+			if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {   
+				showDialog(DIALOG_EXIT);
+			}
+		}
+		Log.w("Main","dispatchKeyEvent"+event.toString());
+		return super.dispatchKeyEvent(event);  
+	}
+	
+	/*
+	 * @SuppressLint("ShowToast")
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {  //获取 back键
+    		Intent intent = new Intent();
+        	intent.setClass(Main.this,Exit.class);
+        	startActivity(intent);
+    	} else if(keyCode == KeyEvent.KEYCODE_MENU){   //获取 Menu键		
+    		Toast.makeText(Main.this,"KEYCODE_MENU", 0).show();	
+    	}
+		Toast.makeText(Main.this,"onKeyDown", 0).show();
+		Log.w("Main","onKeyDown");
+    	return false;
+    }
+	*/
 
 }

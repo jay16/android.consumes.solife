@@ -53,16 +53,10 @@ public class ConsumeTb {
 	/**
 	 *  插入当前登陆用户所有消费记录
 	 *  插入前会先清空实体表
-	 * @param context
 	 * @param consumeInfos
 	 */
-	public void insert_all_record(Context context, ArrayList<ConsumeInfo> consumeInfos) {
-		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		database.beginTransaction();
-		database.execSQL("delete from consumes");
-		database.setTransactionSuccessful();
-		database.endTransaction();
-		database.close();
+	public void insert_all_record(ArrayList<ConsumeInfo> consumeInfos, Boolean isTruncate) {
+		if(isTruncate) truncate_table();
 		
 		for (int i = 0; i < consumeInfos.size(); i++) {
 			ConsumeInfo info = consumeInfos.get(i);
@@ -75,6 +69,15 @@ public class ConsumeTb {
 
 	}
 
+	public void truncate_table(){
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		database.beginTransaction();
+		database.execSQL("delete from consumes");
+		database.setTransactionSuccessful();
+		database.endTransaction();
+		database.close();
+		
+	}
 	// 插入一笔消费记录
 	public long insert_record(Integer user_id, Integer consume_id, Double volue,
 			String msg, String created_at, String updated_at, Boolean sync) {
@@ -99,6 +102,7 @@ public class ConsumeTb {
 
 		return rowid;
 	}
+	
 	//取得所有消费记录
 	public ArrayList<ConsumeInfo> get_all_records(Context context) {
 		// public Integer getAllRecords(Context context) {
@@ -154,5 +158,21 @@ public class ConsumeTb {
 		consume_info.set_state(cursor.getString(cursor.getColumnIndex("state")));
 		
 		return consume_info;
+	}
+    /**
+     * 取得朋友圈的最大消费记录id
+     * 以此来获取最新朋友消费信息
+     * @return
+     */
+	public Integer get_friends_max_consume_id(Integer user_id) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		String sql = "select max(consume_id) as consume_id from consumes where user_id <> " + user_id;
+		Cursor cursor = database.rawQuery(sql, null);
+		Integer consume_id = -1;
+		if(cursor.getCount()>0){
+			cursor.moveToFirst();
+		    consume_id = cursor.getInt(cursor.getColumnIndex("consume_id"));
+		}
+		return consume_id;
 	}
 }

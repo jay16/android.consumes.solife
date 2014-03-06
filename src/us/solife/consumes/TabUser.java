@@ -76,13 +76,14 @@ public class TabUser extends BaseActivity {
 		ImageView image_view = (ImageView)findViewById(R.id.imageView_current_user_gravatar_image);
 
 		String picDirStr = Gravatar.gravatar_path(current_user_email);
-		File picDir = new File(picDirStr);
-        if(!picDir.exists()){
-        	Toast.makeText(TabUser.this, "图片不存在", 0).show();
-        } else {
-    		Bitmap bitmap = NetUtils.getLoacalBitmap(picDirStr); //从本地取图片(在cdcard中获取)  //
+		File picDir = new File(picDirStr); 
+		if(picDir.exists()) {
+    		Bitmap bitmap = NetUtils.getLoacalBitmap(picDirStr); //从本地取图片(在cdcard中获取)
     		image_view.setImageBitmap(bitmap); //设置Bitmap
-        	Toast.makeText(TabUser.this, "图片存在", 0).show();
+        } else if(!ToolUtils.hasSdcard()){
+        	Toast.makeText(TabUser.this, "存储卡已移除，头像图片读取失败", 0).show();
+        } else {
+        	Toast.makeText(TabUser.this, "头像图片不存在", 0).show();
         }
 	    //login
 		TextView  textView_user_name     = (TextView)findViewById(R.id.textView_current_user_name); 

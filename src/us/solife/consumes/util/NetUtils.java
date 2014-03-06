@@ -33,6 +33,7 @@ import us.solife.consumes.db.UserTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
 import us.solife.consumes.entity.UserInfo;
+import us.solife.consumes.parse.ConsumeListParse;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -272,7 +273,8 @@ public class NetUtils {
 				String email = user_info.get_email();
 				File gravatar_path = new File(Gravatar.gravatar_path(email));
 				String gravatar_url  = Gravatar.gravatar_url(email);
-				if(!gravatar_path.exists()) {
+				//存储卡可用并且用用户头像不存在
+				if(ToolUtils.hasSdcard() && !gravatar_path.exists()) {
 					download_image_with_url(email);
 				}
 			}
@@ -286,7 +288,8 @@ public class NetUtils {
 				try {
 					sync_unupload_consumes(context, login_email);
 					sync_user_list(context);
-					//chk_user_gravatar(context);
+					chk_user_gravatar(context);
+					get_new_friends_consumes(context, login_email);
 				} catch (HttpException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -416,4 +419,31 @@ public class NetUtils {
         }
         return bitmap;
    }
+	
+	public static void get_new_friends_consumes(Context context, String email) 
+			throws JSONException {
+	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
+
+		UserTb user_table = UserTb.getUserTb(context);
+		UserInfo user_info = user_table.get_record_with_email(email);
+
+		ConsumeTb consume_table = ConsumeTb.getConsumeTb(context);
+		Integer consume_id = consume_table.get_friends_max_consume_id(user_info.get_user_id());
+        HashMap<String, Object> hash_map = ApiClient._get(context,URLs.CONSUME_FRIEND_NEW+"?consume_id="+consume_id+"&email="+email);
+		int statusCode  = (Integer)hash_map.get("statusCode");
+		String response = (String)hash_map.get("json_str");
+
+    	Log.w("get_new_friends_consumes","statusCode:"+statusCode);
+	    if(statusCode==HttpStatus.SC_OK) {
+	    	ConsumeListParse consumeListParse = new ConsumeListParse();
+	    	HashMap<String, Object> parse_json = consumeListParse.parseJSON(response);
+	    	if((Boolean)parse_json.get("result")) {
+	    		consume_infos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
+	    	}
+	    	Log.w("get_new_friends_consumes","parseJson:"+(Boolean)parse_json.get("result"));
+	    	Log.w("get_new_friends_consumes","consume_infos:"+consume_infos.size());
+	    	consume_table.insert_all_record(consume_infos,false);
+	    }
+
+	}
 }

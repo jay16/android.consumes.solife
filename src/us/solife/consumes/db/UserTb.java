@@ -53,6 +53,22 @@ public class UserTb {
 		}
 		return user_info;
 	}
+
+    /**
+     * @return
+     */
+	public UserInfo get_record_with_email(String email) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		Cursor cursor = database.rawQuery("select * from users where email= '"+email+"'", null);
+		UserInfo user_info = new UserInfo();
+		if (cursor != null) {
+			cursor.moveToFirst();
+			user_info = get_consume_info_from_cursor(cursor);
+		}
+		return user_info;
+	}
+	
+	
 	// 插入一笔消费记录
 	public long insert_record(UserInfo user_info) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
@@ -99,7 +115,7 @@ public class UserTb {
 		
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		String sql = "select distinct user_id from consumes where user_id > 0 " +
-		" and user_id not in (select user_id from users)";
+		" and user_id not in (select distinct user_id from users)";
 		Cursor cursor = database.rawQuery(sql, null);
 
       

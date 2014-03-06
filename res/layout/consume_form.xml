@@ -68,6 +68,8 @@
         android:layout_height="wrap_content"
 		android:background="@drawable/btn_style_white"
         android:textSize="20sp"
+        android:clickable="false"
+        android:enabled="false"
         android:text="提交" />
 
 </LinearLayout>

@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 //import android.widget.CalendarView;
@@ -62,7 +63,7 @@ public class ConsumeForm extends BaseActivity {
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
-		setContentView(R.layout.tab_consume);
+		setContentView(R.layout.consume_form);
 		
 		textView_main_header = (TextView)findViewById(R.id.textView_main_header);
 		editText_consume_form_value      = (EditText) findViewById(R.id.editText_consume_form_value);
@@ -88,9 +89,12 @@ public class ConsumeForm extends BaseActivity {
 		//跳转至该界面状态
 		//创建/编辑
 		Intent intent = getIntent();
-	    action = intent.getStringExtra("action");
-	    row_id = intent.getLongExtra("row_id",0);
-	    
+	    if(intent.hasExtra("action")) {
+		    action = intent.getStringExtra("action");
+		    row_id = intent.getLongExtra("row_id",0);
+	    } else {
+	    	action = "create";
+	    }
 	    if(action.equals("update")){
 	    	init_update_consume(row_id);
 	    } else {
@@ -150,6 +154,13 @@ public class ConsumeForm extends BaseActivity {
             }
 	    	//Toast.makeText(TabConsume.this, ""+value, 0).show();
             editText_consume_form_value.setText(Float.toString(value));
+            if(value > 0) {
+            	button_consume_form_submit.setEnabled(true);
+            	button_consume_form_submit.setClickable(true);
+            } else {
+            	button_consume_form_submit.setEnabled(false);
+            	button_consume_form_submit.setClickable(false);
+            }
 	    }
 	     
 	};
@@ -256,6 +267,15 @@ public class ConsumeForm extends BaseActivity {
 				* 24 * 60 * 60 * 1000));
 		return ret_string;
 	}
-
+	
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if(event.getKeyCode() == KeyEvent.KEYCODE_BACK){  
+			if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {
+				UIHelper.finish(this);
+			}
+		}
+		Log.w("Main","dispatchKeyEvent"+event.toString());
+		return super.dispatchKeyEvent(event);  
+	}
 
 }
