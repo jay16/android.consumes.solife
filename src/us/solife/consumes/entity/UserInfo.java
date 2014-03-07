@@ -91,7 +91,7 @@ public class UserInfo implements Serializable {
     }
     
     public String to_string() {
-    	return "user:"+
+    	return "user_id:"+ this.user_id +
         "id:" + this.id +
         "name:" + this.name +
         "email:" + this.email + 

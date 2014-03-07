@@ -7,7 +7,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 
 /**
- * 搴旂敤绋嬪簭Activity绠＄悊绫伙細鐢ㄤ簬Activity绠＄悊鍜屽簲鐢ㄧ▼搴忛?鍑?
+ * 应用程序Activity管理类：用于Activity管理和应用程序退出
  * @author liux (http://my.oschina.net/liux)
  * @version 1.0
  * @created 2012-3-21
@@ -19,7 +19,7 @@ public class AppManager {
 	
 	private AppManager(){}
 	/**
-	 * 鍗曚竴瀹炰緥
+	 * 单一实例
 	 */
 	public static AppManager getAppManager(){
 		if(instance==null){
@@ -28,7 +28,7 @@ public class AppManager {
 		return instance;
 	}
 	/**
-	 * 娣诲姞Activity鍒板爢鏍?
+	 * 添加Activity到堆栈
 	 */
 	public void addActivity(Activity activity){
 		if(activityStack==null){
@@ -37,21 +37,21 @@ public class AppManager {
 		activityStack.add(activity);
 	}
 	/**
-	 * 鑾峰彇褰撳墠Activity锛堝爢鏍堜腑鏈?悗涓?釜鍘嬪叆鐨勶級
+	 * 获取当前Activity（堆栈中最后一个压入的）
 	 */
 	public Activity currentActivity(){
 		Activity activity=activityStack.lastElement();
 		return activity;
 	}
 	/**
-	 * 缁撴潫褰撳墠Activity锛堝爢鏍堜腑鏈?悗涓?釜鍘嬪叆鐨勶級
+	 * 结束当前Activity（堆栈中最后一个压入的）
 	 */
 	public void finishActivity(){
 		Activity activity=activityStack.lastElement();
 		finishActivity(activity);
 	}
 	/**
-	 * 缁撴潫鎸囧畾鐨凙ctivity
+	 * 结束指定的Activity
 	 */
 	public void finishActivity(Activity activity){
 		if(activity!=null){
@@ -61,7 +61,7 @@ public class AppManager {
 		}
 	}
 	/**
-	 * 缁撴潫鎸囧畾绫诲悕鐨凙ctivity
+	 * 结束指定类名的Activity
 	 */
 	public void finishActivity(Class<?> cls){
 		for (Activity activity : activityStack) {
@@ -71,7 +71,7 @@ public class AppManager {
 		}
 	}
 	/**
-	 * 缁撴潫鎵?湁Activity
+	 * 结束所有Activity
 	 */
 	public void finishAllActivity(){
 		for (int i = 0, size = activityStack.size(); i < size; i++){
@@ -82,7 +82,7 @@ public class AppManager {
 		activityStack.clear();
 	}
 	/**
-	 * 閫?嚭搴旂敤绋嬪簭
+	 * 退出应用程序
 	 */
 	public void AppExit(Context context) {
 		try {

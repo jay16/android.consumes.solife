@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="年"
+                android:text="按[年]汇总"
                 android:textColor="#fff"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -43,7 +43,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="月"
+                android:text="按[月]汇总"
                 android:textColor="#fff"
                 android:textSize="18sp" />
         </LinearLayout>
@@ -58,22 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="周"
-                android:textColor="#fff"
-                android:textSize="18sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/tablist_4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:text="天"
+                android:text="按[天]汇总"
                 android:textColor="#fff"
                 android:textSize="18sp" />
         </LinearLayout>

@@ -103,6 +103,7 @@ public class FileDownloader {
 						
 				//String filename = getFileName(conn);//获取文件名称
 				this.saveFile = new File(fileSaveDir, filename);//构建保存文件
+				if(this.saveFile.exists()) this.saveFile.delete();//存在则删除
 				if(this.data.size()==this.threads.length){//下面计算所有线程已经下载的数据长度
 					for (int i = 0; i < this.threads.length; i++) {
 						this.downloadSize += this.data.get(i+1);

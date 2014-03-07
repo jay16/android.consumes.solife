@@ -35,7 +35,13 @@
 		       android:scaleType="centerInside"
 		       android:src="@drawable/login_slogan"
 		       android:text="http://solife.us/consumes  Ctrl+F9" />
-		            
+
+		   <ProgressBar
+		       android:id="@+id/login_form_loading_progress"
+		       android:layout_gravity="center_horizontal"
+		       style="@style/loading_small"
+		       android:visibility="gone"  />
+		   	 
 			<EditText 
 			    android:id="@+id/user_info_email"
 			    android:layout_width="fill_parent"

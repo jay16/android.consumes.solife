@@ -87,6 +87,8 @@ public abstract class BaseActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		
+		//添加Activity到堆栈
 		AppManager.getAppManager().addActivity(this);
 		try {
 			init();
@@ -101,6 +103,7 @@ public abstract class BaseActivity extends Activity {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
+		//结束Activity&从堆栈中移除
 		AppManager.getAppManager().finishActivity(this);
 	}
 	

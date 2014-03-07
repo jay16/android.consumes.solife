@@ -38,7 +38,7 @@ public class UserTb {
     * @param row_id
     * @return
     */
-	public UserInfo get_record(long user_id) {
+	public UserInfo get_record_with_user_id(long user_id) {
 	    SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		Cursor cursor = database.rawQuery("select * from users where user_id= "+user_id, null);
 		UserInfo user_info = new UserInfo();
@@ -104,7 +104,7 @@ public class UserTb {
 
         long row_id = db.update("users", values, "user_id=?",args);
         
-		user_info = get_record(user_info.get_user_id());
+		user_info = get_record_with_user_id(user_info.get_user_id());
         Log.w("UserTB","更新数据1:"+user_info.to_string());
         
         return row_id;

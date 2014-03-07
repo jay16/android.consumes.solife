@@ -30,7 +30,16 @@ public class TabAbout extends BaseActivity implements OnClickListener {
 		btn_back.setVisibility(View.GONE);
 		
 		UserTb user_table = UserTb.getUserTb(TabAbout.this);
-		ArrayList<Integer> usre_ids = user_table.get_unsync_user_list();
+		ArrayList<Integer> user_ids = user_table.get_unsync_user_list();
+		//ArrayList<UserInfo> user_infos = user_table.get_user_list();
+		String dd = "" + user_ids.size() + ">";
+		for(int i=0;i< user_ids.size();i++) {
+			//dd += user_infos.get(i).to_string() + "\n";
+			dd += "-" + user_ids.get(i);
+		}
+		
+		TextView  textView1 = (TextView)findViewById(R.id.textView1);
+		textView1.setText(dd);
 		
 		RelativeLayout tab_about_info = (RelativeLayout)findViewById(R.id.tab_about_info);
 		RelativeLayout tab_about_msg  = (RelativeLayout)findViewById(R.id.tab_about_msg);

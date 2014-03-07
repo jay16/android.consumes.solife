@@ -1,12 +1,21 @@
 package us.solife.consumes;
 
+import org.json.JSONException;
+
 import us.solife.consumes.R;
+import us.solife.consumes.util.AppManager;
+import us.solife.consumes.util.NetUtils;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
@@ -29,18 +38,17 @@ public class Main extends TabActivity  {
 	private ImageView mTab1,mTab2,mTab3,mTab4,mTab5;
 	private int zero = 0;// 动画图片偏移量
 	private int currIndex = 0;// 当前页卡编号
+	private int preIndex = 0;// 当前页卡编号
 	private int one, two, three, four;//单个水平动画位移
-	int index = 0;
-	int preIndex = 0;
 	private static final int DIALOG_EXIT = 1;
-	TabHost tabHost;
+	private TabHost tabHost;
 	
 	@SuppressWarnings("deprecation")
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
         //启动activity时不自动弹出软键盘
-       getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); 
+       //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); 
 		instance = this;
 		
     	tabHost = getTabHost();
@@ -75,8 +83,23 @@ public class Main extends TabActivity  {
         two = one*2;
         three = one*3;
         four = one*4;
+        
+        //测试版本更新
+        try {
+			NetUtils.chk_version_update(Main.this);
+		} catch (NameNotFoundException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+        
 	}
 
+	@SuppressWarnings("deprecation")
+	public void onResume(){
+    	super.onResume();
+    	instance = this;
+	}
   /**
 	 * 头标点击监听
 	 */
@@ -195,6 +218,7 @@ public class Main extends TabActivity  {
 			}
 			break;
 		}
+		preIndex = currIndex;
 		currIndex = arg0;
 		animation.setFillAfter(true);// True:图片停在动画结束位置
 		animation.setDuration(150);
@@ -235,7 +259,9 @@ public class Main extends TabActivity  {
 			.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface arg0, int arg1) {
-					android.os.Process.killProcess(android.os.Process.myPid());
+					//android.os.Process.killProcess(android.os.Process.myPid());
+					//Main.instance.finish();
+					AppManager.getAppManager().AppExit(Main.this);
 				}
 			})
 			.setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener() {
@@ -263,28 +289,12 @@ public class Main extends TabActivity  {
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if(event.getKeyCode() == KeyEvent.KEYCODE_BACK){  
 			if (event.getAction() == KeyEvent.ACTION_DOWN && event.getRepeatCount() == 0) {   
-				showDialog(DIALOG_EXIT);
+			    showDialog(DIALOG_EXIT);
 			}
 		}
 		Log.w("Main","dispatchKeyEvent"+event.toString());
 		return super.dispatchKeyEvent(event);  
 	}
 	
-	/*
-	 * @SuppressLint("ShowToast")
-	@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-    	if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {  //获取 back键
-    		Intent intent = new Intent();
-        	intent.setClass(Main.this,Exit.class);
-        	startActivity(intent);
-    	} else if(keyCode == KeyEvent.KEYCODE_MENU){   //获取 Menu键		
-    		Toast.makeText(Main.this,"KEYCODE_MENU", 0).show();	
-    	}
-		Toast.makeText(Main.this,"onKeyDown", 0).show();
-		Log.w("Main","onKeyDown");
-    	return false;
-    }
-	*/
 
 }

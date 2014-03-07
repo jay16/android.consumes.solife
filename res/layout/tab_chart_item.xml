@@ -7,20 +7,19 @@
     
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
             android:background="@drawable/mm_listitem"
-             >
-            
-            <ImageView
-                android:id="@+id/gravatar_image"
-                android:layout_width="55dp"
-		        android:layout_height="55dp"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:paddingLeft="5dp"
-                android:src="@drawable/gravatar_default" />
+            android:gravity="center_vertical" >
 
+             <ImageView
+                 android:id="@+id/gravatar_image"
+                 android:layout_width="55dp"
+                 android:layout_height="55dp"
+                 android:layout_alignParentLeft="true"
+                 android:layout_alignTop="@+id/user_name"
+                 android:paddingLeft="5dp"
+                 android:src="@drawable/gravatar_default" />
+             
             <TextView
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
@@ -28,7 +27,18 @@
                 android:layout_toRightOf="@id/gravatar_image"
                 android:padding="7dp"
                 android:text="用户名"
-                android:textColor="#000" />
+                android:textColor="#666" />
+
+             <TextView
+                 android:id="@+id/value"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_alignBaseline="@+id/user_name"
+                 android:layout_alignBottom="@+id/user_name"
+                 android:layout_centerHorizontal="true"
+                 android:text="消费数值"
+                android:textColor="#666" />
+             
             <TextView
                 android:id="@+id/created_at"
                 android:layout_width="wrap_content"
@@ -44,20 +54,12 @@
                  android:layout_height="wrap_content"
                  android:layout_alignParentBottom="true"
                  android:layout_alignParentRight="true"
+                 android:layout_below="@+id/user_name"
                  android:layout_toRightOf="@id/gravatar_image"
                  android:paddingLeft="7dp"
                  android:text="消费数值 - 消费说明文字介绍省略号..."
-                 android:textSize="14sp"
-                 android:textColor="#666" />
-
-             <TextView
-                 android:id="@+id/consume_id"
-                 android:layout_width="0dp"
-                 android:layout_height="wrap_content"
-                 android:layout_alignBaseline="@+id/user_name"
-                 android:layout_alignBottom="@+id/user_name"
-                 android:layout_toRightOf="@+id/user_name"
-                 android:text="TextView" />
+                 android:textColor="#444"
+                 android:textSize="14sp" />
             
         </RelativeLayout>
 

@@ -1,13 +1,19 @@
 package us.solife.consumes;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.apache.commons.httpclient.HttpException;
+import org.json.JSONException;
+
 import us.solife.consumes.R;
 import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.api.URLs;
 import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
+import us.solife.consumes.util.LoadingDialog;
 import us.solife.consumes.util.NetUtils;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +25,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.os.Handler;
@@ -61,7 +68,11 @@ public class TabList extends BaseActivity{
 	private LinearLayout tablist_3;
 	private LinearLayout tablist_4;
 	private TextView mTopText;
-	PopupWindow mPopupWindow;
+	private PopupWindow mPopupWindow;
+	private ProgressBar loading_progress_bar;
+	private LoadingDialog loading_dialog;
+	private String current_user_email;
+	private Long current_user_id;
 
 	@Override
 	public void init() { // TODO Auto-generated method stub
@@ -69,7 +80,13 @@ public class TabList extends BaseActivity{
 		mContext = context;
 		mTopText = (TextView)findViewById(R.id.home_top_text);
 		mTopLayout = (LinearLayout)findViewById(R.id.menu_consume_item_list);
-	
+		loading_progress_bar = (ProgressBar) findViewById(R.id.tab_list_loading_progress);
+		
+
+		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
+		current_user_email = sharedPreferences.getString("current_user_email", "");
+		current_user_id = sharedPreferences.getLong("current_user_id", -1);
+		
 		/**
 		 * 消费记录列表展示方式
 		 * 年/月/周/天
@@ -97,6 +114,9 @@ public class TabList extends BaseActivity{
 		ImageButton imageButton_refresh  = (ImageButton) findViewById(R.id.imageButton_refresh);
 		imageButton_download.setOnClickListener(imageButton_download_listener);
 		imageButton_refresh.setOnClickListener(imageButton_refresh_listener);
+		
+
+		if(loading_dialog != null)	loading_dialog.dismiss();
 	}
 	
 	/**
@@ -109,6 +129,7 @@ public class TabList extends BaseActivity{
 
 		init_view_list("day");
 		setListener();
+    	if(loading_dialog != null) loading_dialog.dismiss();
 	}
 
 
@@ -122,7 +143,7 @@ public class TabList extends BaseActivity{
 				LayoutInflater mLayoutInflater = (LayoutInflater) context  
 	                    .getSystemService(LAYOUT_INFLATER_SERVICE);  
 	            View mPopView = mLayoutInflater.inflate(  
-	                    R.layout.main_top_right_dialog, null); 
+	                    R.layout.menu_tab_list_header, null); 
 
 	    		if (mPopupWindow == null) {
 					mPopupWindow = new PopupWindow(mPopView, LayoutParams.FILL_PARENT,
@@ -131,7 +152,6 @@ public class TabList extends BaseActivity{
 					tablist_1 = (LinearLayout)mPopView.findViewById(R.id.tablist_1);
 					tablist_2 = (LinearLayout)mPopView.findViewById(R.id.tablist_2);
 					tablist_3 = (LinearLayout)mPopView.findViewById(R.id.tablist_3);
-					tablist_4 = (LinearLayout)mPopView.findViewById(R.id.tablist_4);
 					
 					tablist_1.setOnClickListener(new OnClickListener() {
 						public void onClick(View v) {				
@@ -154,14 +174,6 @@ public class TabList extends BaseActivity{
 							if (mPopupWindow.isShowing()) 
 								mPopupWindow.dismiss();
 							Log.w("TabList","tablist_3");
-							init_view_list("week");
-						}
-					});
-					tablist_4.setOnClickListener(new OnClickListener() {
-						public void onClick(View v) {				
-							if (mPopupWindow.isShowing()) 
-								mPopupWindow.dismiss();
-							Log.w("TabList","tablist_4");
 							init_view_list("day");
 						}
 					});
@@ -191,8 +203,6 @@ public class TabList extends BaseActivity{
         	top_text = "年";
         else if(show_type.equals("month"))
         	top_text = "月";
-        else if(show_type.equals("week"))
-        	top_text = "周";
         else if(show_type.equals("day"))
         	top_text = "天";
         else
@@ -332,35 +342,45 @@ public class TabList extends BaseActivity{
 		//同步数据库至本地
 		Button.OnClickListener imageButton_download_listener = new Button.OnClickListener(){//创建监听对象  
 			public void onClick(View v){  
-				Toast.makeText(TabList.this, "开始同步数据1", 0).show();
+				Toast.makeText(TabList.this, "下载数据中...", 0).show();
+
+		    	loading_progress_bar.setVisibility(View.VISIBLE);
+		    	if(loading_dialog != null) loading_dialog.dismiss();
+			    loading_dialog = new LoadingDialog(TabList.this);
+				loading_dialog.setLoadText("下载数据中...");			
+				loading_dialog.show();
 				
-				ConsumeListParse consumeListParse = new ConsumeListParse();
-				getDataFromServer(getApplicationContext(), consumeListParse, URLs.CONSUME_LIST, callback);
+				//ConsumeListParse consumeListParse = new ConsumeListParse();
+				//getDataFromServer(getApplicationContext(), consumeListParse, URLs.CONSUME_LIST, callback);
+				try {
+					NetUtils.get_all_consumes(TabList.this,current_user_email);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 				init_view_list("day");
+				
+				loading_progress_bar.setVisibility(View.GONE);
+				if(loading_dialog != null) loading_dialog.dismiss();
 			}
 		};
 		//同步本地数据至服务器
 		Button.OnClickListener imageButton_refresh_listener = new Button.OnClickListener(){//创建监听对象  
 			public void onClick(View v){  
 				consume_infos = consumeDao.get_unsync_records();
-				sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 				
 		    	//Toast.makeText(TabList.this, "更新未同步数据", 0).show();
-		    	
-				if (sharedPreferences.contains("current_user_email")
-						&& !sharedPreferences.getString("current_user_email", "").equals("")) {
-					String login_email = sharedPreferences.getString("current_user_email", "");
-					long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-					
+		    	loading_progress_bar.setVisibility(View.VISIBLE);
+		    	if(loading_dialog != null) loading_dialog.dismiss();
+			    loading_dialog = new LoadingDialog(TabList.this);
+				loading_dialog.setLoadText("同步数据中...");	
+				loading_dialog.show();
 
-			    	Toast.makeText(TabList.this, "更新数据", 0).show();
-					//后台同步更新未同步的数据
-					NetUtils.upload_unsync_consumes_background(TabList.this,login_email);
-					Toast.makeText(TabList.this, "更新完毕", 0).show();
-					init_view_list("day");
-			    } else {
-			    	Toast.makeText(TabList.this, "更新失败", 0).show();
-			    }
+				NetUtils.upload_unsync_consumes_background(TabList.this,current_user_email);
+				Toast.makeText(TabList.this, "同步完毕", 0).show();
+				init_view_list("day");
+				
+				loading_progress_bar.setVisibility(View.GONE);
+				if(loading_dialog != null) loading_dialog.dismiss();
 		};
 	
 	

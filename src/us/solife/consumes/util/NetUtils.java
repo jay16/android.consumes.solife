@@ -32,12 +32,17 @@ import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.db.UserTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
+import us.solife.consumes.entity.UpdateInfo;
 import us.solife.consumes.entity.UserInfo;
 import us.solife.consumes.parse.ConsumeListParse;
+import us.solife.consumes.parse.UpdateInfoParse;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
@@ -163,7 +168,7 @@ public class NetUtils {
 	 * @throws IOException 
 	 * @throws HttpException 
 	 */
-	public static void sync_unupload_consumes(Context context,String login_email) 
+	public static void upload_unsync_consumes(Context context,String login_email) 
 			throws HttpException, IOException, JSONException {
 		    ArrayList<ConsumeInfo> consume_infos;
 		    ConsumeTb             consumeDao;
@@ -252,7 +257,8 @@ public class NetUtils {
 			throws JSONException {
 		UserTb user_table = UserTb.getUserTb(context);
 		ArrayList<Integer> user_ids = user_table.get_unsync_user_list();
-		if(user_ids.size()>0) 
+		if(user_ids.size() == 0) return;
+		
 		for(int i=0; i<user_ids.size(); i++ ) {
 			UserInfo user_info = get_user_info_with_user_id(context,user_ids.get(i));
 			if(user_info.get_user_id()>0) {
@@ -268,7 +274,7 @@ public class NetUtils {
 		ArrayList<UserInfo> user_infos = user_table.get_user_list();
 		if(user_infos.size()>0) 
 		for(int i=0; i<user_infos.size(); i++ ) {
-			UserInfo user_info = get_user_info_with_user_id(context,user_infos.get(i).get_user_id());
+			UserInfo user_info = user_infos.get(i);//get_user_info_with_user_id(context,user_infos.get(i).get_user_id());
 			if(user_info.get_user_id()>0) {
 				String email = user_info.get_email();
 				File gravatar_path = new File(Gravatar.gravatar_path(email));
@@ -286,7 +292,7 @@ public class NetUtils {
 		 new Thread() {
 			 public void run() {
 				try {
-					sync_unupload_consumes(context, login_email);
+					upload_unsync_consumes(context, login_email);
 					sync_user_list(context);
 					chk_user_gravatar(context);
 					get_new_friends_consumes(context, login_email);
@@ -442,8 +448,69 @@ public class NetUtils {
 	    	}
 	    	Log.w("get_new_friends_consumes","parseJson:"+(Boolean)parse_json.get("result"));
 	    	Log.w("get_new_friends_consumes","consume_infos:"+consume_infos.size());
-	    	consume_table.insert_all_record(consume_infos,false);
+	    	if(consume_infos.size()>0) {
+	    		consume_table.insert_all_record(consume_infos,false);
+	    		for(int i=0;i<consume_infos.size();i++) {
+	    			ConsumeInfo c_info = consume_infos.get(i);
+	    			UserInfo u_info = user_table.get_record_with_user_id(c_info.get_user_id());
+	    			String title   = u_info.get_name()+"[￥"+c_info.get_volue()+"]";
+	    			String content = c_info.get_msg();
+	    			UIHelper.push_notice(context,title,content,10+i);
+	    		}
+	    	}
 	    }
 
+	}
+	
+	public static void get_all_consumes(Context context, String email) 
+			throws JSONException {
+	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
+        HashMap<String, Object> hash_map = ApiClient._get(context,URLs.CONSUME_LIST+"?email="+email);
+		int statusCode  = (Integer)hash_map.get("statusCode");
+		String response = (String)hash_map.get("json_str");
+
+    	Log.w("get_new_friends_consumes","statusCode:"+statusCode);
+	    if(statusCode==HttpStatus.SC_OK) {
+	    	ConsumeListParse consumeListParse = new ConsumeListParse();
+	    	HashMap<String, Object> parse_json = consumeListParse.parseJSON(response);
+	    	if((Boolean)parse_json.get("result")) {
+	    		consume_infos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
+	    	}
+	    	Log.w("get_new_friends_consumes","parseJson:"+(Boolean)parse_json.get("result"));
+	    	Log.w("get_new_friends_consumes","consume_infos:"+consume_infos.size());
+	    	if(consume_infos.size()>0) {
+	    		ConsumeTb consume_table = ConsumeTb.getConsumeTb(context);
+	    		consume_table.insert_all_record(consume_infos,true);
+	    	}
+	    }
+
+	}
+	
+	
+	public static void chk_version_update(Context context) 
+			throws JSONException, NameNotFoundException {
+		//检测当前环境是否有网络
+		if (!NetUtils.hasNetWork(context)) return;
+		
+		HashMap<String, Object> http_get = ApiClient._get(context,URLs.VERSION_UPDATE);
+		UpdateInfo update_info = null;
+		if ((Integer)http_get.get("statusCode")==HttpStatus.SC_OK) {
+			String responseBody = (String)http_get.get("json_str");
+			HashMap<String, Object> hash_map = UpdateInfoParse.getInstance().parseJSON(responseBody);
+			if((Boolean)hash_map.get("result")) {
+				update_info = (UpdateInfo) hash_map.get("update_info");
+				Log.w("CheckVersionTash",update_info.to_string());
+			}
+			
+			final PackageManager pm = context.getPackageManager();
+			final PackageInfo packInfo = pm.getPackageInfo("us.solife.consumes", PackageManager.GET_ACTIVITIES);
+			final String version = packInfo.versionName;
+			Log.w("UIHelper","Version :"+version);
+			
+			/*版本相同无需下载*/
+			if (!version.equals(update_info.get_version())) {
+				UIHelper.push_notice(context, "版本更新通知", update_info.get_description(), 0);
+			}
+		}
 	}
 }

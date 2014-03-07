@@ -69,6 +69,7 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 			convertView   = View.inflate(context, R.layout.tab_chart_item, null);
 
 			holder.name   = (TextView) convertView.findViewById(R.id.user_name);
+			holder.value  = (TextView) convertView.findViewById(R.id.value);
 			holder.date   = (TextView) convertView.findViewById(R.id.created_at);
 			holder.desc   = (TextView) convertView.findViewById(R.id.describtion);
 			holder.gravatar   = (ImageView) convertView.findViewById(R.id.gravatar_image);
@@ -103,9 +104,11 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 		date = consume_info.get_created_at().toString();
 		if(date.length()>15)
 			date = date.substring(0,16);
+		holder.value.setText("￥"+volue);
 		holder.date.setText(date);
 		holder.desc.setTag(consume_info);//设置隐藏参数(实体类)
-		holder.desc.setText("￥"+volue + " - " + msg.toString().replace("\n","-")+"...");
+		//holder.desc.setText("￥"+volue + " - " + msg.toString().replace("\n","-")+"...");
+		holder.desc.setText(msg.toString());
 		holder.desc.setOnClickListener(figClickListener);
 		/*
 		if(consumeInfo.getCreated_at().length()>=10){
@@ -117,7 +120,7 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 	}
 
 	class ViewHolder {
-		private TextView head,name,date,desc;
+		private TextView head,name,date,desc, value;
 		private ImageView gravatar;
 	}	
 	

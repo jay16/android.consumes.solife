@@ -9,8 +9,7 @@
 
     <ScrollView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.02"
+        android:layout_height="match_parent"
         android:scrollbarStyle="outsideOverlay" >
 
         <LinearLayout
@@ -123,7 +122,23 @@
 
             <!-- *********************************************************************** -->
 
+            <RelativeLayout
+                android:id="@+id/tab_about_solife"
+                android:layout_width="fill_parent"
+                android:layout_height="238dp"
+                android:clickable="true"
+                android:gravity="center_vertical" >
+
+		    <TextView
+		        android:id="@+id/textView1"
+		        android:layout_width="305dp"
+		        android:layout_height="match_parent"
+		        android:layout_weight="44.44"
+		        android:text="TextView" />
+
+            </RelativeLayout>
         </LinearLayout>
     </ScrollView>
+
 
 </LinearLayout>

@@ -1,20 +1,34 @@
 package us.solife.consumes.util;
 
 import java.io.File;
+import java.util.HashMap;
+
+import org.apache.commons.httpclient.HttpStatus;
+import org.json.JSONException;
 
 import us.solife.consumes.ConsumeItem;
 import us.solife.consumes.Main;
 import us.solife.consumes.R;
 import us.solife.consumes.ConsumeForm;
 import us.solife.consumes.TabList;
+import us.solife.consumes.api.ApiClient;
+import us.solife.consumes.api.URLs;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
+import us.solife.consumes.entity.UpdateInfo;
+import us.solife.consumes.parse.UpdateInfoParse;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -149,4 +163,28 @@ public class UIHelper {
 		builder.setMessage(consume_info.get_msg());
 		builder.create().show();
 	}
+	
+	public static void push_notice(Context context, String title, String content, Integer uid) {
+    	
+		NotificationManager mNotificationManager=(NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);    
+		//∂®“Âƒ⁄»›  
+		int notificationIcon=R.drawable.favicon;  
+		CharSequence notificationTitle=title;  
+		long when = System.currentTimeMillis();  
+		  
+		Notification notification=new Notification(notificationIcon, notificationTitle, when);  
+		  
+		notification.defaults=Notification.DEFAULT_ALL;  
+		  
+		Intent intent= new Intent(context,Main.class);  
+		PendingIntent pendingIntent=PendingIntent.getActivity(context, 0, intent, 0);  
+		notification.setLatestEventInfo(context,title, content,pendingIntent);  
+		  
+		if(notification!=null)  
+		{  
+		    Log.e("notifacation", "notifacation is ok");  
+		    mNotificationManager.notify(1000+uid, notification);  
+		} 
+	}
+
 }

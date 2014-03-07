@@ -138,9 +138,11 @@ public class ConsumeItem extends BaseActivity {
 
 	@Override
 	public void onBackPressed() {
-		Intent intent;
-		intent = new Intent(getApplicationContext(), Main.class);
-		startActivity(intent);	
+		this.finish();
+		//Intent intent;
+		//intent = new Intent(getApplicationContext(), Main.class);
+		//intent.putExtra("currIndex", 1);
+		//startActivity(intent);	
 	}
 	
 }
