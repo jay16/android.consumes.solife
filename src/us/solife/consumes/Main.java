@@ -93,6 +93,11 @@ public class Main extends TabActivity  {
 			e.printStackTrace();
 		}
         
+        Intent intent = getIntent();
+        if(intent.hasExtra("currIndex")) {
+			img_bg_animation(intent.getIntExtra("currIndex",0));
+        }
+        
 	}
 
 	@SuppressWarnings("deprecation")

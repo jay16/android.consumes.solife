@@ -40,6 +40,7 @@ import android.text.TextWatcher;
 import android.text.Editable;
 
 import java.util.Date;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
@@ -142,15 +143,16 @@ public class ConsumeForm extends BaseActivity {
 	    	
             rows = s.toString().split("\n");
             for (int i = 0; i < rows.length; i++) {
-              row = rows[i];
-              
-              tmp = row.split("-")[0];
-              try
-              {
-                //float f = Float.valueOf(tmp.trim()).floatValue();
-                float f = Float.parseFloat(tmp.trim());
-                value = value + f;
-              } catch (NumberFormatException nfe) {}
+				String[] aa = rows[i].split("-");
+				if(aa.length==0) continue;
+				tmp = aa[0].trim();
+				if(tmp.length()==0) continue;
+				  
+				try {
+				      //float f = Float.valueOf(tmp.trim()).floatValue();
+				      float f = Float.parseFloat(tmp.trim());
+				      value = value + f;
+				} catch (NumberFormatException nfe) {}
             }
 	    	//Toast.makeText(TabConsume.this, ""+value, 0).show();
             editText_consume_form_value.setText(Float.toString(value));
