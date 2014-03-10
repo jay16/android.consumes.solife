@@ -3,9 +3,11 @@ package us.solife.consumes;
 import org.json.JSONException;
 
 import us.solife.consumes.R;
+import us.solife.consumes.recevier.TimerService;
 import us.solife.consumes.util.AppManager;
 import us.solife.consumes.util.NetUtils;
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Notification;
@@ -49,6 +51,18 @@ public class Main extends TabActivity  {
 		setContentView(R.layout.main);
         //启动activity时不自动弹出软键盘
        //getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN); 
+
+        /*测试版本更新
+        if(instance==null) {
+	        try {
+				NetUtils.chk_version_update(Main.this);
+			} catch (NameNotFoundException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+        }
+        */
 		instance = this;
 		
     	tabHost = getTabHost();
@@ -83,15 +97,7 @@ public class Main extends TabActivity  {
         two = one*2;
         three = one*3;
         four = one*4;
-        
-        //测试版本更新
-        try {
-			NetUtils.chk_version_update(Main.this);
-		} catch (NameNotFoundException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+
         
         Intent intent = getIntent();
         if(intent.hasExtra("currIndex")) {
@@ -266,6 +272,13 @@ public class Main extends TabActivity  {
 				public void onClick(DialogInterface arg0, int arg1) {
 					//android.os.Process.killProcess(android.os.Process.myPid());
 					//Main.instance.finish();
+
+					//关闭循环定时执行
+					Intent i =new Intent(getApplication(), TimerService.class);
+				    PendingIntent sender=PendingIntent.getBroadcast(getApplication(), 0, i, 0);
+					AlarmManager am=(AlarmManager)getSystemService(ALARM_SERVICE);
+					am.cancel(sender);
+					
 					AppManager.getAppManager().AppExit(Main.this);
 				}
 			})
