@@ -42,39 +42,40 @@
 		       style="@style/loading_small"
 		       android:visibility="gone"  />
 		   	 
-			<EditText 
+			<EditText
 			    android:id="@+id/user_info_email"
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
 			    android:layout_below="@+id/login_top_layout"
-			    android:textColor="#000"
-			    android:textSize="15sp"
-			    android:layout_marginTop="25dp"
 			    android:layout_marginLeft="20dp"
 			    android:layout_marginRight="20dp"
+			    android:layout_marginTop="25dp"
+			    android:background="@drawable/login_input"
+			    android:drawableLeft="@drawable/login_icon_account"
+			    android:drawablePadding="25dip"
+			    android:hint="注册邮邮箱"
 			    android:singleLine="true"
-		        android:background="@drawable/login_input"
-		        android:drawableLeft="@drawable/login_icon_account"
-		        android:drawablePadding="25dip"
-			    android:hint="注册邮邮箱"/>
+			    android:text="solife.jay@gmail.com"
+			    android:textColor="#000"
+			    android:textSize="15sp" />
 			
-			<EditText 
+			<EditText
 			    android:id="@+id/user_info_pwd"
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
 			    android:layout_below="@+id/user_info_email"
-			    android:textColor="#000"
-			    android:textSize="15sp"
-			    android:layout_marginTop="15dp"
 			    android:layout_marginLeft="20dp"
 			    android:layout_marginRight="20dp"
-		        android:background="@drawable/login_input"
-		        android:drawableLeft="@drawable/login_icon_password"
-		        android:drawablePadding="25dip"
+			    android:layout_marginTop="15dp"
+			    android:background="@drawable/login_input"
+			    android:drawableLeft="@drawable/login_icon_password"
+			    android:drawablePadding="25dip"
+			    android:hint="登陆密码"
 			    android:password="true"
 			    android:singleLine="true"
-			    android:hint="登陆密码"/>
-		
+			    android:text="jay527130673"
+			    android:textColor="#000"
+			    android:textSize="15sp" />
 
 		     <Button
 		         android:id="@+id/login_login_btn"

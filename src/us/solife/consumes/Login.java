@@ -6,10 +6,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 //import java.util.HashMap;
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+
 
 //import org.apache.http.client.methods.HttpPost; 
 import org.apache.commons.httpclient.HttpException;
@@ -32,6 +34,7 @@ import us.solife.consumes.util.NetUtils;
 //import us.solife.consumes.entity.ConsumeInfo;
 
 
+import us.solife.consumes.util.ToolUtils;
 import android.widget.Toast;
 //import android.os.Bundle;
 //import android.os.Handler;
@@ -93,20 +96,23 @@ public class Login extends BaseActivity {
 			String login_pwd   = editText_login_pwd.getText().toString();
 			
     		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);	
-            Editor Editor = sharedPreferences.edit();
+            //Editor Editor = sharedPreferences.edit();
             
-			String [] ret_array =  NetUtils.get_user_info(sharedPreferences,login_email);
+            String token = ToolUtils.generateUserToken(login_email, login_pwd);
+			String [] ret_array =  NetUtils.get_user_info(sharedPreferences,token);
 	        String ret_str;
 	        if(ret_array[0].equals("1")){
 	            ret_str = "登陆成功";	
 	            
 				//后台同步更新未同步的数据
+	            /*
 				try {
 					NetUtils.get_all_consumes(Login.this,login_email);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 				startActivity(new Intent(Login.this,Main.class));
+				*/
 	        } else {
 	            ret_str = "登陆失败:" +ret_array[1];
 				if(loading_dialog != null) loading_dialog.dismiss();

@@ -1,6 +1,7 @@
 package us.solife.consumes.util;
 
 import java.text.SimpleDateFormat;
+import android.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -57,7 +58,7 @@ public class ToolUtils {
 		return y_m_d;
 	}
 	
-	 public static boolean hasSdcard() {
+	public static boolean hasSdcard() {
 	     String status = Environment.getExternalStorageState();
 	     if (status.equals(Environment.MEDIA_MOUNTED)) {
 	         return true;
@@ -65,4 +66,12 @@ public class ToolUtils {
 	         return false;
 	     }
 	 }
+	public static String generateUserToken(String email, String password) {
+		String cat = email + password;
+		String _n1 = cat.length() + "";
+		String _n2 = _n1.length() + "";
+		String token = _n2 + _n1 + cat;
+		
+		return Base64.encodeToString(token.getBytes(),Base64.DEFAULT);
+	}
 }
