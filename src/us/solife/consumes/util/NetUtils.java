@@ -231,7 +231,7 @@ public class NetUtils {
         String [] ret_array = {"0","更新成功"};
         Integer ret     = 0; 
         String ret_info = "no return";
-        HashMap<String, Object> hash_map = ApiClient._get(context,URLs.USR_INFO+"?id="+user_id);
+        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.USR_INFO+"?id="+user_id);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 		
@@ -318,7 +318,7 @@ public class NetUtils {
         
 	    Editor Editor = preferences.edit();
         //httpGet 连接对象
-        HttpGet httpRequest =new HttpGet(URLs.USR_VALIDATE+"?email="+email);
+        HttpGet httpRequest =new HttpGet(URLs.USR_VALIDATE+"?token="+email);
 
         try {
             //取得HttpClinet对象
@@ -326,7 +326,7 @@ public class NetUtils {
             // 请求HttpClient,取得HttpResponse
             HttpResponse httpResponse = httpclient.execute(httpRequest);
             //请求成功
-            if(httpResponse.getStatusLine().getStatusCode()==HttpStatus.SC_OK)
+            if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
             {
 			     //取得返回的字符串
 			     String strResult=EntityUtils.toString(httpResponse.getEntity());
@@ -339,25 +339,23 @@ public class NetUtils {
 			     ret_array[0] = ret.toString();
 			     ret_array[1] = ret_info;
 			     if(ret.toString().equals("1")) {
-			         //Integer user_id      = jsonObject.getInt("user_id");
-			         String user_name     = jsonObject.getString("user_name");
-			         String user_email    = jsonObject.getString("user_email");
-			         String user_province = jsonObject.getString("user_province");
-			         String user_register = jsonObject.getString("user_register");
-			         String user_gravatar = jsonObject.getString("user_gravatar");
-			         int user_id = jsonObject.getInt("user_id");
+			         int    user_id       = jsonObject.getInt("id");
+			         String user_name     = jsonObject.getString("name");
+			         String user_email    = jsonObject.getString("email");
+			         String user_province = "province";//jsonObject.getString("user_province");
+			         String user_register = jsonObject.getString("created_at");
+			         String user_gravatar = "gravatar"; //jsonObject.getString("user_gravatar");
 			         
-					//Editor.putInt("current_user_id", user_id);
-					Editor.putString("current_user_name", user_name);
+			        Editor.putLong("current_user_id",      user_id);
+					Editor.putString("current_user_name",  user_name);
 					Editor.putString("current_user_email", user_email);
 					Editor.putString("current_user_province", user_province);
 					Editor.putString("current_user_register", user_register);
 					Editor.putString("current_user_gravatar", user_gravatar);
-					Editor.putLong("current_user_id", user_id);
 					Editor.putBoolean("is_login", true);
 					ret_array[1] = user_gravatar;
 					
-					download_image_with_url(user_email);
+					//download_image_with_url(user_email);
 					Editor.commit();
 			     }
 			            }
@@ -435,7 +433,7 @@ public class NetUtils {
 
 		ConsumeTb consume_table = ConsumeTb.getConsumeTb(context);
 		Integer consume_id = consume_table.get_friends_max_consume_id(user_info.get_user_id());
-        HashMap<String, Object> hash_map = ApiClient._get(context,URLs.CONSUME_FRIEND_NEW+"?consume_id="+consume_id+"&email="+email);
+        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.CONSUME_FRIEND_NEW+"?consume_id="+consume_id+"&email="+email);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 
@@ -465,7 +463,7 @@ public class NetUtils {
 	public static void get_all_consumes(Context context, String email) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
-        HashMap<String, Object> hash_map = ApiClient._get(context,URLs.CONSUME_LIST+"?email="+email);
+        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.CONSUME_LIST+"?email="+email);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 
@@ -492,7 +490,7 @@ public class NetUtils {
 		//检测当前环境是否有网络
 		if (!NetUtils.hasNetWork(context)) return;
 		
-		HashMap<String, Object> http_get = ApiClient._get(context,URLs.VERSION_UPDATE);
+		HashMap<String, Object> http_get = ApiClient._Get(context,URLs.VERSION_UPDATE);
 		UpdateInfo update_info = null;
 		if ((Integer)http_get.get("statusCode")==HttpStatus.SC_OK) {
 			String responseBody = (String)http_get.get("json_str");

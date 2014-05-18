@@ -382,8 +382,6 @@ public class TabList extends BaseActivity{
 				loading_progress_bar.setVisibility(View.GONE);
 				if(loading_dialog != null) loading_dialog.dismiss();
 		};
-	
-	
 	};
 	
 	public void chk_list_click() {

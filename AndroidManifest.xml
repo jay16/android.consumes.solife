@@ -1,9 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="us.solife.consumes"
     android:versionCode="1"
-    android:versionName="1.1" >
+    android:versionName="1.2" >
 
-    <uses-sdk android:minSdkVersion="8" />
+    <uses-sdk android:minSdkVersion="9" />
 
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"

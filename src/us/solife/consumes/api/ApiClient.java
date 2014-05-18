@@ -45,7 +45,7 @@ public class ApiClient {
 	private final static int RETRY_TIME = 3;
 
 	
-	private static HttpClient get_http_client() {        
+	private static HttpClient getHttpClient() {        
         HttpClient httpClient = new HttpClient();
 		// 设置 HttpClient 接收 Cookie,用与浏览器一样的策略
 		httpClient.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
@@ -61,7 +61,7 @@ public class ApiClient {
 	}	
 	
 	public static HashMap<String, Object> _post(String url, org.apache.commons.httpclient.NameValuePair[] params) throws HttpException, IOException{	
-		HttpClient http_client = get_http_client();
+		HttpClient http_client = getHttpClient();
 		PostMethod http_post = new PostMethod(url);
 		// 请求httpRequest
 		http_post.setRequestBody(params);				        
@@ -100,8 +100,8 @@ public class ApiClient {
 	/**
 	 * get请求URL
 	 */
-	public static HashMap<String, Object> _get(Context context, String url){	
-		HttpClient client = get_http_client();
+	public static HashMap<String, Object> _Get(Context context, String url){	
+		HttpClient client = getHttpClient();
 		GetMethod httpGet = new GetMethod(url);
 		httpGet.getParams().setSoTimeout(TIMEOUT_SOCKET);
 		HashMap<String, Object> hash_map = new HashMap<String, Object>();
