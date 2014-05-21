@@ -15,10 +15,10 @@ public class ConsumeDatabaseHelper extends SQLiteOpenHelper {
 			"id integer primary key autoincrement, " +
 			"user_id integer," +
 			"consume_id integer," +
-			"volue double NOT NULL,"+
-			"msg varchar(200) DEFAULT ''," +
+			"value double NOT NULL,"+
+			"remark varchar(200) DEFAULT ''," +
+			"ymdhms varchar(100) DEFAULT ''," +
 			"created_at varchar(100)," +
-			"updated_at varchar(100) DEFAULT ''," +
 			"sync boolean DEFAULT false," +
 			"state varchar(100) DEFAULT '')";
 	

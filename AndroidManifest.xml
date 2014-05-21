@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="us.solife.consumes"
-    android:versionCode="1"
-    android:versionName="1.2" >
+    package="us.solife.iconsumes"
+    android:versionCode="0"
+    android:versionName="0.0" >
 
     <uses-sdk android:minSdkVersion="9" />
 

@@ -35,7 +35,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import us.solife.androidcharts.entity.TitleValueColorEntity;
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.adapter.ListViewFriendsConsumesAdapter;
 import us.solife.consumes.api.Gravatar;
@@ -94,7 +94,7 @@ public class TabChart extends BaseActivity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		setViewList();
+		//setViewList();
 	}
 	public void setViewList() {
 		listView = (ListView) findViewById(R.id.listView_consumes);
@@ -120,7 +120,7 @@ public class TabChart extends BaseActivity {
 					    ConsumeInfo consumeinfo = consumeInfos.get(position);
 					    //String consume_id = ((TextView) view.findViewById(R.id.consume_id)).getText().toString();
 
-						Toast.makeText(TabChart.this, consumeinfo.get_msg(), 0).show();
+						Toast.makeText(TabChart.this, consumeinfo.get_remark(), 0).show();
 						// 界面切换
 						// 显示记录记录
 						//Intent intent = new Intent(TabChart.this, ConsumeItem.class);

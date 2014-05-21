@@ -3,7 +3,7 @@ package us.solife.consumes.adapter;
 import java.util.ArrayList;
 import java.math.BigDecimal;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.util.ToolUtils;
 import android.content.Context;
@@ -80,7 +80,7 @@ public class ListViewConsumeAdapter extends BaseAdapter{
 		ConsumeInfo consumeInfo = consumeInfos.get(position);
 
 		//消费值四舍五入，保留一位小数
-		BigDecimal volue = new BigDecimal(consumeInfo.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);
+		BigDecimal volue = new BigDecimal(consumeInfo.get_value()).setScale(1, BigDecimal.ROUND_HALF_UP);
 		holder.item_value.setText(volue + "元");
 		holder.item_value.setTag(consumeInfo);//设置隐藏参数(实体类)
 		holder.item_date.setText(consumeInfo.get_created_at());

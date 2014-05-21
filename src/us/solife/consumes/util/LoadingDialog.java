@@ -1,6 +1,6 @@
 package us.solife.consumes.util;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 
 import android.app.Dialog;
 import android.content.Context;

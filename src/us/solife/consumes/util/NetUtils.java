@@ -1,6 +1,11 @@
 package us.solife.consumes.util;
 
 import java.io.BufferedOutputStream;
+
+
+
+import android.util.Base64;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,7 +41,6 @@ import us.solife.consumes.entity.UpdateInfo;
 import us.solife.consumes.entity.UserInfo;
 import us.solife.consumes.parse.ConsumeListParse;
 import us.solife.consumes.parse.UpdateInfoParse;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -47,6 +51,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
@@ -89,9 +94,9 @@ public class NetUtils {
 
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
 		  new org.apache.commons.httpclient.NameValuePair("email", login_email),
-		  new org.apache.commons.httpclient.NameValuePair("consume[volue]", consume_info.get_volue()+""),
+		  new org.apache.commons.httpclient.NameValuePair("consume[volue]", consume_info.get_value()+""),
 		  new org.apache.commons.httpclient.NameValuePair("consume[created_at]", consume_info.get_created_at()),
-		  new org.apache.commons.httpclient.NameValuePair("consume[msg]", consume_info.get_msg())
+		  new org.apache.commons.httpclient.NameValuePair("consume[msg]", consume_info.get_remark())
 		};
 
 		HashMap<String, Object> hash_map = ApiClient._post(URLs.CONSUME_CREATE, params);
@@ -118,9 +123,9 @@ public class NetUtils {
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
 		  new org.apache.commons.httpclient.NameValuePair("email", login_email),
 		  new org.apache.commons.httpclient.NameValuePair("id",consume_info.get_consume_id()+""),
-		  new org.apache.commons.httpclient.NameValuePair("consume[volue]", consume_info.get_volue()+""),
+		  new org.apache.commons.httpclient.NameValuePair("consume[volue]", consume_info.get_value()+""),
 		  new org.apache.commons.httpclient.NameValuePair("consume[created_at]", consume_info.get_created_at()),
-		  new org.apache.commons.httpclient.NameValuePair("consume[msg]", consume_info.get_msg())
+		  new org.apache.commons.httpclient.NameValuePair("consume[msg]", consume_info.get_remark())
 		};
 
 		HashMap<String, Object> hash_map = ApiClient._post(URLs.CONSUME_UPDATE, params);
@@ -225,49 +230,7 @@ public class NetUtils {
 
     }
 	
-	public static UserInfo get_user_info_with_user_id(Context context,Integer user_id) 
-			throws JSONException {
-        UserInfo user_info = new UserInfo();
-        String [] ret_array = {"0","更新成功"};
-        Integer ret     = 0; 
-        String ret_info = "no return";
-        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.USR_INFO+"?id="+user_id);
-		int statusCode  = (Integer)hash_map.get("statusCode");
-		String response = (String)hash_map.get("json_str");
-		
-	    if(statusCode==HttpStatus.SC_OK)
-	    {
-		     JSONObject jsonObject = new JSONObject(response);
-		     ret      = jsonObject.getInt("ret");
-		     ret_info = jsonObject.getString("ret_info");
-		     ret_array[0] = ret.toString();
-		     ret_array[1] = ret_info;
-		     if(ret.toString().equals("1")) {
-		    	 user_info.set_user_id(jsonObject.getInt("id"));
-		         user_info.set_name(jsonObject.getString("name"));
-		         user_info.set_email(jsonObject.getString("email"));
-		         user_info.set_created_at(jsonObject.getString("created_at"));
-		         user_info.set_updated_at(jsonObject.getString("updated_at"));
-		     }
-	    }
-	    return user_info;
-	}
-	
-	public static void sync_user_list(Context context) 
-			throws JSONException {
-		UserTb user_table = UserTb.getUserTb(context);
-		ArrayList<Integer> user_ids = user_table.get_unsync_user_list();
-		if(user_ids.size() == 0) return;
-		
-		for(int i=0; i<user_ids.size(); i++ ) {
-			UserInfo user_info = get_user_info_with_user_id(context,user_ids.get(i));
-			if(user_info.get_user_id()>0) {
-			    user_table.insert_record(user_info);
-				Log.w("NetUtils","Insert User:"+user_info.to_string());
-			}
-		}
-	}
-	
+			
 	public static void chk_user_gravatar(Context context)
 			throws JSONException {
 		UserTb user_table = UserTb.getUserTb(context);
@@ -293,7 +256,6 @@ public class NetUtils {
 			 public void run() {
 				try {
 					upload_unsync_consumes(context, login_email);
-					sync_user_list(context);
 					chk_user_gravatar(context);
 					get_new_friends_consumes(context, login_email);
 				} catch (HttpException e) {
@@ -311,14 +273,11 @@ public class NetUtils {
 	}
 	
 
-	public static String [] get_user_info(SharedPreferences preferences,String email) {
-    	String [] ret_array = {"0","更新成功"};
-        Integer ret     = 0; 
-        String ret_info = "no return";
-        
+	public static String [] get_user_info(SharedPreferences preferences,String token) {
+    	String [] ret_array = {"1","成功"};
 	    Editor Editor = preferences.edit();
         //httpGet 连接对象
-        HttpGet httpRequest =new HttpGet(URLs.USR_VALIDATE+"?token="+email);
+        HttpGet httpRequest =new HttpGet(URLs.URL_USER+"?token="+ Uri.encode(token));
 
         try {
             //取得HttpClinet对象
@@ -326,46 +285,41 @@ public class NetUtils {
             // 请求HttpClient,取得HttpResponse
             HttpResponse httpResponse = httpclient.execute(httpRequest);
             //请求成功
-            if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK)
-            {
+            if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 			     //取得返回的字符串
-			     String strResult=EntityUtils.toString(httpResponse.getEntity());
-			     
+			     String strResult = EntityUtils.toString(httpResponse.getEntity());
 			     JSONObject jsonObject = new JSONObject(strResult) ;
-			     //获取返回值,并判断是否正确
-			     //actionResult=jsonObject.getBoolean("ActionResult");
-			     ret      = jsonObject.getInt("ret");
-			     ret_info = jsonObject.getString("ret_info");
-			     ret_array[0] = ret.toString();
-			     ret_array[1] = ret_info;
-			     if(ret.toString().equals("1")) {
-			         int    user_id       = jsonObject.getInt("id");
-			         String user_name     = jsonObject.getString("name");
-			         String user_email    = jsonObject.getString("email");
-			         String user_province = "province";//jsonObject.getString("user_province");
-			         String user_register = jsonObject.getString("created_at");
-			         String user_gravatar = "gravatar"; //jsonObject.getString("user_gravatar");
-			         
-			        Editor.putLong("current_user_id",      user_id);
-					Editor.putString("current_user_name",  user_name);
-					Editor.putString("current_user_email", user_email);
-					Editor.putString("current_user_province", user_province);
-					Editor.putString("current_user_register", user_register);
-					Editor.putString("current_user_gravatar", user_gravatar);
-					Editor.putBoolean("is_login", true);
-					ret_array[1] = user_gravatar;
-					
-					//download_image_with_url(user_email);
-					Editor.commit();
-			     }
-			            }
-			        }
-			        catch(Exception e) {
-			        	ret_array[1] = e.getMessage().toString();
-						Editor.commit();
-			        }
-			        
-				    return ret_array;
+			     
+		         int    user_id       = jsonObject.getInt("id");
+		         String user_name     = jsonObject.getString("name");
+		         String user_email    = jsonObject.getString("email");
+		         String user_province = "china";//jsonObject.getString("user_province");
+		         String user_register = jsonObject.getString("created_at");
+		         String user_gravatar = "gravatar"; //jsonObject.getString("user_gravatar");
+		         
+		        Editor.putLong("current_user_id",      user_id);
+				Editor.putString("current_user_name",  user_name);
+				Editor.putString("current_user_email", user_email);
+				Editor.putString("current_user_province", user_province);
+				Editor.putString("current_user_register", user_register);
+				Editor.putString("current_user_gravatar", user_gravatar);
+				Editor.putString("current_user_token", token);
+				Editor.putBoolean("is_login", true);
+				
+				//download_image_with_url(user_email);
+				Editor.commit();
+	        } else {
+	        	ret_array[0] = httpResponse.getStatusLine().getStatusCode() + "";
+	        	ret_array[1] = "fail";
+	        }
+        }
+        catch(Exception e) {
+        	ret_array[0] = "-1";
+        	ret_array[1] = e.getMessage().toString();
+			Editor.commit();
+        }
+	        
+	    return ret_array;
 	}
 	
 	public static void download_image_with_url(String email) {    
@@ -451,8 +405,8 @@ public class NetUtils {
 	    		for(int i=0;i<consume_infos.size();i++) {
 	    			ConsumeInfo c_info = consume_infos.get(i);
 	    			UserInfo u_info = user_table.get_record_with_user_id(c_info.get_user_id());
-	    			String title   = u_info.get_name()+"[￥"+c_info.get_volue()+"]";
-	    			String content = c_info.get_msg();
+	    			String title   = u_info.get_name()+"[￥"+c_info.get_value()+"]";
+	    			String content = c_info.get_remark();
 	    			UIHelper.push_notice(context,title,content,10+i);
 	    		}
 	    	}
@@ -460,10 +414,10 @@ public class NetUtils {
 
 	}
 	
-	public static void get_all_consumes(Context context, String email) 
+	public static void download_all_records(Context context, String token) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
-        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.CONSUME_LIST+"?email="+email);
+        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.URL_RECORD+"?token="+token);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 
@@ -490,7 +444,7 @@ public class NetUtils {
 		//检测当前环境是否有网络
 		if (!NetUtils.hasNetWork(context)) return;
 		
-		HashMap<String, Object> http_get = ApiClient._Get(context,URLs.VERSION_UPDATE);
+		HashMap<String, Object> http_get = ApiClient._Get(context,URLs.URL_VERSION);
 		UpdateInfo update_info = null;
 		if ((Integer)http_get.get("statusCode")==HttpStatus.SC_OK) {
 			String responseBody = (String)http_get.get("json_str");

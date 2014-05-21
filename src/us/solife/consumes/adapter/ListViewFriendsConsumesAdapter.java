@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.io.File;
 import java.math.BigDecimal;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.TabAbout;
 import us.solife.consumes.TabUser;
 import us.solife.consumes.api.Gravatar;
@@ -90,15 +90,13 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 	    		Bitmap bitmap = NetUtils.getLoacalBitmap(picDirStr); 
 	    		holder.gravatar.setImageBitmap(bitmap); //设置Bitmap
 	        }
-	        consume_info.set_user_name(user_info.get_name());
 		} else {
 			holder.name.setText(consume_info.get_user_id()+"-"+consume_info.get_consume_id()+"-"+consume_info.get_sync()+"-"+consume_info.get_state());
-	        consume_info.set_user_name(user_info.get_user_id()+"");
 		}
 
 		//消费值四舍五入，保留一位小数
-		BigDecimal volue = new BigDecimal(consume_info.get_volue()).setScale(1, BigDecimal.ROUND_HALF_UP);	
-		msg = consume_info.get_msg().toString();	
+		BigDecimal volue = new BigDecimal(consume_info.get_value()).setScale(1, BigDecimal.ROUND_HALF_UP);	
+		msg = consume_info.get_remark().toString();	
 		if(msg.length()>17)
 			msg = msg.substring(0,18);
 		date = consume_info.get_created_at().toString();

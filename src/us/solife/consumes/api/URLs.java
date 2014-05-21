@@ -28,9 +28,12 @@ public class URLs implements Serializable {
 	
 	private final static String URL_API_HOST = HTTP + HOST + URL_SPLITTER;
 	//users
-	public final static String USR_VALIDATE  = URL_API_HOST + "api/users/validate.json";
-	public final static String USR_INFO      = URL_API_HOST + "api/users/info";
+	public final static String URL_USER  = URL_API_HOST + "api/users.json";
+	//public final static String USR_VALIDATE  = URL_API_HOST + "api/users/validate.json";
+	//public final static String USR_INFO      = URL_API_HOST + "api/users/info";
 	//consumes
+	
+	public final static String URL_RECORD   = URL_API_HOST + "api/records.json";
 	public final static String CONSUME_LIST   = URL_API_HOST + "api/consumes/list";
 	public final static String CONSUME_CREATE = URL_API_HOST + "api/consumes/create";
 	public final static String CONSUME_UPDATE = URL_API_HOST + "api/consumes/update";
@@ -38,7 +41,7 @@ public class URLs implements Serializable {
 	public final static String CONSUME_SHOW   = URL_API_HOST + "api/consumes/show";
 	public final static String CONSUME_FRIEND_NEW   = URL_API_HOST + "api/consumes/friends";
 	//android app
-	public final static String VERSION_UPDATE   = URL_API_HOST + "api/phone/update";
+	public final static String URL_VERSION   = URL_API_HOST + "api/version.json";
 	
 
 	public final static String STORAGE_BASE     = Environment.getExternalStorageDirectory().getAbsolutePath() 

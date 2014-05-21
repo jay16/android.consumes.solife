@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
 
@@ -66,7 +66,7 @@ public class ConsumeItem extends BaseActivity {
 		
 		for(int i=0; i<consume_infos.size(); i++ ) {
 			consume_info = consume_infos.get(i);
-			volue = volue + (float)consume_info.get_volue();
+			volue = volue + (float)consume_info.get_value();
 		}
 		
 		TextView consume_item_value = (TextView) findViewById(R.id.consume_item_value);
@@ -131,7 +131,7 @@ public class ConsumeItem extends BaseActivity {
 
 		
         //提示消费内容
-		Toast.makeText(ConsumeItem.this, "长按可编辑[￥"+consume_info.get_volue()+"]", 0).show();
+		Toast.makeText(ConsumeItem.this, "长按可编辑[￥"+consume_info.get_value()+"]", 0).show();
 		//TextView consume_item_msg = (TextView) v.findViewById(R.id.consume_item_msg);
 		//Toast.makeText(ConsumeItem.this, consume_item_msg.getText(), 0).show();
 	}

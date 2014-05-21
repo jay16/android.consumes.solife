@@ -67,10 +67,9 @@ public class ToolUtils {
 	     }
 	 }
 	public static String generateUserToken(String email, String password) {
-		String cat = email + password;
-		String _n1 = cat.length() + "";
+		String _n1 = email.length() + "";
 		String _n2 = _n1.length() + "";
-		String token = _n2 + _n1 + cat;
+		String token = _n2 + _n1 + email + password;
 		
 		return Base64.encodeToString(token.getBytes(),Base64.DEFAULT);
 	}

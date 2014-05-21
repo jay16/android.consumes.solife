@@ -1,6 +1,6 @@
 package us.solife.consumes.widget;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 
 import android.content.Context;
 import android.util.AttributeSet;

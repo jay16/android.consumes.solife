@@ -7,7 +7,7 @@ import java.util.HashMap;
 import org.apache.commons.httpclient.HttpException;
 import org.json.JSONException;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.api.URLs;
 import us.solife.consumes.db.ConsumeTb;
@@ -71,7 +71,7 @@ public class TabList extends BaseActivity{
 	private PopupWindow mPopupWindow;
 	private ProgressBar loading_progress_bar;
 	private LoadingDialog loading_dialog;
-	private String current_user_email;
+	private String current_user_token;
 	private Long current_user_id;
 
 	@Override
@@ -84,7 +84,7 @@ public class TabList extends BaseActivity{
 		
 
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-		current_user_email = sharedPreferences.getString("current_user_email", "");
+		current_user_token = sharedPreferences.getString("current_user_token", "");
 		current_user_id = sharedPreferences.getLong("current_user_id", -1);
 		
 		/**
@@ -353,7 +353,7 @@ public class TabList extends BaseActivity{
 				//ConsumeListParse consumeListParse = new ConsumeListParse();
 				//getDataFromServer(getApplicationContext(), consumeListParse, URLs.CONSUME_LIST, callback);
 				try {
-					NetUtils.get_all_consumes(TabList.this,current_user_email);
+					NetUtils.download_all_records(TabList.this,current_user_token);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
@@ -375,7 +375,7 @@ public class TabList extends BaseActivity{
 				loading_dialog.setLoadText("同步数据中...");	
 				loading_dialog.show();
 
-				NetUtils.upload_unsync_consumes_background(TabList.this,current_user_email);
+				NetUtils.upload_unsync_consumes_background(TabList.this,current_user_token);
 				Toast.makeText(TabList.this, "同步完毕", 0).show();
 				init_view_list("day");
 				

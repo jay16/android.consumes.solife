@@ -8,7 +8,7 @@ import org.json.JSONException;
 
 import us.solife.consumes.ConsumeItem;
 import us.solife.consumes.Main;
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.ConsumeForm;
 import us.solife.consumes.TabList;
 import us.solife.consumes.api.ApiClient;
@@ -65,7 +65,7 @@ public class UIHelper {
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setIcon(R.drawable.ic_dialog_menu);
-		builder.setTitle(context.getString(R.string.select)+"[гд"+consume_info.get_volue()+"]");
+		builder.setTitle(context.getString(R.string.select)+"[гд"+consume_info.get_value()+"]");
 
 		builder.setItems(R.array.consume_item_edit_array,new DialogInterface.OnClickListener(){
 			public void onClick(DialogInterface arg0, int arg1) {
@@ -112,7 +112,7 @@ public class UIHelper {
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
 		builder.setIcon(R.drawable.ic_dialog_menu);
-		builder.setTitle(context.getString(R.string.delete)+"[гд"+consume_info.get_volue()+"]");
+		builder.setTitle(context.getString(R.string.delete)+"[гд"+consume_info.get_value()+"]");
 		builder.setItems(R.array.delete_options,new DialogInterface.OnClickListener(){
 			public void onClick(DialogInterface arg0, int arg1) {
 				/*
@@ -159,8 +159,8 @@ public class UIHelper {
 	public static void FriendsConsumeItemDialog(final Context context, final ConsumeInfo consume_info)
 	{
 		AlertDialog.Builder builder = new AlertDialog.Builder(context);
-		builder.setTitle(consume_info.get_user_name()+"[гд"+consume_info.get_volue()+"]");
-		builder.setMessage(consume_info.get_msg());
+		builder.setTitle("[гд"+consume_info.get_value()+"]");
+		builder.setMessage(consume_info.get_remark());
 		builder.create().show();
 	}
 	

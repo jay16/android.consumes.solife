@@ -2,7 +2,7 @@ package us.solife.consumes;
 
 import org.json.JSONException;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.recevier.TimerService;
 import us.solife.consumes.util.AppManager;
 import us.solife.consumes.util.NetUtils;

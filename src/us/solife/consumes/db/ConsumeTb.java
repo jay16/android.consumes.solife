@@ -61,10 +61,10 @@ public class ConsumeTb {
 		for (int i = 0; i < consumeInfos.size(); i++) {
 			ConsumeInfo info = consumeInfos.get(i);
 			//log调试用
-            Log.w("ConsumeDao",info.get_msg());
+            Log.w("ConsumeDao",info.to_string());
             
-			insert_record(info.get_user_id(), info.get_consume_id(), info.get_volue(),
-					info.get_msg(), info.get_created_at(),info.get_updated_at(),true);
+			insert_record(info.get_user_id(), (int) info.get_id(), info.get_value(),
+					info.get_remark(), info.get_created_at(),true);
 		}
 
 	}
@@ -79,18 +79,17 @@ public class ConsumeTb {
 		
 	}
 	// 插入一笔消费记录
-	public long insert_record(Integer user_id, Integer consume_id, Double volue,
-			String msg, String created_at, String updated_at, Boolean sync) {
+	public long insert_record(Integer user_id, Integer consume_id, Double value,
+			String remark, String created_at, Boolean sync) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		database.beginTransaction();
 
 		ContentValues values = new ContentValues();
 		values.put("user_id", user_id);
 		values.put("consume_id", consume_id);
-		values.put("volue", volue);
-		values.put("msg", msg);
+		values.put("value", value);
+		values.put("remark", remark);
 		values.put("created_at", created_at);
-		values.put("updated_at", created_at);
 		//是否与服务器数据已同步
 		values.put("sync", sync);
 		long rowid = database.insert("consumes", null, values);
@@ -150,10 +149,9 @@ public class ConsumeTb {
 	    consume_info.set_id(cursor.getInt(cursor.getColumnIndex("id")));
 	    consume_info.set_user_id(cursor.getInt(cursor.getColumnIndex("user_id")));
 	    consume_info.set_consume_id(cursor.getInt(cursor.getColumnIndex("consume_id")));
-		consume_info.set_volue(cursor.getDouble(cursor.getColumnIndex("volue")));
-		consume_info.set_msg(cursor.getString(cursor.getColumnIndex("msg")).toString());
+		consume_info.set_value(cursor.getDouble(cursor.getColumnIndex("value")));
+		consume_info.set_remark(cursor.getString(cursor.getColumnIndex("msg")).toString());
 		consume_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")).toString());
-		consume_info.set_updated_at(cursor.getString(cursor.getColumnIndex("updated_at")));
 		consume_info.set_sync(cursor.getLong(cursor.getColumnIndex("sync")));
 		consume_info.set_state(cursor.getString(cursor.getColumnIndex("state")));
 		

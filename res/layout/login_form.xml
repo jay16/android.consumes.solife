@@ -55,7 +55,7 @@
 			    android:drawablePadding="25dip"
 			    android:hint="注册邮邮箱"
 			    android:singleLine="true"
-			    android:text="solife.jay@gmail.com"
+			    android:text="jay_li@solife.us"
 			    android:textColor="#000"
 			    android:textSize="15sp" />
 			

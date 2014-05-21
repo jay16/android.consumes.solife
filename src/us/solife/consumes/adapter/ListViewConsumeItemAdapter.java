@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.math.BigDecimal;
 
 import us.solife.consumes.ConsumeItem;
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.TabList;
 import us.solife.consumes.adapter.ListViewConsumeAdapter.ViewHolder;
 import us.solife.consumes.entity.ConsumeInfo;
@@ -90,7 +90,7 @@ public class ListViewConsumeItemAdapter extends BaseAdapter{
         ConsumeInfo consumeInfo = consumeInfos.get(position);
         
 		holder.created_at.setText(consumeInfo.get_created_at().substring(10, 16));
-		holder.msg.setText(consumeInfo.get_msg());
+		holder.msg.setText(consumeInfo.get_remark());
 		holder.msg.setTag(consumeInfo);//设置隐藏参数(实体类)
 		holder.msg.setOnLongClickListener(msgLongClickListener);
 		

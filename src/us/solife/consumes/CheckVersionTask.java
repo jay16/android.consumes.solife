@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 import org.apache.commons.httpclient.HttpStatus;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.api.ApiClient;
 import us.solife.consumes.api.URLs;
 import us.solife.consumes.entity.UpdateInfo;
@@ -181,7 +181,7 @@ public class CheckVersionTask implements Runnable {
 	    }
 	public void run() {
 		//更新服务器路径
-		String path = URLs.VERSION_UPDATE;
+		String path = URLs.URL_VERSION;
 		
 		try {
 			//检测当前环境是否有网络

@@ -24,7 +24,7 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.util.LoadingDialog;
 import us.solife.consumes.util.NetUtils;
 //import org.json.JSONException;
@@ -105,14 +105,13 @@ public class Login extends BaseActivity {
 	            ret_str = "登陆成功";	
 	            
 				//后台同步更新未同步的数据
-	            /*
 				try {
-					NetUtils.get_all_consumes(Login.this,login_email);
+					NetUtils.download_all_records(Login.this,token);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 				startActivity(new Intent(Login.this,Main.class));
-				*/
+				
 	        } else {
 	            ret_str = "登陆失败:" +ret_array[1];
 				if(loading_dialog != null) loading_dialog.dismiss();

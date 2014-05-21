@@ -2,7 +2,7 @@ package us.solife.consumes;
 
 import java.util.ArrayList;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.api.Gravatar;
 import us.solife.consumes.db.UserTb;
 import us.solife.consumes.entity.UserInfo;

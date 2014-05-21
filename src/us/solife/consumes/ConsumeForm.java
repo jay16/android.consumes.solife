@@ -16,7 +16,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
 
@@ -115,7 +115,7 @@ public class ConsumeForm extends BaseActivity {
 	private void init_update_consume(Long row_id) {		
 		ConsumeInfo consume_info = current_user.get_record(row_id);
 		editText_consume_form_created_at.setText(consume_info.get_created_at());
-		editText_consume_form_msg.setText(consume_info.get_msg());
+		editText_consume_form_msg.setText(consume_info.get_remark());
 		textView_main_header.setText("编辑记录");
 		button_consume_form_submit.setText("更新");
 	}
@@ -197,8 +197,8 @@ public class ConsumeForm extends BaseActivity {
 						Log.e("ConsumeForm","Action:["+action+"]");
 					} else if(action.equals("update")){
 						ConsumeInfo consume_info = current_user.get_record(row_id);
-						consume_info.set_volue(Double.parseDouble(volue));
-						consume_info.set_msg(msg);
+						consume_info.set_value(Double.parseDouble(volue));
+						consume_info.set_remark(msg);
 						consume_info.set_created_at(created_at);
 						
 						//修改未同步数据，无需修改sync,state

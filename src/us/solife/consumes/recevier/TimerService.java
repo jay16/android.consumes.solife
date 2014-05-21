@@ -1,7 +1,7 @@
 package us.solife.consumes.recevier;
 
 import us.solife.consumes.Main;
-import us.solife.consumes.R;
+import us.solife.iconsumes.R;
 import us.solife.consumes.util.NetUtils;
 import us.solife.consumes.util.ToolUtils;
 import android.app.Notification;
