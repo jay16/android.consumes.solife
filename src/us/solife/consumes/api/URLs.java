@@ -33,7 +33,7 @@ public class URLs implements Serializable {
 	//public final static String USR_INFO      = URL_API_HOST + "api/users/info";
 	//consumes
 	
-	public final static String URL_RECORD   = URL_API_HOST + "api/records.json";
+	public final static String URL_RECORD   = URL_API_HOST + "api/records";
 	public final static String CONSUME_LIST   = URL_API_HOST + "api/consumes/list";
 	public final static String CONSUME_CREATE = URL_API_HOST + "api/consumes/create";
 	public final static String CONSUME_UPDATE = URL_API_HOST + "api/consumes/update";

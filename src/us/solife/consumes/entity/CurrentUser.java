@@ -34,7 +34,7 @@ public class CurrentUser {
 		this.consumeDatabaseHelper = new ConsumeDatabaseHelper(context);
 	}
 
-	public static CurrentUser getCurrentUser(Context context,int user_id) {
+	public static CurrentUser get_current_user(Context context,int user_id) {
 		if (consume_user != null) {
 		} else {
 			consume_user = new CurrentUser(context,user_id);
@@ -51,7 +51,7 @@ public class CurrentUser {
      */
 	public ConsumeInfo get_record(long row_id) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		Cursor cursor = database.rawQuery("select * from consumes where id= "+row_id + " and user_id = "+ user_id, null);
+		Cursor cursor = database.rawQuery("select * from consumes where id = "+row_id + " and user_id = "+ user_id, null);
         ConsumeInfo consume_info = new ConsumeInfo();
 		if (cursor != null) {
 			cursor.moveToFirst();

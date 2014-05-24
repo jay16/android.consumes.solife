@@ -131,7 +131,7 @@ public class UIHelper {
 		builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int arg1) {
-				CurrentUser current_user = CurrentUser.getCurrentUser(context, consume_info.get_user_id());
+				CurrentUser current_user = CurrentUser.get_current_user(context, consume_info.get_user_id());
 				current_user.destroy_record(consume_info.get_id());
 				Log.w("UIHelper","Delete YES");
 				Intent intent = new Intent(context, ConsumeItem.class);

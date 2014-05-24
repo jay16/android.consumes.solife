@@ -106,7 +106,7 @@ public class TabList extends BaseActivity{
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
 		consumeDao = ConsumeTb.getConsumeTb(getApplication());
-		current_user = CurrentUser.getCurrentUser(getApplication(),Integer.parseInt(String.valueOf(current_user_id)));
+		current_user = CurrentUser.get_current_user(getApplication(),Integer.parseInt(String.valueOf(current_user_id)));
 		/**
 		 * 同步/下载数据按钮
 		 */
@@ -375,7 +375,7 @@ public class TabList extends BaseActivity{
 				loading_dialog.setLoadText("同步数据中...");	
 				loading_dialog.show();
 
-				NetUtils.upload_unsync_consumes_background(TabList.this,current_user_token);
+				NetUtils.sync_upload_record_background(TabList.this,current_user_token);
 				Toast.makeText(TabList.this, "同步完毕", 0).show();
 				init_view_list("day");
 				

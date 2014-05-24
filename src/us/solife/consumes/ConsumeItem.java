@@ -61,7 +61,7 @@ public class ConsumeItem extends BaseActivity {
 
 		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = shared_preferences.getLong("current_user_id", -1);
-		current_user = CurrentUser.getCurrentUser(ConsumeItem.this,Integer.parseInt(String.valueOf(current_user_id)));
+		current_user = CurrentUser.get_current_user(ConsumeItem.this,Integer.parseInt(String.valueOf(current_user_id)));
 		consume_infos = current_user.get_consume_items_with_date(day);
 		
 		for(int i=0; i<consume_infos.size(); i++ ) {

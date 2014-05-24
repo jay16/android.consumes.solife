@@ -114,26 +114,24 @@ public class NetUtils {
 	}
 
 	
-	//创建consume
-	public static String[] solife_consume_update(String login_email, ConsumeInfo consume_info) 
+	//update a record
+	public static String[] update_record(String token, ConsumeInfo consume_info) 
 			throws HttpException, IOException, JSONException {
-		// 从服务器接口中获取当前账号和密码的配对情况
 		String[] ret_array = { "0", "return null" };
 
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
-		  new org.apache.commons.httpclient.NameValuePair("email", login_email),
-		  new org.apache.commons.httpclient.NameValuePair("id",consume_info.get_consume_id()+""),
-		  new org.apache.commons.httpclient.NameValuePair("consume[volue]", consume_info.get_value()+""),
-		  new org.apache.commons.httpclient.NameValuePair("consume[created_at]", consume_info.get_created_at()),
-		  new org.apache.commons.httpclient.NameValuePair("consume[msg]", consume_info.get_remark())
+		  new org.apache.commons.httpclient.NameValuePair("token", token),
+		  new org.apache.commons.httpclient.NameValuePair("record[value]", consume_info.get_value()+""),
+		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_created_at()),
+		  new org.apache.commons.httpclient.NameValuePair("record[remark]", consume_info.get_remark())
 		};
 
-		HashMap<String, Object> hash_map = ApiClient._post(URLs.CONSUME_UPDATE, params);
+		HashMap<String, Object> hash_map = ApiClient._post(URLs.URL_RECORD+"/"+consume_info.get_consume_id()+".json", params);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("response");
 		if (statusCode == HttpStatus.SC_OK) {
 			JSONObject jsonObject = new JSONObject(response);
-			ret_array[0] = jsonObject.getInt("ret")+"";
+			ret_array[0] = "1";
 			ret_array[1] = jsonObject.getString("ret_info");
 		}
 		return ret_array;
@@ -141,12 +139,12 @@ public class NetUtils {
 	
 
 	//创建consume
-	public static String[] solife_consume_delete(String login_email, ConsumeInfo consume_info) 
+	public static String[] deleteRecord(String token, ConsumeInfo consume_info) 
 			throws HttpException, IOException, JSONException {
 		String[] ret_array = { "0", "return null" };
 
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
-		  new org.apache.commons.httpclient.NameValuePair("email", login_email),
+		  new org.apache.commons.httpclient.NameValuePair("token", token),
 		  new org.apache.commons.httpclient.NameValuePair("id",consume_info.get_consume_id()+"")
 		};
 
@@ -158,7 +156,7 @@ public class NetUtils {
 		if (statusCode == HttpStatus.SC_OK) {;
 			JSONObject jsonObject = new JSONObject(response);
 			// 获取返回值
-			ret_array[0] = jsonObject.getInt("ret")+"";
+			ret_array[0] = "1";
 			ret_array[1] = jsonObject.getString("ret_info");
 		}
 
@@ -173,12 +171,12 @@ public class NetUtils {
 	 * @throws IOException 
 	 * @throws HttpException 
 	 */
-	public static void upload_unsync_consumes(Context context,String login_email) 
+	public static void sync_upload_record(Context context,String token) 
 			throws HttpException, IOException, JSONException {
 		    ArrayList<ConsumeInfo> consume_infos;
-		    ConsumeTb             consumeDao;
+		    ConsumeTb              consumeDao;
 		    
-		    consumeDao = ConsumeTb.getConsumeTb(context);
+		    consumeDao    = ConsumeTb.getConsumeTb(context);
 		    consume_infos = consumeDao.get_unsync_records();
 		    
 			Integer un_sync_count = consume_infos.size();
@@ -186,10 +184,10 @@ public class NetUtils {
 			if(un_sync_count>0){
 				for(int i = 0; i < consume_infos.size(); i++) {
 					ConsumeInfo consume_info = consume_infos.get(i);
-					CurrentUser current_user = CurrentUser.getCurrentUser(context, consume_info.get_user_id());
+					CurrentUser current_user = CurrentUser.get_current_user(context, consume_info.get_user_id());
 					String[] ret_array = {"0","","-1"};
 					if(consume_info.get_state().equals("create")){
-					  ret_array = NetUtils.solife_consume_create(login_email, consume_info);
+					  ret_array = NetUtils.solife_consume_create(token, consume_info);
 						if (ret_array[0].equals("1")) {
 							//同步成功则修改数据库内容
 							consume_info.set_consume_id(Integer.valueOf(ret_array[2]));
@@ -203,7 +201,7 @@ public class NetUtils {
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-NO");
 						}	
 					} else if(consume_info.get_state().equals("update")){
-					  ret_array = NetUtils.solife_consume_update(login_email, consume_info);
+					    ret_array = NetUtils.update_record(token, consume_info);
 						if (ret_array[0].equals("1")) {
 							consume_info.set_sync((long)1);
 							consume_info.set_state("");
@@ -214,7 +212,7 @@ public class NetUtils {
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-NO");
 						}	
 					} else if(consume_info.get_state().equals("delete")) {
-					  ret_array = NetUtils.solife_consume_delete(login_email, consume_info);
+					  ret_array = NetUtils.deleteRecord(token, consume_info);
 						if (ret_array[0].equals("1")) {
 							Log.w("NetUtils",consume_info.to_string());
 							current_user.destroy_record(consume_info.get_id());
@@ -251,11 +249,11 @@ public class NetUtils {
 		
 	}
 	
-	public static void upload_unsync_consumes_background(final Context context,final String login_email) {
+	public static void sync_upload_record_background(final Context context,final String login_email) {
 		 new Thread() {
 			 public void run() {
 				try {
-					upload_unsync_consumes(context, login_email);
+					sync_upload_record(context, login_email);
 					chk_user_gravatar(context);
 					get_new_friends_consumes(context, login_email);
 				} catch (HttpException e) {
