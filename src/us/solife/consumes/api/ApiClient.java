@@ -2,9 +2,7 @@ package us.solife.consumes.api;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HttpClient;
@@ -13,20 +11,10 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+import org.apache.commons.httpclient.methods.DeleteMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
 import android.content.Context;
+import android.util.Log;
 
 /**
  * API客户端接口：用于访问网络数据
@@ -60,26 +48,6 @@ public class ApiClient {
 		return httpClient;
 	}	
 	
-	public static HashMap<String, Object> _post(String url, org.apache.commons.httpclient.NameValuePair[] params) throws HttpException, IOException{	
-		HttpClient http_client = getHttpClient();
-		PostMethod http_post = new PostMethod(url);
-		// 请求httpRequest
-		http_post.setRequestBody(params);				        
-        int statusCode  = http_client.executeMethod(http_post);
-        String response = "";
-		try {
-			response = http_post.getResponseBodyAsString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        HashMap<String, Object> hash_map = new HashMap<String, Object>();
-        hash_map.put("statusCode", statusCode);
-        hash_map.put("response", response);
-        return hash_map;
-        
-	}
 	private static String _MakeURL(String p_url, Map<String, Object> params) {
 		StringBuilder url = new StringBuilder(p_url);
 		if(url.indexOf("?")<0)
@@ -117,5 +85,49 @@ public class ApiClient {
 		
 		return hash_map ;
 	}
+	
+	public static HashMap<String, Object> _post(String url, org.apache.commons.httpclient.NameValuePair[] params) throws HttpException, IOException{	
+		HttpClient http_client = getHttpClient();
+		PostMethod http_post = new PostMethod(url);
+		// 请求httpRequest
+		http_post.setRequestBody(params);				        
+        int statusCode  = http_client.executeMethod(http_post);
+        String response = "";
+		try {
+			response = http_post.getResponseBodyAsString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        HashMap<String, Object> hash_map = new HashMap<String, Object>();
+        
+        hash_map.put("statusCode", statusCode);
+        hash_map.put("response", response);
+        Log.w("_POST", hash_map.toString());
+        return hash_map;
+	}
+	public static HashMap<String, Object> _delete(String url)
+			throws HttpException, IOException{	
+		HttpClient http_client = getHttpClient();
+		DeleteMethod http_delete = new DeleteMethod(url);
+		// 请求httpRequest     
+        int statusCode  = http_client.executeMethod(http_delete);
+        String response = "";
+		try {
+			response = http_delete.getResponseBodyAsString();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        HashMap<String, Object> hash_map = new HashMap<String, Object>();
+        
+        hash_map.put("statusCode", statusCode);
+        hash_map.put("response", response);
+        Log.w("_DELETE", hash_map.toString());
+        return hash_map;
+	}
+	
+
 	
 }

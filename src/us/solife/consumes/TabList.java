@@ -105,7 +105,7 @@ public class TabList extends BaseActivity{
          */
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-		consumeDao = ConsumeTb.getConsumeTb(getApplication());
+		consumeDao = ConsumeTb.get_record_tb(getApplication());
 		current_user = CurrentUser.get_current_user(getApplication(),Integer.parseInt(String.valueOf(current_user_id)));
 		/**
 		 * 同步/下载数据按钮

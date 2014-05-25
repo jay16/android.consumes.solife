@@ -87,29 +87,32 @@ public class NetUtils {
 	}
 	
 	//创建consume
-	public static String[] solife_consume_create(String login_email, ConsumeInfo consume_info) 
+	public static String[] create_record(String token, ConsumeInfo consume_info) 
 			throws HttpException, IOException, JSONException {
 		// 从服务器接口中获取当前账号和密码的配对情况
 		String[] ret_array = { "0", "return null","-1" };
 
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
-		  new org.apache.commons.httpclient.NameValuePair("email", login_email),
-		  new org.apache.commons.httpclient.NameValuePair("consume[volue]", consume_info.get_value()+""),
-		  new org.apache.commons.httpclient.NameValuePair("consume[created_at]", consume_info.get_created_at()),
-		  new org.apache.commons.httpclient.NameValuePair("consume[msg]", consume_info.get_remark())
+		  new org.apache.commons.httpclient.NameValuePair("token", token),
+		  new org.apache.commons.httpclient.NameValuePair("format", "json"),
+		  new org.apache.commons.httpclient.NameValuePair("record[value]", consume_info.get_value()+""),
+		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_created_at()),
+		  new org.apache.commons.httpclient.NameValuePair("record[remark]", consume_info.get_remark()),
+		  new org.apache.commons.httpclient.NameValuePair("record[klass]", "-1")
 		};
 
-		HashMap<String, Object> hash_map = ApiClient._post(URLs.CONSUME_CREATE, params);
+		HashMap<String, Object> hash_map = ApiClient._post(URLs.URL_RECORD, params);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("response");
 			// 请求成功
-		if (statusCode == HttpStatus.SC_OK) {
+		if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) {
 			JSONObject jsonObject = new JSONObject(response);
 			// 获取返回值
-			ret_array[0] = jsonObject.getInt("ret")+"";
-			ret_array[1] = jsonObject.getString("ret_info");
-			ret_array[2] = jsonObject.getInt("consume_id")+"";
+			ret_array[0] = "1";
+			ret_array[1] = jsonObject.toString();
+			ret_array[2] = jsonObject.getInt("id")+"";
 		}
+		Log.w("CreateRecord", ret_array.toString());
 		return ret_array;
 	}
 
@@ -129,36 +132,32 @@ public class NetUtils {
 		HashMap<String, Object> hash_map = ApiClient._post(URLs.URL_RECORD+"/"+consume_info.get_consume_id()+".json", params);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("response");
-		if (statusCode == HttpStatus.SC_OK) {
+		if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) {
 			JSONObject jsonObject = new JSONObject(response);
 			ret_array[0] = "1";
-			ret_array[1] = jsonObject.getString("ret_info");
+			ret_array[1] = jsonObject.toString();
 		}
+		Log.w("UpdateRecord", ret_array.toString());
 		return ret_array;
 	}
 	
 
 	//创建consume
-	public static String[] deleteRecord(String token, ConsumeInfo consume_info) 
+	public static String[] delete_record(String token, ConsumeInfo consume_info) 
 			throws HttpException, IOException, JSONException {
 		String[] ret_array = { "0", "return null" };
 
-		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
-		  new org.apache.commons.httpclient.NameValuePair("token", token),
-		  new org.apache.commons.httpclient.NameValuePair("id",consume_info.get_consume_id()+"")
-		};
-
-		HashMap<String, Object> hash_map = ApiClient._post(URLs.CONSUME_DELETE, params);
+		HashMap<String, Object> hash_map = ApiClient._delete(URLs.URL_RECORD+"/"+consume_info.get_consume_id()+".json");
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("response");
 		
 		// 请求成功
-		if (statusCode == HttpStatus.SC_OK) {;
+		//if (statusCode == HttpStatus.SC_OK) {;
 			JSONObject jsonObject = new JSONObject(response);
 			// 获取返回值
 			ret_array[0] = "1";
-			ret_array[1] = jsonObject.getString("ret_info");
-		}
+			ret_array[1] = jsonObject.toString();
+		//}
 
 		return ret_array;
 	}
@@ -176,18 +175,18 @@ public class NetUtils {
 		    ArrayList<ConsumeInfo> consume_infos;
 		    ConsumeTb              consumeDao;
 		    
-		    consumeDao    = ConsumeTb.getConsumeTb(context);
+		    consumeDao    = ConsumeTb.get_record_tb(context);
 		    consume_infos = consumeDao.get_unsync_records();
 		    
 			Integer un_sync_count = consume_infos.size();
 			
-			if(un_sync_count>0){
+			if(un_sync_count > 0){
 				for(int i = 0; i < consume_infos.size(); i++) {
 					ConsumeInfo consume_info = consume_infos.get(i);
 					CurrentUser current_user = CurrentUser.get_current_user(context, consume_info.get_user_id());
 					String[] ret_array = {"0","","-1"};
 					if(consume_info.get_state().equals("create")){
-					  ret_array = NetUtils.solife_consume_create(token, consume_info);
+					    ret_array = NetUtils.create_record(token, consume_info);
 						if (ret_array[0].equals("1")) {
 							//同步成功则修改数据库内容
 							consume_info.set_consume_id(Integer.valueOf(ret_array[2]));
@@ -212,7 +211,7 @@ public class NetUtils {
                             Log.w("NetUtils","Action:"+consume_info.get_state()+"-NO");
 						}	
 					} else if(consume_info.get_state().equals("delete")) {
-					  ret_array = NetUtils.deleteRecord(token, consume_info);
+					  ret_array = NetUtils.delete_record(token, consume_info);
 						if (ret_array[0].equals("1")) {
 							Log.w("NetUtils",consume_info.to_string());
 							current_user.destroy_record(consume_info.get_id());
@@ -255,7 +254,7 @@ public class NetUtils {
 				try {
 					sync_upload_record(context, login_email);
 					chk_user_gravatar(context);
-					get_new_friends_consumes(context, login_email);
+					// get_new_friends_consumes(context, login_email);
 				} catch (HttpException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -376,14 +375,14 @@ public class NetUtils {
         return bitmap;
    }
 	
-	public static void get_new_friends_consumes(Context context, String email) 
+	public static void get_new_friends_consumes1(Context context, String email) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
 
 		UserTb user_table = UserTb.getUserTb(context);
 		UserInfo user_info = user_table.get_record_with_email(email);
 
-		ConsumeTb consume_table = ConsumeTb.getConsumeTb(context);
+		ConsumeTb consume_table = ConsumeTb.get_record_tb(context);
 		Integer consume_id = consume_table.get_friends_max_consume_id(user_info.get_user_id());
         HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.CONSUME_FRIEND_NEW+"?consume_id="+consume_id+"&email="+email);
 		int statusCode  = (Integer)hash_map.get("statusCode");
@@ -429,7 +428,7 @@ public class NetUtils {
 	    	Log.w("get_new_friends_consumes","parseJson:"+(Boolean)parse_json.get("result"));
 	    	Log.w("get_new_friends_consumes","consume_infos:"+consume_infos.size());
 	    	if(consume_infos.size()>0) {
-	    		ConsumeTb consume_table = ConsumeTb.getConsumeTb(context);
+	    		ConsumeTb consume_table = ConsumeTb.get_record_tb(context);
 	    		consume_table.insert_all_record(consume_infos,true);
 	    	}
 	    }

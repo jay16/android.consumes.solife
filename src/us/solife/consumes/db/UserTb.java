@@ -49,7 +49,6 @@ public class UserTb {
 			user_info.set_name(cursor.getString(cursor.getColumnIndex("name")));
 			user_info.set_email(cursor.getString(cursor.getColumnIndex("email")));
 			user_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")));
-			user_info.set_updated_at(cursor.getString(cursor.getColumnIndex("updated_at")));
 		}
 		return user_info;
 	}
@@ -79,7 +78,6 @@ public class UserTb {
 		values.put("name", user_info.get_name());
 		values.put("email", user_info.get_email());
 		values.put("created_at", user_info.get_created_at());
-		values.put("updated_at", user_info.get_created_at());
 		//是否与服务器数据已同步
 		long row_id = database.insert("users", null, values);
 
@@ -99,7 +97,6 @@ public class UserTb {
 		values.put("name", user_info.get_name());
 		values.put("email", user_info.get_email());
 		values.put("created_at", user_info.get_created_at());
-		values.put("updated_at", user_info.get_created_at());
 		String[] args = {String.valueOf(user_info.get_user_id())};
 
         long row_id = db.update("users", values, "user_id=?",args);

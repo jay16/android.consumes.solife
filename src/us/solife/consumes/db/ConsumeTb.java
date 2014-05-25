@@ -40,14 +40,12 @@ public class ConsumeTb {
 		this.consumeDatabaseHelper = new ConsumeDatabaseHelper(context);
 	}
 
-	public static ConsumeTb getConsumeTb(Context context) {
+	public static ConsumeTb get_record_tb(Context context) {
 		if (consumeDao != null) {
 		} else {
 			consumeDao = new ConsumeTb(context);
-
 		}
 		return consumeDao;
-
 	}
 
 	/**

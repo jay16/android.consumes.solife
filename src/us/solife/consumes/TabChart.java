@@ -104,7 +104,7 @@ public class TabChart extends BaseActivity {
 
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-		consumeDao = ConsumeTb.getConsumeTb(TabChart.this);
+		consumeDao = ConsumeTb.get_record_tb(TabChart.this);
         consumeInfos = consumeDao.get_all_records(TabChart.this);
 
 		UserTb user_table = UserTb.getUserTb(TabChart.this);

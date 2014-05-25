@@ -76,8 +76,8 @@ public class CurrentUser {
 		values.put("consume_id", -1);
 		values.put("value", value);
 		values.put("remark", remark);
+		values.put("ymdhms", created_at);
 		values.put("created_at", created_at);
-		values.put("updated_at", created_at);
 		//是否与服务器数据已同步
 		values.put("sync", false);
 		values.put("state", "create");
@@ -125,6 +125,7 @@ public class CurrentUser {
 		cv.put("consume_id", consume_info.get_consume_id());
 		cv.put("value", consume_info.get_value());
 		cv.put("remark", consume_info.get_remark());
+		cv.put("ymdhms", consume_info.get_created_at());
 		cv.put("created_at", consume_info.get_created_at());
 		cv.put("sync", consume_info.get_sync());
 		cv.put("state", consume_info.get_state());
@@ -274,6 +275,7 @@ public class CurrentUser {
 	    consume_info.set_user_id(cursor.getInt(cursor.getColumnIndex("user_id")));
 	    consume_info.set_consume_id(cursor.getInt(cursor.getColumnIndex("consume_id")));
 		consume_info.set_value(cursor.getDouble(cursor.getColumnIndex("value")));
+		consume_info.set_ymdhms(cursor.getString(cursor.getColumnIndex("ymdhms")).toString());
 		consume_info.set_remark(cursor.getString(cursor.getColumnIndex("remark")).toString());
 		consume_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")).toString());
 		consume_info.set_sync(cursor.getLong(cursor.getColumnIndex("sync")));
@@ -418,7 +420,6 @@ public class CurrentUser {
 		    user_info.set_area(cursor.getString(cursor.getColumnIndex("area")));
 		    user_info.set_gravatar(cursor.getString(cursor.getColumnIndex("gravatar")));
 		    user_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")));
-		    user_info.set_updated_at(cursor.getString(cursor.getColumnIndex("updated_at")));
 		    user_info.set_sync(cursor.getLong(cursor.getColumnIndex("sync")));
 		    user_info.set_state(cursor.getString(cursor.getColumnIndex("state")));
 		}
