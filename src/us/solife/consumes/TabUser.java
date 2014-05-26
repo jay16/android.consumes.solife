@@ -65,7 +65,7 @@ public class TabUser extends BaseActivity {
 		long current_user_id = sharedPreferences.getLong("current_user_id",-1);
 
 		String standard_date = ToolUtils.getStandardDate();
-		String week_name = ToolUtils.getWeekName(standard_date);
+		String week_name = ToolUtils.get_week_name(standard_date);
 		int week_number = ToolUtils.getWeekNumber(standard_date);
 		//当前日期信息
 		TextView  textView_current_date = (TextView)findViewById(R.id.textView_current_date); 	

@@ -17,7 +17,7 @@ public class ToolUtils {
 	 * @param context
 	 * @return
 	 */
-	public static String getWeekName(String date_str) {
+	public static String get_week_name(String date_str) {
 		SimpleDateFormat sdf =   new SimpleDateFormat("yyyy-MM-dd");
 		String week = "δ֪";
 		try {

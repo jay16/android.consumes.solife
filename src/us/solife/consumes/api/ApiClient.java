@@ -86,7 +86,8 @@ public class ApiClient {
 		return hash_map ;
 	}
 	
-	public static HashMap<String, Object> _post(String url, org.apache.commons.httpclient.NameValuePair[] params) throws HttpException, IOException{	
+	public static HashMap<String, Object> _post(String url, org.apache.commons.httpclient.NameValuePair[] params)
+			throws HttpException, IOException{	
 		HttpClient http_client = getHttpClient();
 		PostMethod http_post = new PostMethod(url);
 		// «Î«ÛhttpRequest

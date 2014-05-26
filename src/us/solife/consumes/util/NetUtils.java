@@ -146,18 +146,21 @@ public class NetUtils {
 	public static String[] delete_record(String token, ConsumeInfo consume_info) 
 			throws HttpException, IOException, JSONException {
 		String[] ret_array = { "0", "return null" };
-
-		HashMap<String, Object> hash_map = ApiClient._delete(URLs.URL_RECORD+"/"+consume_info.get_consume_id()+".json");
+       
+		String url = URLs.URL_RECORD+"/"+consume_info.get_consume_id()+".json?token="+Uri.encode(token);
+		HashMap<String, Object> hash_map = ApiClient._delete(url);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("response");
 		
-		// 请求成功
-		//if (statusCode == HttpStatus.SC_OK) {;
-			JSONObject jsonObject = new JSONObject(response);
+		// 未认证成功
+		if (statusCode == HttpStatus.SC_UNAUTHORIZED) {;
 			// 获取返回值
+			ret_array[0] = "-1";
+		} else {
 			ret_array[0] = "1";
-			ret_array[1] = jsonObject.toString();
-		//}
+		}
+		JSONObject jsonObject = new JSONObject(response);
+		ret_array[1] = jsonObject.toString();
 
 		return ret_array;
 	}
@@ -248,12 +251,12 @@ public class NetUtils {
 		
 	}
 	
-	public static void sync_upload_record_background(final Context context,final String login_email) {
+	public static void sync_upload_record_background(final Context context,final String token) {
 		 new Thread() {
 			 public void run() {
 				try {
-					sync_upload_record(context, login_email);
-					chk_user_gravatar(context);
+					sync_upload_record(context, token);
+					//chk_user_gravatar(context);
 					// get_new_friends_consumes(context, login_email);
 				} catch (HttpException e) {
 					// TODO Auto-generated catch block

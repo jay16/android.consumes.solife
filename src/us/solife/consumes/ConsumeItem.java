@@ -78,7 +78,7 @@ public class ConsumeItem extends BaseActivity {
 		consume_item_value.setText(value+"元");
 		consume_item_created_at.setText(day);
 		
-		String week = ToolUtils.getWeekName(day);
+		String week = ToolUtils.get_week_name(day);
 		consume_item_created_at_week.setText(week);
 		
 		//显示明细
@@ -123,13 +123,12 @@ public class ConsumeItem extends BaseActivity {
 		//判断是否是TextView
 		if(view instanceof TextView){
 			consume_info = (ConsumeInfo)view.getTag();
-		}else{
+		} else {
 			TextView tv = (TextView)view.findViewById(R.id.consume_item_msg);
 			consume_info = (ConsumeInfo)tv.getTag();
 		}
 		if(consume_info == null) return;
 
-		
         //提示消费内容
 		Toast.makeText(ConsumeItem.this, "长按可编辑[￥"+consume_info.get_value()+"]", 0).show();
 		//TextView consume_item_msg = (TextView) v.findViewById(R.id.consume_item_msg);

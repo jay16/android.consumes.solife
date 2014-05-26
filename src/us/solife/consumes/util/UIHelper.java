@@ -58,7 +58,7 @@ public class UIHelper {
 	public final static int REQUEST_CODE_FOR_REPLY = 0x02;
 	
 	/**
-	 * 评论操作选择框
+	 * 编辑/删除消费记录
 	 * @param context
 	 */
 	public static void showCommentInfoOptionDialog(final Context context,final ConsumeInfo consume_info)

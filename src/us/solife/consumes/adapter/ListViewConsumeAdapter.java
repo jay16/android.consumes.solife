@@ -88,7 +88,7 @@ public class ListViewConsumeAdapter extends BaseAdapter{
 		//如果消费日期详细内容至少2014-02-12长度
 		//可以解析消费日期所在周
 		if(consumeInfo.get_created_at().length()>=10){
-			String week_name = ToolUtils.getWeekName(consumeInfo.get_created_at());
+			String week_name = ToolUtils.get_week_name(consumeInfo.get_created_at());
 			holder.item_week.setText(week_name);
 		}
 

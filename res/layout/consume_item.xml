@@ -77,7 +77,7 @@
 
         <ListView
             android:id="@+id/consume_item_list_view"
-	       style="@style/widget_listview"/>
+	        style="@style/widget_listview"/>
         
     </LinearLayout>
 

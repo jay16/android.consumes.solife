@@ -73,7 +73,7 @@ public class Loading extends BaseActivity {
 			
 			//循环定时执行
 			Intent intent1 =new Intent(getApplication(), TimerService.class);
-		    intent1.setAction(sharedPreferences.getString("current_user_email", ""));
+		    intent1.setAction(sharedPreferences.getString("current_user_token", ""));
 		    PendingIntent sender=PendingIntent.getBroadcast(getApplication(), 0, intent1, 0);
 		    //开始时间
 		    long now =SystemClock.elapsedRealtime();
