@@ -29,23 +29,17 @@ public class URLs implements Serializable {
 	private final static String URL_API_HOST = HTTP + HOST + URL_SPLITTER;
 	//users
 	public final static String URL_USER  = URL_API_HOST + "api/users.json";
-	//public final static String USR_VALIDATE  = URL_API_HOST + "api/users/validate.json";
-	//public final static String USR_INFO      = URL_API_HOST + "api/users/info";
+	public final static String URL_USER_FRIENDS  = URL_API_HOST + "api/users/friends.json";
 	//consumes
 	
 	public final static String URL_RECORD   = URL_API_HOST + "api/records";
-	public final static String CONSUME_LIST   = URL_API_HOST + "api/consumes/list";
-	public final static String CONSUME_CREATE = URL_API_HOST + "api/consumes/create";
-	public final static String CONSUME_UPDATE = URL_API_HOST + "api/consumes/update";
-	public final static String CONSUME_DELETE = URL_API_HOST + "api/consumes/delete";
-	public final static String CONSUME_SHOW   = URL_API_HOST + "api/consumes/show";
-	public final static String CONSUME_FRIEND_NEW   = URL_API_HOST + "api/consumes/friends";
+	public final static String URL_RECORD_FRIENDS   = URL_API_HOST + "api/records/friends.json";
 	//android app
 	public final static String URL_VERSION   = URL_API_HOST + "api/version.json";
 	
 
 	public final static String STORAGE_BASE     = Environment.getExternalStorageDirectory().getAbsolutePath() 
-			+ "/solife/";
+			+ "/solife.consume/";
 	public final static String STORAGE_GRAVATAR = STORAGE_BASE + "gravatar";
 	public final static String STORAGE_APK      = STORAGE_BASE + "apk";
 	public final static String STORAGE_IMAGES   = STORAGE_BASE + "images";

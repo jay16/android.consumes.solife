@@ -98,7 +98,7 @@ public class Login extends BaseActivity {
     		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);	
             //Editor Editor = sharedPreferences.edit();
             
-            String token = ToolUtils.generateUserToken(login_email, login_pwd);
+            String token = ToolUtils.generate_user_token(login_email, login_pwd);
 			String [] ret_array =  NetUtils.get_user_info(sharedPreferences,token);
 	        String ret_str;
 	        if(ret_array[0].equals("1")){
@@ -106,7 +106,7 @@ public class Login extends BaseActivity {
 	            
 				//后台同步更新未同步的数据
 				try {
-					NetUtils.download_all_records(Login.this,token);
+					NetUtils.get_self_records_with_del(Login.this,token);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

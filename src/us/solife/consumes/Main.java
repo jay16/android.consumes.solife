@@ -298,7 +298,7 @@ public class Main extends TabActivity  {
 		}
 	}
 	/**
-           退出到Home窗口
+    退出到Home窗口
 	@Override
 	public void onBackPressed() {
 		Toast.makeText(getApplication(),"back", 0).show();

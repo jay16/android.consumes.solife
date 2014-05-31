@@ -48,8 +48,21 @@
 			        android:text="用户名称"
 			        android:textColor="#000"
 			        android:textSize="18sp" />
-
-
+			    
+			    <TextView
+			        android:id="@+id/textView_current_network"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_above="@+id/textView_current_user_registeration_time"
+			        android:layout_alignParentTop="false"
+			        android:layout_alignRight="@+id/textView_current_date"
+			        android:layout_toRightOf="@+id/textView_current_user_name"
+			        android:gravity="bottom|right"
+			        android:padding="5dp"
+			        android:text="当前网络: wifi"
+			        android:textColor="#666"
+			        android:textSize="10sp" />
+			    
 			    <TextView
 			        android:id="@+id/textView_current_user_registeration_time"
 			        android:layout_width="wrap_content"
@@ -72,6 +85,7 @@
 			        android:text="当前时间：2014/01/01 第12周  周二"
 			        android:textColor="#333"
 			        android:textSize="10sp" />
+
 
 			</RelativeLayout>
 

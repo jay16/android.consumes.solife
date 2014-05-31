@@ -14,7 +14,7 @@ public class ConsumeInfo implements Serializable {
 	public String state;
 	public Long sync; //Boolean ´æ·ÅÎªLong£¬true => 1, flase => 0
 
-	public String ymdhms() {
+	public String get_ymdhms() {
 		return ymdhms;
 	}
 

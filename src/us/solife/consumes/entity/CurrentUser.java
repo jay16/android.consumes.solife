@@ -291,10 +291,10 @@ public class CurrentUser {
 	public ArrayList<ConsumeInfo> consume_info_list() {
 		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
 		String sql;
-		String y_m_d = ToolUtils.getStandardDate();
+		String y_m_d = ToolUtils.get_standard_date();
 		String week = "00";
 		try {
-			int i = ToolUtils.getWeekNumber(y_m_d)-1;
+			int i = ToolUtils.get_week_number(y_m_d)-1;
 			if(i<10) {
 			  week = "0"+i;
 			} else {

@@ -55,7 +55,6 @@
 			    android:drawablePadding="25dip"
 			    android:hint="注册邮邮箱"
 			    android:singleLine="true"
-			    android:text="jay_li@solife.us"
 			    android:textColor="#000"
 			    android:textSize="15sp" />
 			
@@ -73,7 +72,6 @@
 			    android:hint="登陆密码"
 			    android:password="true"
 			    android:singleLine="true"
-			    android:text="jay527130673"
 			    android:textColor="#000"
 			    android:textSize="15sp" />
 

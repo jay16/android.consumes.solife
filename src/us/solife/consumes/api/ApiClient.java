@@ -76,8 +76,8 @@ public class ApiClient {
 		try {
 			int statusCode = client.executeMethod(httpGet);
 			hash_map.put("statusCode", statusCode);
-			if (statusCode == HttpStatus.SC_OK) 
-				hash_map.put("json_str", httpGet.getResponseBodyAsString());
+			//if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) 
+			hash_map.put("json_str", httpGet.getResponseBodyAsString());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

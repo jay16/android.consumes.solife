@@ -21,21 +21,27 @@ import us.solife.consumes.util.ToolUtils;
 
 import android.widget.Toast;
 import android.os.Environment;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import java.text.ParseException;
+
+import org.json.JSONException;
 
 public class TabUser extends BaseActivity {
 	SharedPreferences sharedPreferences;
 	CurrentUser       current_user;
+	Context mContext;
 
 	@Override
 	public void init(){
 		// TODO Auto-generated method stub
 		setContentView(R.layout.tab_user);
+		mContext = context;
 
 	}
 	
@@ -44,6 +50,10 @@ public class TabUser extends BaseActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 
+		String network  = NetUtils.network_type(getApplicationContext());
+		TextView  textView_network    = (TextView)findViewById(R.id.textView_current_network); 
+		textView_network.setText("当前网络: " + network);
+		
 		try {
 			initUserInfo();
 		} catch (ParseException e) {
@@ -64,9 +74,9 @@ public class TabUser extends BaseActivity {
 		String current_user_gravatar = sharedPreferences.getString("current_user_gravatar","");
 		long current_user_id = sharedPreferences.getLong("current_user_id",-1);
 
-		String standard_date = ToolUtils.getStandardDate();
+		String standard_date = ToolUtils.get_standard_date();
 		String week_name = ToolUtils.get_week_name(standard_date);
-		int week_number = ToolUtils.getWeekNumber(standard_date);
+		int week_number = ToolUtils.get_week_number(standard_date);
 		//当前日期信息
 		TextView  textView_current_date = (TextView)findViewById(R.id.textView_current_date); 	
 		textView_current_date.setText("当前日期:"+standard_date+" "+week_name+" 第"+week_number+"周");
@@ -80,7 +90,7 @@ public class TabUser extends BaseActivity {
 		if(picDir.exists()) {
     		Bitmap bitmap = NetUtils.getLoacalBitmap(picDirStr); //从本地取图片(在cdcard中获取)
     		image_view.setImageBitmap(bitmap); //设置Bitmap
-        } else if(!ToolUtils.hasSdcard()){
+        } else if(!ToolUtils.has_sdcard()){
         	Toast.makeText(TabUser.this, "存储卡已移除，头像图片读取失败", 0).show();
         } else {
         	Toast.makeText(TabUser.this, "头像图片不存在", 0).show();
@@ -150,11 +160,18 @@ public class TabUser extends BaseActivity {
 			
 	    	Toast.makeText(TabUser.this, "开始更新用户信息", 0).show();
 	    	
-			if (sharedPreferences.contains("current_user_email")
-					&& !sharedPreferences.getString("current_user_email", "").equals("")) {
-				String email = sharedPreferences.getString("current_user_email", "");
+			if (sharedPreferences.contains("current_user_token")
+					&& !sharedPreferences.getString("current_user_token", "").equals("")) {
+				String token = sharedPreferences.getString("current_user_token", "");
+				Log.w("Token", token);
 				
-				String [] ret_array = NetUtils.get_user_info(sharedPreferences,email);
+				try {
+					NetUtils.get_user_friends_info(getApplicationContext(), token);
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				String [] ret_array = NetUtils.get_user_info(sharedPreferences,token);
 				if(ret_array[0].equals("1")){
 					try {
 						initUserInfo();

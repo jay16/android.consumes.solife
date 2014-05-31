@@ -353,7 +353,7 @@ public class TabList extends BaseActivity{
 				//ConsumeListParse consumeListParse = new ConsumeListParse();
 				//getDataFromServer(getApplicationContext(), consumeListParse, URLs.CONSUME_LIST, callback);
 				try {
-					NetUtils.download_all_records(TabList.this,current_user_token);
+					NetUtils.get_self_records_with_del(TabList.this,current_user_token);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

@@ -69,15 +69,16 @@ public class UserTb {
 	
 	
 	// 插入一笔消费记录
-	public long insert_record(UserInfo user_info) {
+	public long insert_user(UserInfo user_info) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		database.beginTransaction();
 
 		ContentValues values = new ContentValues();
-		values.put("user_id", user_info.get_user_id());
+		values.put("user_id", user_info.get_id());
 		values.put("name", user_info.get_name());
 		values.put("email", user_info.get_email());
 		values.put("created_at", user_info.get_created_at());
+		values.put("updated_at", user_info.get_updated_at());
 		//是否与服务器数据已同步
 		long row_id = database.insert("users", null, values);
 
@@ -91,18 +92,18 @@ public class UserTb {
 	}
 	
 	
-	public long update_record(UserInfo user_info){
+	public long update_user(UserInfo user_info){
 		SQLiteDatabase db = consumeDatabaseHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
 		values.put("name", user_info.get_name());
 		values.put("email", user_info.get_email());
 		values.put("created_at", user_info.get_created_at());
+		values.put("updated_at", user_info.get_updated_at());
 		String[] args = {String.valueOf(user_info.get_user_id())};
 
         long row_id = db.update("users", values, "user_id=?",args);
-        
 		user_info = get_record_with_user_id(user_info.get_user_id());
-        Log.w("UserTB","更新数据1:"+user_info.to_string());
+        Log.w("UserTB","更新user数据:"+user_info.to_string());
         
         return row_id;
 	}

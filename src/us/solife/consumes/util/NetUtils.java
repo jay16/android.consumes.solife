@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 
 
 
+
 import android.util.Base64;
 
 import java.io.File;
@@ -41,6 +42,7 @@ import us.solife.consumes.entity.UpdateInfo;
 import us.solife.consumes.entity.UserInfo;
 import us.solife.consumes.parse.ConsumeListParse;
 import us.solife.consumes.parse.UpdateInfoParse;
+import us.solife.consumes.parse.UserListParse;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -63,29 +65,34 @@ import android.widget.Toast;
  * @created 2014-02-25
  */
 public class NetUtils {
-	
 	/**
-	 * 与服务器发送请求，得到数据
-	 * @param url
+	 * 判断是否有网络
+	 * @param context
 	 * @return
 	 */
-	public static Object post(URL url) {
-		return new Object();
+	public static boolean has_network(Context context) {
+		ConnectivityManager con = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo workinfo = con.getActiveNetworkInfo();
+		return workinfo == null || !workinfo.isAvailable();
 	}
 	/**
 	 * 判断是否有网络
 	 * @param context
 	 * @return
 	 */
-	public static boolean hasNetWork(Context context) {
+	public static String network_type(Context context) {
 		ConnectivityManager con = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo workinfo = con.getActiveNetworkInfo();
-		if (workinfo == null || !workinfo.isAvailable()) {
-			return false;
+		String net_str = "none";
+		if (workinfo != null && workinfo.isAvailable()) {
+			switch(workinfo.getType()) {
+			  case ConnectivityManager.TYPE_MOBILE: net_str = "mobile"; break;
+			  case ConnectivityManager.TYPE_WIFI: net_str = "wifi"; break;
+			  default: net_str = "other"; break;
+			}
 		}
-		return true;
+		return net_str;
 	}
-	
 	//创建consume
 	public static String[] create_record(String token, ConsumeInfo consume_info) 
 			throws HttpException, IOException, JSONException {
@@ -243,7 +250,7 @@ public class NetUtils {
 				File gravatar_path = new File(Gravatar.gravatar_path(email));
 				String gravatar_url  = Gravatar.gravatar_url(email);
 				//存储卡可用并且用用户头像不存在
-				if(ToolUtils.hasSdcard() && !gravatar_path.exists()) {
+				if(ToolUtils.has_sdcard() && !gravatar_path.exists()) {
 					download_image_with_url(email);
 				}
 			}
@@ -285,7 +292,8 @@ public class NetUtils {
             // 请求HttpClient,取得HttpResponse
             HttpResponse httpResponse = httpclient.execute(httpRequest);
             //请求成功
-            if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK ||
+               httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
 			     //取得返回的字符串
 			     String strResult = EntityUtils.toString(httpResponse.getEntity());
 			     JSONObject jsonObject = new JSONObject(strResult) ;
@@ -312,13 +320,38 @@ public class NetUtils {
 	        	ret_array[0] = httpResponse.getStatusLine().getStatusCode() + "";
 	        	ret_array[1] = "fail";
 	        }
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
         	ret_array[0] = "-1";
         	ret_array[1] = e.getMessage().toString();
 			Editor.commit();
         }
-	        
+	    return ret_array;
+	}
+	
+	public static String [] get_user_friends_info(Context context, String token) 
+			throws JSONException {
+    	String [] ret_array = {"1","成功"};
+	    ArrayList<UserInfo> user_infos = new  ArrayList<UserInfo>();
+        HashMap<String, Object> hash_map = ApiClient._Get(context, URLs.URL_USER_FRIENDS+"?token="+ Uri.encode(token)); 
+		int statusCode  = (Integer)hash_map.get("statusCode");
+		String response = (String)hash_map.get("json_str");
+
+    	Log.w("userFriends","statusCode:"+statusCode);
+    	Log.w("userFriends","json_str:"+response);
+	    if(statusCode==HttpStatus.SC_OK) { 
+	        UserListParse userListParse = new UserListParse();
+	    	HashMap<String, Object> parse_json = userListParse.parseJSON(response);
+	    	if((Boolean)parse_json.get("result")) {
+	    		user_infos = (ArrayList<UserInfo>)parse_json.get("user_infos");
+	    		for(int i= 0; i< user_infos.size(); i++) {
+	    			UserInfo user_info = user_infos.get(i);
+	    			Log.w("UserFriendsInfo", user_info.to_string());
+	    		}
+	        } else {
+	        	ret_array[0] = "-1";
+	        	ret_array[1] = "fail";
+	        }
+        } 
 	    return ret_array;
 	}
 	
@@ -378,58 +411,48 @@ public class NetUtils {
         return bitmap;
    }
 	
-	public static void get_new_friends_consumes1(Context context, String email) 
+	// friend's records
+	public static void get_friend_records(Context context, String token) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
-
-		UserTb user_table = UserTb.getUserTb(context);
-		UserInfo user_info = user_table.get_record_with_email(email);
-
-		ConsumeTb consume_table = ConsumeTb.get_record_tb(context);
-		Integer consume_id = consume_table.get_friends_max_consume_id(user_info.get_user_id());
-        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.CONSUME_FRIEND_NEW+"?consume_id="+consume_id+"&email="+email);
+		 
+        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.URL_RECORD_FRIENDS+"?token="+token);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 
-    	Log.w("get_new_friends_consumes","statusCode:"+statusCode);
-	    if(statusCode==HttpStatus.SC_OK) {
+    	Log.w("friendRecords","statusCode:"+statusCode);
+	    if(statusCode==HttpStatus.SC_OK || statusCode==HttpStatus.SC_CREATED) {
 	    	ConsumeListParse consumeListParse = new ConsumeListParse();
 	    	HashMap<String, Object> parse_json = consumeListParse.parseJSON(response);
-	    	if((Boolean)parse_json.get("result")) {
-	    		consume_infos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
-	    	}
-	    	Log.w("get_new_friends_consumes","parseJson:"+(Boolean)parse_json.get("result"));
-	    	Log.w("get_new_friends_consumes","consume_infos:"+consume_infos.size());
+	    	if((Boolean)parse_json.get("result")) consume_infos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
+	    	 
+	    	Log.w("friendRecords","parseJson:"+(Boolean)parse_json.get("result"));
+	    	Log.w("friendRecords","records:"+consume_infos.size());
+	    	
 	    	if(consume_infos.size()>0) {
+	    		ConsumeTb consume_table = ConsumeTb.get_record_tb(context);
 	    		consume_table.insert_all_record(consume_infos,false);
-	    		for(int i=0;i<consume_infos.size();i++) {
-	    			ConsumeInfo c_info = consume_infos.get(i);
-	    			UserInfo u_info = user_table.get_record_with_user_id(c_info.get_user_id());
-	    			String title   = u_info.get_name()+"[￥"+c_info.get_value()+"]";
-	    			String content = c_info.get_remark();
-	    			UIHelper.push_notice(context,title,content,10+i);
-	    		}
+	    		
+	    		UIHelper.push_notice(context,"朋友消费圈","近期有"+consume_infos+"笔消费记录",1000);
 	    	}
 	    }
-
 	}
 	
-	public static void download_all_records(Context context, String token) 
+	public static void get_self_records_with_del(Context context, String token) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
         HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.URL_RECORD+"?token="+token);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 
-    	Log.w("get_new_friends_consumes","statusCode:"+statusCode);
+    	Log.w("currentUserRecords","statusCode:"+statusCode);
 	    if(statusCode==HttpStatus.SC_OK) {
 	    	ConsumeListParse consumeListParse = new ConsumeListParse();
 	    	HashMap<String, Object> parse_json = consumeListParse.parseJSON(response);
-	    	if((Boolean)parse_json.get("result")) {
-	    		consume_infos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
-	    	}
-	    	Log.w("get_new_friends_consumes","parseJson:"+(Boolean)parse_json.get("result"));
-	    	Log.w("get_new_friends_consumes","consume_infos:"+consume_infos.size());
+	    	if((Boolean)parse_json.get("result")) consume_infos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
+
+	    	Log.w("currentUserRecords","parseJson:"+(Boolean)parse_json.get("result"));
+	    	Log.w("currentUserRecords","records:"+consume_infos.size());
 	    	if(consume_infos.size()>0) {
 	    		ConsumeTb consume_table = ConsumeTb.get_record_tb(context);
 	    		consume_table.insert_all_record(consume_infos,true);
@@ -442,7 +465,7 @@ public class NetUtils {
 	public static void chk_version_update(Context context) 
 			throws JSONException, NameNotFoundException {
 		//检测当前环境是否有网络
-		if (!NetUtils.hasNetWork(context)) return;
+		if (!NetUtils.has_network(context)) return;
 		
 		HashMap<String, Object> http_get = ApiClient._Get(context,URLs.URL_VERSION);
 		UpdateInfo update_info = null;

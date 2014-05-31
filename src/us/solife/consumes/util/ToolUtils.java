@@ -36,7 +36,7 @@ public class ToolUtils {
 		return week;
 	}
 	
-	public static int getWeekNumber(String date_str) throws java.text.ParseException{
+	public static int get_week_number(String date_str) throws java.text.ParseException{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Calendar cl = Calendar.getInstance();
 		Date date = (Date)sdf.parse(date_str);
@@ -46,19 +46,19 @@ public class ToolUtils {
 		return week;
 	}
 	
-	public static String getStandardDate() {
+	public static String get_standard_date() {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 		String y_m_d = df.format(new Date());
 		return y_m_d;
 	}	
 	
-	public static String getStandardDetailDate() {
+	public static String get_standard_detail_date() {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String y_m_d = df.format(new Date());
 		return y_m_d;
 	}
 	
-	public static boolean hasSdcard() {
+	public static boolean has_sdcard() {
 	     String status = Environment.getExternalStorageState();
 	     if (status.equals(Environment.MEDIA_MOUNTED)) {
 	         return true;
@@ -66,7 +66,7 @@ public class ToolUtils {
 	         return false;
 	     }
 	 }
-	public static String generateUserToken(String email, String password) {
+	public static String generate_user_token(String email, String password) {
 		String _n1 = email.length() + "";
 		String _n2 = _n1.length() + "";
 		String token = _n2 + _n1 + email + password;

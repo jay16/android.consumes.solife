@@ -7,10 +7,10 @@ public class UserInfo implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private long id = (long) -1, sync;
-	private int user_id = -1;
-	private String  name, email,gravatar,area;
-	private String created_at,updated_at,state;
+	public long id = (long) -1, sync;
+	public int user_id = -1;
+	public String  name, email,gravatar,area;
+	public String created_at,updated_at,state;
 
 	public long get_id() {
 		return id;

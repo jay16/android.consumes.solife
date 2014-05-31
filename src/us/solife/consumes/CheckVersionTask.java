@@ -185,7 +185,7 @@ public class CheckVersionTask implements Runnable {
 		
 		try {
 			//检测当前环境是否有网络
-			if (NetUtils.hasNetWork(context)) {
+			if (NetUtils.has_network(context)) {
 				HashMap<String, Object> http_get = ApiClient._Get(context,path);
 				if ((Integer)http_get.get("statusCode")==HttpStatus.SC_OK) {
 					String responseBody = (String)http_get.get("json_str");

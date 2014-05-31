@@ -21,7 +21,7 @@ public class TimerService extends BroadcastReceiver {
         // TODO Auto-generated method stub
         //intent.getAction().equals("short")
     	
-    	if(NetUtils.hasNetWork(context)) {
+    	if(NetUtils.has_network(context)) {
     		NetUtils.sync_upload_record_background(context, intent.getAction());
             //Toast.makeText(context, ToolUtils.getStandardDetailDate()+"\n成功同步数据！", Toast.LENGTH_LONG).show();
     	} else {
