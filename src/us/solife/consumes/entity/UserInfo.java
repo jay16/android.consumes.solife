@@ -9,7 +9,7 @@ public class UserInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public long id = (long) -1, sync;
 	public int user_id = -1;
-	public String  name, email,gravatar,area;
+	public String  name, email,gravatar,area,info;
 	public String created_at,updated_at,state;
 
 	public long get_id() {
@@ -42,6 +42,14 @@ public class UserInfo implements Serializable {
     	return this.email;
     }
 
+    public void set_info(String info){
+    	this.info = info;
+    }
+    
+    public String get_info(){
+    	return this.info;
+    }
+    
     public void set_area(String area){
     	this.area = area;
     }
@@ -95,7 +103,9 @@ public class UserInfo implements Serializable {
         "id:" + this.id +
         "name:" + this.name +
         "email:" + this.email + 
-        "created_at:" + this.created_at;
+        "created_at:" + this.created_at+
+        "updated_at:" + this.updated_at+
+        "info:" + this.info;
         
     }
 }

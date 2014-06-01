@@ -29,7 +29,7 @@ public class TabAbout extends BaseActivity implements OnClickListener {
 		Button btn_back = (Button)findViewById(R.id.menu_btn_back);
 		btn_back.setVisibility(View.GONE);
 		
-		UserTb user_table = UserTb.getUserTb(TabAbout.this);
+		UserTb user_table = UserTb.get_user_tb(TabAbout.this);
 		ArrayList<Integer> user_ids = user_table.get_unsync_user_list();
 		//ArrayList<UserInfo> user_infos = user_table.get_user_list();
 		String dd = "" + user_ids.size() + ">";

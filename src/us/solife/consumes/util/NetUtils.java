@@ -185,7 +185,7 @@ public class NetUtils {
 		    ArrayList<ConsumeInfo> consume_infos;
 		    ConsumeTb              consumeDao;
 		    
-		    consumeDao    = ConsumeTb.get_record_tb(context);
+		    consumeDao    = ConsumeTb.get_consume_tb(context);
 		    consume_infos = consumeDao.get_unsync_records();
 		    
 			Integer un_sync_count = consume_infos.size();
@@ -240,7 +240,7 @@ public class NetUtils {
 			
 	public static void chk_user_gravatar(Context context)
 			throws JSONException {
-		UserTb user_table = UserTb.getUserTb(context);
+		UserTb user_table = UserTb.get_user_tb(context);
 		ArrayList<UserInfo> user_infos = user_table.get_user_list();
 		if(user_infos.size()>0) 
 		for(int i=0; i<user_infos.size(); i++ ) {
@@ -259,20 +259,18 @@ public class NetUtils {
 	}
 	
 	public static void sync_upload_record_background(final Context context,final String token) {
+		if(NetUtils.has_network(context))
 		 new Thread() {
 			 public void run() {
 				try {
 					sync_upload_record(context, token);
-					//chk_user_gravatar(context);
-					// get_new_friends_consumes(context, login_email);
+					get_friend_records(context, token);
+					chk_user_gravatar(context);
 				} catch (HttpException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			 };
@@ -280,51 +278,53 @@ public class NetUtils {
 	}
 	
 
-	public static String [] get_user_info(SharedPreferences preferences,String token) {
+	public static String [] get_user_info(SharedPreferences preferences,String token, Context context) 
+			throws JSONException {
     	String [] ret_array = {"1","成功"};
 	    Editor Editor = preferences.edit();
-        //httpGet 连接对象
-        HttpGet httpRequest =new HttpGet(URLs.URL_USER+"?token="+ Uri.encode(token));
+	    String url = URLs.URL_USER+"?token="+ Uri.encode(token);
+        HashMap<String, Object> hash_map = ApiClient._Get(context, url);
+        Log.w("getUserInfo","URL:"+ url);
+        
+		int statusCode  = (Integer)hash_map.get("statusCode");
+		String response = (String)hash_map.get("json_str");
 
-        try {
-            //取得HttpClinet对象
-            HttpClient httpclient = new DefaultHttpClient();
-            // 请求HttpClient,取得HttpResponse
-            HttpResponse httpResponse = httpclient.execute(httpRequest);
-            //请求成功
-            if(httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK ||
-               httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
-			     //取得返回的字符串
-			     String strResult = EntityUtils.toString(httpResponse.getEntity());
-			     JSONObject jsonObject = new JSONObject(strResult) ;
-			     
-		         int    user_id       = jsonObject.getInt("id");
-		         String user_name     = jsonObject.getString("name");
-		         String user_email    = jsonObject.getString("email");
-		         String user_province = "china";//jsonObject.getString("user_province");
-		         String user_register = jsonObject.getString("created_at");
-		         String user_gravatar = "gravatar"; //jsonObject.getString("user_gravatar");
-		         
-		        Editor.putLong("current_user_id",      user_id);
-				Editor.putString("current_user_name",  user_name);
-				Editor.putString("current_user_email", user_email);
-				Editor.putString("current_user_province", user_province);
-				Editor.putString("current_user_register", user_register);
-				Editor.putString("current_user_gravatar", user_gravatar);
-				Editor.putString("current_user_token", token);
-				Editor.putBoolean("is_login", true);
-				
-				//download_image_with_url(user_email);
-				Editor.commit();
-	        } else {
-	        	ret_array[0] = httpResponse.getStatusLine().getStatusCode() + "";
-	        	ret_array[1] = "fail";
-	        }
-        } catch(Exception e) {
-        	ret_array[0] = "-1";
-        	ret_array[1] = e.getMessage().toString();
+        if(statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) {
+		     JSONObject jsonObject = new JSONObject(response) ;
+		     
+	         int    user_id       = jsonObject.getInt("id");
+	         String user_name     = jsonObject.getString("name");
+	         String user_email    = jsonObject.getString("email");
+	         String user_province = "china";//jsonObject.getString("user_province");
+	         String user_register = jsonObject.getString("created_at");
+	         String user_gravatar = "gravatar"; //jsonObject.getString("user_gravatar");
+	         UserInfo user_info = new UserInfo();
+	         user_info.set_user_id(user_id);
+	         user_info.set_name(user_name);
+	         user_info.set_email(user_email);
+	         user_info.set_created_at(user_register);
+	         user_info.set_updated_at(jsonObject.getString("updated_at"));
+	         user_info.set_info("current_user");
+	         
+	         UserTb user_tb = UserTb.get_user_tb(context);       
+	         user_tb.insert_or_update_user(user_info);
+	         
+	        Editor.putLong("current_user_id",      user_id);
+			Editor.putString("current_user_name",  user_name);
+			Editor.putString("current_user_email", user_email);
+			Editor.putString("current_user_province", user_province);
+			Editor.putString("current_user_register", user_register);
+			Editor.putString("current_user_gravatar", user_gravatar);
+			Editor.putString("current_user_token", token);
+			Editor.putBoolean("is_login", true);
+			
+			//download_image_with_url(user_email);
 			Editor.commit();
+        } else {
+        	ret_array[0] = "-1";
+        	ret_array[1] = "fail:"+response;
         }
+
 	    return ret_array;
 	}
 	
@@ -332,7 +332,12 @@ public class NetUtils {
 			throws JSONException {
     	String [] ret_array = {"1","成功"};
 	    ArrayList<UserInfo> user_infos = new  ArrayList<UserInfo>();
-        HashMap<String, Object> hash_map = ApiClient._Get(context, URLs.URL_USER_FRIENDS+"?token="+ Uri.encode(token)); 
+	    ConsumeTb consume_tb = ConsumeTb.get_consume_tb(context);
+	    long max_consume_id = consume_tb.get_friends_max_consume_id();
+	    String url = URLs.URL_USER_FRIENDS+"?token="+ Uri.encode(token);
+        HashMap<String, Object> hash_map = ApiClient._Get(context, url);
+        Log.w("getUserFriend","URL:"+ url);
+        
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 
@@ -342,10 +347,14 @@ public class NetUtils {
 	        UserListParse userListParse = new UserListParse();
 	    	HashMap<String, Object> parse_json = userListParse.parseJSON(response);
 	    	if((Boolean)parse_json.get("result")) {
+	    		
 	    		user_infos = (ArrayList<UserInfo>)parse_json.get("user_infos");
+	    		UserTb user_tb = UserTb.get_user_tb(context);
 	    		for(int i= 0; i< user_infos.size(); i++) {
 	    			UserInfo user_info = user_infos.get(i);
 	    			Log.w("UserFriendsInfo", user_info.to_string());
+	    			user_info.set_info("friend");
+	    			user_tb.insert_or_update_user(user_info);
 	    		}
 	        } else {
 	        	ret_array[0] = "-1";
@@ -415,8 +424,11 @@ public class NetUtils {
 	public static void get_friend_records(Context context, String token) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
-		 
-        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.URL_RECORD_FRIENDS+"?token="+token);
+	    ConsumeTb consume_tb = ConsumeTb.get_consume_tb(context);
+	    long max_consume_id = consume_tb.get_friends_max_consume_id();
+	    String url = URLs.URL_RECORD_FRIENDS+"?token="+Uri.encode(token)+"&id="+max_consume_id;
+	    Log.w("FriendsRecords", url);
+        HashMap<String, Object> hash_map = ApiClient._Get(context,url);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 
@@ -430,7 +442,7 @@ public class NetUtils {
 	    	Log.w("friendRecords","records:"+consume_infos.size());
 	    	
 	    	if(consume_infos.size()>0) {
-	    		ConsumeTb consume_table = ConsumeTb.get_record_tb(context);
+	    		ConsumeTb consume_table = ConsumeTb.get_consume_tb(context);
 	    		consume_table.insert_all_record(consume_infos,false);
 	    		
 	    		UIHelper.push_notice(context,"朋友消费圈","近期有"+consume_infos+"笔消费记录",1000);
@@ -441,7 +453,7 @@ public class NetUtils {
 	public static void get_self_records_with_del(Context context, String token) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
-        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.URL_RECORD+"?token="+token);
+        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.URL_RECORD+"?token="+Uri.encode(token));
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 
@@ -454,7 +466,7 @@ public class NetUtils {
 	    	Log.w("currentUserRecords","parseJson:"+(Boolean)parse_json.get("result"));
 	    	Log.w("currentUserRecords","records:"+consume_infos.size());
 	    	if(consume_infos.size()>0) {
-	    		ConsumeTb consume_table = ConsumeTb.get_record_tb(context);
+	    		ConsumeTb consume_table = ConsumeTb.get_consume_tb(context);
 	    		consume_table.insert_all_record(consume_infos,true);
 	    	}
 	    }

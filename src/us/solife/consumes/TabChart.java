@@ -94,7 +94,7 @@ public class TabChart extends BaseActivity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-		//setViewList();
+		setViewList();
 	}
 	public void setViewList() {
 		listView = (ListView) findViewById(R.id.listView_consumes);
@@ -104,10 +104,10 @@ public class TabChart extends BaseActivity {
 
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-		consumeDao = ConsumeTb.get_record_tb(TabChart.this);
+		consumeDao = ConsumeTb.get_consume_tb(TabChart.this);
         consumeInfos = consumeDao.get_all_records(TabChart.this);
 
-		UserTb user_table = UserTb.getUserTb(TabChart.this);
+		UserTb user_table = UserTb.get_user_tb(TabChart.this);
 		ArrayList<UserInfo> user_infos = user_table.get_user_list();
 		
 		if (consumeInfos != null && consumeInfos.size() != 0) {

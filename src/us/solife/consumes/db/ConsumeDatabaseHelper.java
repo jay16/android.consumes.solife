@@ -31,6 +31,7 @@ public class ConsumeDatabaseHelper extends SQLiteOpenHelper {
 			"gravatar varchar(200) DEFAULT ''," +
 			"created_at varchar(100)," +
 			"updated_at varchar(100) DEFAULT '',"+
+			"info varchar(100) DEFAULT '',"+
 			"sync boolean DEFAULT false," +
 			"state varchar(100) DEFAULT '')";
 

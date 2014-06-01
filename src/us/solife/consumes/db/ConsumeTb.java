@@ -40,7 +40,7 @@ public class ConsumeTb {
 		this.consumeDatabaseHelper = new ConsumeDatabaseHelper(context);
 	}
 
-	public static ConsumeTb get_record_tb(Context context) {
+	public static ConsumeTb get_consume_tb(Context context) {
 		if (consumeDao != null) {
 		} else {
 			consumeDao = new ConsumeTb(context);
@@ -160,12 +160,13 @@ public class ConsumeTb {
      * 以此来获取最新朋友消费信息
      * @return
      */
-	public Integer get_friends_max_consume_id(Integer user_id) {
+	public Integer get_friends_max_consume_id() {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		String sql = "select max(consume_id) as consume_id from consumes where user_id <> " + user_id;
+		String sql = "select max(consume_id) as consume_id from consumes where user_id in "
+				+ "(select distinct user_id from users where info = 'friend')";
 		Cursor cursor = database.rawQuery(sql, null);
 		Integer consume_id = -1;
-		if(cursor.getCount()>0){
+		if(cursor != null && cursor.getCount()>0){
 			cursor.moveToFirst();
 		    consume_id = cursor.getInt(cursor.getColumnIndex("consume_id"));
 		}

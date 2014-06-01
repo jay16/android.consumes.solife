@@ -34,7 +34,8 @@
 		       android:layout_marginBottom="20dip"
 		       android:scaleType="centerInside"
 		       android:src="@drawable/login_slogan"
-		       android:text="http://solife.us/consumes  Ctrl+F9" />
+		       android:gravity="center"
+		       android:text="http://consume.solife.us" />
 
 		   <ProgressBar
 		       android:id="@+id/login_form_loading_progress"

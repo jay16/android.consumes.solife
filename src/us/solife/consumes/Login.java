@@ -7,10 +7,12 @@ import java.util.regex.Pattern;
 //import java.util.HashMap;
 
 
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+
 
 
 //import org.apache.http.client.methods.HttpPost; 
@@ -36,6 +38,7 @@ import us.solife.consumes.util.NetUtils;
 
 import us.solife.consumes.util.ToolUtils;
 import android.widget.Toast;
+import android.net.Uri;
 //import android.os.Bundle;
 //import android.os.Handler;
 //import android.os.Message;
@@ -99,7 +102,15 @@ public class Login extends BaseActivity {
             //Editor Editor = sharedPreferences.edit();
             
             String token = ToolUtils.generate_user_token(login_email, login_pwd);
-			String [] ret_array =  NetUtils.get_user_info(sharedPreferences,token);
+			String[] ret_array = { "-1", "fail" };
+			token = Uri.encode(token);
+			try {
+				ret_array = NetUtils.get_user_info(sharedPreferences,token, getApplicationContext());
+				NetUtils.get_user_friends_info(getApplicationContext(),token);
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 	        String ret_str;
 	        if(ret_array[0].equals("1")){
 	            ret_str = "登陆成功";	
@@ -107,6 +118,7 @@ public class Login extends BaseActivity {
 				//后台同步更新未同步的数据
 				try {
 					NetUtils.get_self_records_with_del(Login.this,token);
+					NetUtils.get_friend_records(Login.this, token);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

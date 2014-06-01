@@ -167,25 +167,26 @@ public class TabUser extends BaseActivity {
 				
 				try {
 					NetUtils.get_user_friends_info(getApplicationContext(), token);
-				} catch (JSONException e1) {
+	                NetUtils.get_friend_records(getApplicationContext(), token);
+					String [] ret_array = NetUtils.get_user_info(sharedPreferences,token, getApplicationContext());
+					if(ret_array[0].equals("1")){
+					    try {
+							initUserInfo();
+						} catch (ParseException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						Toast.makeText(TabUser.this, "更新成功", 0).show();
+					} else {
+				    	Toast.makeText(TabUser.this, "更新失败:"+ret_array[1], 0).show();
+					}				
+				} catch (JSONException e) {
 					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				String [] ret_array = NetUtils.get_user_info(sharedPreferences,token);
-				if(ret_array[0].equals("1")){
-					try {
-						initUserInfo();
-					} catch (ParseException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					Toast.makeText(TabUser.this, "更新成功", 0).show();
-				} else {
-			    	Toast.makeText(TabUser.this, "更新失败:"+ret_array[1], 0).show();
+					e.printStackTrace();
 				}
 		    } else {
 		    	Toast.makeText(TabUser.this, "配置信息不完善", 0).show();
-		    }
+		    }			
 	  }
 	};
 }
