@@ -59,11 +59,14 @@ public class TabUser extends BaseActivity {
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		initControls();
 	}
 	
-	public void initUserInfo()  throws ParseException{
+	public void initUserInfo()  throws ParseException, JSONException{
 		//加载用户信息
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		//Integer current_user_id      = sharedPreferences.getInt("current_user_id",-1);
@@ -74,7 +77,7 @@ public class TabUser extends BaseActivity {
 		String current_user_gravatar = sharedPreferences.getString("current_user_gravatar","");
 		long current_user_id = sharedPreferences.getLong("current_user_id",-1);
 
-		String standard_date = ToolUtils.get_standard_date();
+		String standard_date = ToolUtils.get_ymd_date();
 		String week_name = ToolUtils.get_week_name(standard_date);
 		int week_number = ToolUtils.get_week_number(standard_date);
 		//当前日期信息
@@ -88,12 +91,14 @@ public class TabUser extends BaseActivity {
 		String picDirStr = Gravatar.gravatar_path(current_user_email);
 		File picDir = new File(picDirStr); 
 		if(picDir.exists()) {
-    		Bitmap bitmap = NetUtils.getLoacalBitmap(picDirStr); //从本地取图片(在cdcard中获取)
+    		Bitmap bitmap = NetUtils.get_loacal_bitmap(picDirStr); //从本地取图片(在cdcard中获取)
     		image_view.setImageBitmap(bitmap); //设置Bitmap
         } else if(!ToolUtils.has_sdcard()){
         	Toast.makeText(TabUser.this, "存储卡已移除，头像图片读取失败", 0).show();
         } else {
         	Toast.makeText(TabUser.this, "头像图片不存在", 0).show();
+        	NetUtils.chk_user_gravatar(getApplicationContext());
+        		
         }
 	    //login
 		TextView  textView_user_name     = (TextView)findViewById(R.id.textView_current_user_name); 
@@ -163,26 +168,34 @@ public class TabUser extends BaseActivity {
 			if (sharedPreferences.contains("current_user_token")
 					&& !sharedPreferences.getString("current_user_token", "").equals("")) {
 				String token = sharedPreferences.getString("current_user_token", "");
-				Log.w("Token", token);
-				
-				try {
-					NetUtils.get_user_friends_info(getApplicationContext(), token);
-	                NetUtils.get_friend_records(getApplicationContext(), token);
-					String [] ret_array = NetUtils.get_user_info(sharedPreferences,token, getApplicationContext());
-					if(ret_array[0].equals("1")){
-					    try {
-							initUserInfo();
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						Toast.makeText(TabUser.this, "更新成功", 0).show();
-					} else {
-				    	Toast.makeText(TabUser.this, "更新失败:"+ret_array[1], 0).show();
-					}				
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if(NetUtils.has_network(getApplicationContext())) {
+					Log.w("Token", token);
+					try {
+						NetUtils.get_user_friends_info(getApplicationContext(), token);
+		                NetUtils.get_friend_records(getApplicationContext(), token);
+		                if(ToolUtils.has_sdcard()) {
+		                   NetUtils.chk_user_gravatar(getApplicationContext());
+		                } else {
+		                   Toast.makeText(TabUser.this, "存储卡已移除，头像图片读取失败", 0).show();
+		                }
+						String [] ret_array = NetUtils.get_user_info(sharedPreferences,token, getApplicationContext());
+						if(ret_array[0].equals("1")){
+						    try {
+								initUserInfo();
+							} catch (ParseException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							Toast.makeText(TabUser.this, "更新成功", 0).show();
+						} else {
+					    	Toast.makeText(TabUser.this, "更新失败:"+ret_array[1], 0).show();
+						}				
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					Toast.makeText(TabUser.this, "请检查手机网络", 0).show();
 				}
 		    } else {
 		    	Toast.makeText(TabUser.this, "配置信息不完善", 0).show();

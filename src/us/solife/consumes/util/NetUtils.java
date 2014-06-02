@@ -73,7 +73,7 @@ public class NetUtils {
 	public static boolean has_network(Context context) {
 		ConnectivityManager con = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo workinfo = con.getActiveNetworkInfo();
-		return workinfo == null || !workinfo.isAvailable();
+		return (workinfo != null && workinfo.isAvailable() ? true : false); 
 	}
 	/**
 	 * 判断是否有网络
@@ -98,14 +98,15 @@ public class NetUtils {
 			throws HttpException, IOException, JSONException {
 		// 从服务器接口中获取当前账号和密码的配对情况
 		String[] ret_array = { "0", "return null","-1" };
-
+        Log.w("PostCreate", "beforePost:"+consume_info.to_string());
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
 		  new org.apache.commons.httpclient.NameValuePair("token", token),
 		  new org.apache.commons.httpclient.NameValuePair("format", "json"),
 		  new org.apache.commons.httpclient.NameValuePair("record[value]", consume_info.get_value()+""),
-		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_created_at()),
+		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_ymdhms()),
 		  new org.apache.commons.httpclient.NameValuePair("record[remark]", consume_info.get_remark()),
-		  new org.apache.commons.httpclient.NameValuePair("record[klass]", "-1")
+		  new org.apache.commons.httpclient.NameValuePair("record[klass]", "-1"),
+		  new org.apache.commons.httpclient.NameValuePair("record[created_at]", consume_info.get_created_at())
 		};
 
 		HashMap<String, Object> hash_map = ApiClient._post(URLs.URL_RECORD, params);
@@ -129,10 +130,12 @@ public class NetUtils {
 			throws HttpException, IOException, JSONException {
 		String[] ret_array = { "0", "return null" };
 
+        Log.w("PostUpdate", "beforePost:"+consume_info.to_string());
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
 		  new org.apache.commons.httpclient.NameValuePair("token", token),
 		  new org.apache.commons.httpclient.NameValuePair("record[value]", consume_info.get_value()+""),
-		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_created_at()),
+		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_ymdhms()),
+		  new org.apache.commons.httpclient.NameValuePair("record[created_at]", consume_info.get_created_at()),
 		  new org.apache.commons.httpclient.NameValuePair("record[remark]", consume_info.get_remark())
 		};
 
@@ -240,41 +243,43 @@ public class NetUtils {
 			
 	public static void chk_user_gravatar(Context context)
 			throws JSONException {
-		UserTb user_table = UserTb.get_user_tb(context);
-		ArrayList<UserInfo> user_infos = user_table.get_user_list();
-		if(user_infos.size()>0) 
-		for(int i=0; i<user_infos.size(); i++ ) {
-			UserInfo user_info = user_infos.get(i);//get_user_info_with_user_id(context,user_infos.get(i).get_user_id());
-			if(user_info.get_user_id()>0) {
-				String email = user_info.get_email();
-				File gravatar_path = new File(Gravatar.gravatar_path(email));
-				String gravatar_url  = Gravatar.gravatar_url(email);
-				//存储卡可用并且用用户头像不存在
-				if(ToolUtils.has_sdcard() && !gravatar_path.exists()) {
-					download_image_with_url(email);
+		if(ToolUtils.has_sdcard()) {
+			UserTb user_table = UserTb.get_user_tb(context);
+			ArrayList<UserInfo> user_infos = user_table.get_user_list();
+			if(user_infos.size()>0) 
+			for(int i=0; i<user_infos.size(); i++ ) {
+				UserInfo user_info = user_infos.get(i);
+				if(user_info.get_user_id()>0) {
+					String email = user_info.get_email();
+					File gravatar_path = new File(Gravatar.gravatar_path(email));
+					//String gravatar_url  = Gravatar.gravatar_url(email);
+					//存储卡可用并且用用户头像不存在
+					if(!gravatar_path.exists()) download_gravatar_with_email(email);
 				}
 			}
-		}
-		
+		} 
 	}
 	
 	public static void sync_upload_record_background(final Context context,final String token) {
 		if(NetUtils.has_network(context))
-		 new Thread() {
-			 public void run() {
-				try {
-					sync_upload_record(context, token);
-					get_friend_records(context, token);
-					chk_user_gravatar(context);
-				} catch (HttpException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			 };
-		 }.start();
+			 new Thread() {
+				 public void run() {
+					try {
+						sync_upload_record(context, token);
+						get_friend_records(context, token);
+						chk_user_gravatar(context);
+					} catch (HttpException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				 };
+			 }.start();
+	 else
+		 Log.w("NetUtils","No NetWork");
+				 
 	}
 	
 
@@ -364,9 +369,9 @@ public class NetUtils {
 	    return ret_array;
 	}
 	
-	public static void download_image_with_url(String email) {    
+	public static void download_gravatar_with_email(String email) {    
 		
-		if(email.length() == 0) return;
+		if(email == null || email.length() == 0) return;
 
 		String gravatar_url = Gravatar.gravatar_url(email);
         try {
@@ -381,14 +386,12 @@ public class NetUtils {
 			     bitmap.recycle();//回收bitmap空间
 		     }
         } catch (ClientProtocolException e) {  
-            // TODO Auto-generated catch block  
             e.printStackTrace();  
         } catch (IOException e) {  
-            // TODO Auto-generated catch block  
             e.printStackTrace();  
         }  
 	}
-	public static Bitmap getLoacalBitmap(String url) {
+	public static Bitmap get_loacal_bitmap(String url) {
         try {
              FileInputStream fis = new FileInputStream(url);
              return BitmapFactory.decodeStream(fis);  ///把流转化为Bitmap图片        

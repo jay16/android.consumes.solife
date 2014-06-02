@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-        <include layout="@layout/main_header" />
+    <include layout="@layout/main_header" />
         
     <EditText
         android:id="@+id/editText_consume_form_value"  
@@ -23,7 +23,7 @@
         android:orientation="horizontal" >
 
         <EditText
-            android:id="@+id/editText_consume_form_created_at"
+            android:id="@+id/editText_consume_form_ymdhms"
 		    android:background="@drawable/login_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/editText_consume_form_msg"
+        android:id="@+id/editText_consume_form_remark"
 		android:background="@drawable/login_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

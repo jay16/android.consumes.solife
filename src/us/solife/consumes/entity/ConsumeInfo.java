@@ -92,6 +92,7 @@ public class ConsumeInfo implements Serializable {
 		",consume_id:" + this.consume_id + 
 		",value:" + this.value + 
 		",remark:" + this.remark + 
+		",ymdhms:" + this.ymdhms + 
 		",created_at:" + this.created_at + 
 		",sync:" + this.sync +
 		",state:" + this.state;

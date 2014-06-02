@@ -67,7 +67,7 @@ public class CurrentUser {
 	 * @param created_at
 	 * @return
 	 */
-	public long insert_record(Double value, String remark, String created_at) {
+	public long insert_record(Double value, String remark, String ymdhms) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		database.beginTransaction();
 
@@ -76,8 +76,8 @@ public class CurrentUser {
 		values.put("consume_id", -1);
 		values.put("value", value);
 		values.put("remark", remark);
-		values.put("ymdhms", created_at);
-		values.put("created_at", created_at);
+		values.put("ymdhms", ymdhms);
+		values.put("created_at", ymdhms.substring(0, 19));
 		//是否与服务器数据已同步
 		values.put("sync", false);
 		values.put("state", "create");
@@ -125,7 +125,7 @@ public class CurrentUser {
 		cv.put("consume_id", consume_info.get_consume_id());
 		cv.put("value", consume_info.get_value());
 		cv.put("remark", consume_info.get_remark());
-		cv.put("ymdhms", consume_info.get_created_at());
+		cv.put("ymdhms", consume_info.get_ymdhms());
 		cv.put("created_at", consume_info.get_created_at());
 		cv.put("sync", consume_info.get_sync());
 		cv.put("state", consume_info.get_state());
@@ -291,7 +291,7 @@ public class CurrentUser {
 	public ArrayList<ConsumeInfo> consume_info_list() {
 		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
 		String sql;
-		String y_m_d = ToolUtils.get_standard_date();
+		String y_m_d = ToolUtils.get_ymd_date();
 		String week = "00";
 		try {
 			int i = ToolUtils.get_week_number(y_m_d)-1;

@@ -87,7 +87,7 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 			String picDirStr = Gravatar.gravatar_path(user_info.get_email());
 			File picDir = new File(picDirStr);
 	        if(picDir.exists()){
-	    		Bitmap bitmap = NetUtils.getLoacalBitmap(picDirStr); 
+	    		Bitmap bitmap = NetUtils.get_loacal_bitmap(picDirStr); 
 	    		holder.gravatar.setImageBitmap(bitmap); //…Ë÷√Bitmap
 	        }
 		} else {

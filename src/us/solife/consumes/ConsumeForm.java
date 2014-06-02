@@ -44,7 +44,9 @@ import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+
 import us.solife.consumes.util.NetUtils;
+import us.solife.consumes.util.ToolUtils;
 import us.solife.consumes.util.UIHelper;
 
 public class ConsumeForm extends BaseActivity {
@@ -52,7 +54,7 @@ public class ConsumeForm extends BaseActivity {
 	private CurrentUser       current_user;
 	private TextView  textView_main_header;
 	private EditText editText_consume_form_value;
-	private EditText editText_consume_form_created_at;
+	private EditText editText_consume_form_ymdhms;
 	private EditText editText_consume_form_remark;
 	private Button button_consume_form_submit;
 	private Button button_date_add;
@@ -68,8 +70,8 @@ public class ConsumeForm extends BaseActivity {
 		
 		textView_main_header = (TextView)findViewById(R.id.textView_main_header);
 		editText_consume_form_value      = (EditText) findViewById(R.id.editText_consume_form_value);
-		editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
-		editText_consume_form_remark = (EditText) findViewById(R.id.editText_consume_form_msg);
+		editText_consume_form_ymdhms = (EditText) findViewById(R.id.editText_consume_form_ymdhms);
+		editText_consume_form_remark = (EditText) findViewById(R.id.editText_consume_form_remark);
 		editText_consume_form_remark.addTextChangedListener(text_watcher);
 
 		// consume_form
@@ -101,13 +103,13 @@ public class ConsumeForm extends BaseActivity {
 	    } else {
 			init_create_consume();
 	    }
-
+	    TextView time = (TextView)findViewById(R.id.textView_main_time);
+	    time.setText(ToolUtils.get_ymdw_date());
 	}
 	
 	private void init_create_consume() {
 		// 初始化创建日期时间
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		editText_consume_form_created_at.setText(dateFormat.format(new Date()));
+		editText_consume_form_ymdhms.setText(ToolUtils.get_ymdhmsw_date());
 		textView_main_header.setText("创建记录");
 		button_consume_form_submit.setText("提交");
 	}
@@ -116,7 +118,7 @@ public class ConsumeForm extends BaseActivity {
 		ConsumeInfo consume_info = current_user.get_record(row_id);
 		Log.w("get_record", consume_info.to_string());
 		editText_consume_form_value.setText(consume_info.get_value()+"");
-		editText_consume_form_created_at.setText(consume_info.get_created_at());
+		editText_consume_form_ymdhms.setText(consume_info.get_ymdhms());
 		editText_consume_form_remark.setText(consume_info.get_remark());
 		textView_main_header.setText("编辑记录");
 		button_consume_form_submit.setText("更新");
@@ -174,18 +176,20 @@ public class ConsumeForm extends BaseActivity {
 	Button.OnClickListener button_consume_form_submit_listener = new Button.OnClickListener() {
 		public void onClick(View v) {
 			EditText editText_consume_form_value = (EditText) findViewById(R.id.editText_consume_form_value);
-			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
-			EditText editText_consume_form_remark = (EditText) findViewById(R.id.editText_consume_form_msg);
+			EditText editText_consume_form_ymdhms = (EditText) findViewById(R.id.editText_consume_form_ymdhms);
+			EditText editText_consume_form_remark = (EditText) findViewById(R.id.editText_consume_form_remark);
 
 			String value  = editText_consume_form_value.getText().toString();
 			String remark = editText_consume_form_remark.getText().toString();
-			String created_at = editText_consume_form_created_at.getText().toString();
+			String ymdhms = editText_consume_form_ymdhms.getText().toString();
 			Integer user_id = -1;
 			// 登陆用户密码及密码
 			// String created_at = "2013-12-29 9:1:1";
 			String token = "";
 			String[] ret_array = { "0", "login email is empty!" };
 
+			Log.w("ConsumeForm","value:["+value+"] remark:["+remark+"] ymdhms:["+ymdhms+"]");
+			
 			// login email不存在则提示用户无登陆
 			sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 			if (sharedPreferences.contains("current_user_token")
@@ -194,14 +198,14 @@ public class ConsumeForm extends BaseActivity {
 				
 				try {
 					if(action.equals("create")){
-						Log.w("ConsumeForm","value:["+value+"] remark:["+remark+"] created_at:["+created_at+"]");
-						current_user.insert_record(Double.parseDouble(value), remark, created_at);
+						current_user.insert_record(Double.parseDouble(value), remark, ymdhms);
 						Log.e("ConsumeForm","Action:["+action+"]");
 					} else if(action.equals("update")){
 						ConsumeInfo consume_info = current_user.get_record(row_id);
 						consume_info.set_value(Double.parseDouble(value));
 						consume_info.set_remark(remark);
-						consume_info.set_created_at(created_at);
+						consume_info.set_ymdhms(ymdhms);
+						consume_info.set_created_at(ymdhms.substring(0,19));
 						
 						//修改未同步数据，无需修改sync,state
 						if(consume_info.get_sync() == (long)1) {
@@ -225,7 +229,7 @@ public class ConsumeForm extends BaseActivity {
 				// 界面切换
 				// 显示记录记录
 				Intent intent = new Intent(ConsumeForm.this, ConsumeItem.class);
-				intent.putExtra("created_at", created_at.substring(0,10));
+				intent.putExtra("created_at", ymdhms.substring(0,10));
 				startActivity(intent);
 			} else {
 				Toast.makeText(ConsumeForm.this, "Email Is Empty!", 0).show();
@@ -238,11 +242,13 @@ public class ConsumeForm extends BaseActivity {
 	/* 日期加一天 */
 	Button.OnClickListener button_date_add_listener = new Button.OnClickListener() {
 		public void onClick(View v) {
-			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
-			String created_at = editText_consume_form_created_at.getText()
-					.toString();
-			editText_consume_form_created_at.setText(get_date(created_at, 1));
-
+			EditText editText_consume_form_ymdhms = (EditText) findViewById(R.id.editText_consume_form_ymdhms);
+			String created_at = editText_consume_form_ymdhms.getText().toString();
+			try {
+				editText_consume_form_ymdhms.setText(ToolUtils.add_dates(created_at, 1));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 			// 控件重新赋值后刷新界面
 			v.invalidate();
 		}
@@ -250,28 +256,20 @@ public class ConsumeForm extends BaseActivity {
 	/* 日期减一天 */
 	Button.OnClickListener button_date_plus_listener = new Button.OnClickListener() {
 		public void onClick(View v) {
-			EditText editText_consume_form_created_at = (EditText) findViewById(R.id.editText_consume_form_created_at);
-			String created_at = editText_consume_form_created_at.getText().toString();
-			editText_consume_form_created_at.setText(get_date(created_at, -1));
+			EditText editText_consume_form_ymdhms = (EditText) findViewById(R.id.editText_consume_form_ymdhms);
+			String ymdhms = editText_consume_form_ymdhms.getText().toString();
+			try {
+				editText_consume_form_ymdhms.setText(ToolUtils.add_dates(ymdhms, -1));
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
 
 			// 控件重新赋值后刷新界面
 			v.invalidate();
 		}
 	};
 
-	public static String get_date(String date_string, Integer num) {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
-		Date date = null;
-		try {
-			date = dateFormat.parse(date_string);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		String ret_string = dateFormat.format(new Date(date.getTime() + num
-				* 24 * 60 * 60 * 1000));
-		return ret_string;
-	}
+
 	
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if(event.getKeyCode() == KeyEvent.KEYCODE_BACK){  

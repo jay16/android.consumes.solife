@@ -349,15 +349,18 @@ public class TabList extends BaseActivity{
 			    loading_dialog = new LoadingDialog(TabList.this);
 				loading_dialog.setLoadText("下载数据中...");			
 				loading_dialog.show();
-				
-				//ConsumeListParse consumeListParse = new ConsumeListParse();
-				//getDataFromServer(getApplicationContext(), consumeListParse, URLs.CONSUME_LIST, callback);
-				try {
-					NetUtils.get_self_records_with_del(TabList.this,current_user_token);
-				} catch (JSONException e) {
-					e.printStackTrace();
+				 
+				if(NetUtils.has_network(getApplicationContext())) {
+					try {
+						NetUtils.get_self_records_with_del(TabList.this,current_user_token);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					init_view_list("day");
+					Toast.makeText(TabList.this, "下载完毕", 0).show();
+				} else {
+					Toast.makeText(TabList.this, "请检查手机网络", 0).show();
 				}
-				init_view_list("day");
 				
 				loading_progress_bar.setVisibility(View.GONE);
 				if(loading_dialog != null) loading_dialog.dismiss();
@@ -375,9 +378,13 @@ public class TabList extends BaseActivity{
 				loading_dialog.setLoadText("同步数据中...");	
 				loading_dialog.show();
 
-				NetUtils.sync_upload_record_background(TabList.this,current_user_token);
-				Toast.makeText(TabList.this, "同步完毕", 0).show();
-				init_view_list("day");
+				if( NetUtils.has_network(getApplicationContext())) {
+				    NetUtils.sync_upload_record_background(TabList.this,current_user_token);
+				    init_view_list("day");
+				    Toast.makeText(TabList.this, "同步完毕", 0).show();
+				} else {
+					Toast.makeText(TabList.this, "请检查手机网络", 0).show();
+				}
 				
 				loading_progress_bar.setVisibility(View.GONE);
 				if(loading_dialog != null) loading_dialog.dismiss();

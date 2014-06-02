@@ -29,7 +29,22 @@
         		android:text="消费记录"
         		android:layout_centerInParent="true"
         		android:textSize="20sp"		
-				android:textColor="#ffffff" />      
+				android:textColor="#ffffff" />     
+
+      		<TextView
+      		    android:id="@+id/textView_main_time"
+      		    android:layout_width="wrap_content"
+      		    android:layout_height="wrap_content"
+      		    android:layout_alignBottom="@+id/textView_main_header"
+      		    android:layout_alignParentRight="true"
+      		    android:layout_alignTop="@+id/textView_main_header"
+      		    android:layout_toRightOf="@+id/textView_main_header"
+      		    android:gravity="right|bottom"
+      		    android:padding="1dp"
+      		    android:text=""
+      		    android:textColor="#666"
+      		    android:textSize="14sp" />
+   
 		</RelativeLayout>
     
 </LinearLayout>

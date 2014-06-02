@@ -54,11 +54,11 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_above="@+id/textView_current_user_registeration_time"
-			        android:layout_alignParentTop="false"
 			        android:layout_alignRight="@+id/textView_current_date"
+			        android:layout_alignTop="@+id/imageView_current_user_gravatar_image"
 			        android:layout_toRightOf="@+id/textView_current_user_name"
 			        android:gravity="bottom|right"
-			        android:padding="5dp"
+			        android:padding="1dp"
 			        android:text="当前网络: wifi"
 			        android:textColor="#666"
 			        android:textSize="10sp" />
