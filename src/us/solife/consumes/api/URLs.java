@@ -35,7 +35,7 @@ public class URLs implements Serializable {
 	public final static String URL_RECORD   = URL_API_HOST + "api/records";
 	public final static String URL_RECORD_FRIENDS   = URL_API_HOST + "api/records/friends.json";
 	//android app
-	public final static String URL_VERSION   = URL_API_HOST + "api/version.json";
+	public final static String URL_VERSION   = URL_API_HOST + "api/version.json?os=android";
 	
 
 	public final static String STORAGE_BASE     = Environment.getExternalStorageDirectory().getAbsolutePath() 

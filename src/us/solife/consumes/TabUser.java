@@ -171,7 +171,7 @@ public class TabUser extends BaseActivity {
 				if(NetUtils.has_network(getApplicationContext())) {
 					Log.w("Token", token);
 					try {
-						NetUtils.get_user_friends_info(getApplicationContext(), token);
+						NetUtils.get_user_friends_info(getApplicationContext(), token, true);
 		                NetUtils.get_friend_records(getApplicationContext(), token);
 		                if(ToolUtils.has_sdcard()) {
 		                   NetUtils.chk_user_gravatar(getApplicationContext());

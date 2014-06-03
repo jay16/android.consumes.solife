@@ -116,7 +116,7 @@ public class Login extends BaseActivity {
 				//后台同步更新未同步的数据
 				try {
 					NetUtils.get_self_records_with_del(Login.this,token);
-					NetUtils.get_user_friends_info(getApplicationContext(),token);
+					NetUtils.get_user_friends_info(getApplicationContext(),token, true);
 					NetUtils.get_friend_records(Login.this, token);
 				} catch (JSONException e) {
 					e.printStackTrace();

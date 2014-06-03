@@ -205,7 +205,7 @@ public class CheckVersionTask implements Runnable {
 			}
 			
 			final PackageManager pm = context.getPackageManager();
-			final PackageInfo packInfo = pm.getPackageInfo("us.solife.consumes", PackageManager.GET_ACTIVITIES);
+			final PackageInfo packInfo = pm.getPackageInfo("us.solife.iconsumes", PackageManager.GET_ACTIVITIES);
 			final String version = packInfo.versionName;
 			Log.w(TAG,"Version :"+version);
 			

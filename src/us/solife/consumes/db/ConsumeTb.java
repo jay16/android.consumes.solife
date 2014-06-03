@@ -173,4 +173,22 @@ public class ConsumeTb {
 		}
 		return consume_id;
 	}
+    /**
+     * @return
+     */
+	public String get_friends_ids() {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		String sql = "select distinct user_id from users where info = 'friend'";
+		String ids = "";
+		Cursor cursor = database.rawQuery(sql, null);
+		if(cursor != null && cursor.getCount()>0) {
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+				ids = ids + cursor.getInt(cursor.getColumnIndex("user_id")) + ",";
+				Log.w("FriendId", ids);
+			}
+			
+			ids = ids.substring(0, ids.length()-1);
+		}
+		return ids;
+	}
 }

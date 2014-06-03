@@ -267,6 +267,7 @@ public class NetUtils {
 					try {
 						sync_upload_record(context, token);
 						get_friend_records(context, token);
+						get_user_friends_info(context, token, false);
 						chk_user_gravatar(context);
 					} catch (HttpException e) {
 						e.printStackTrace();
@@ -333,13 +334,15 @@ public class NetUtils {
 	    return ret_array;
 	}
 	
-	public static String [] get_user_friends_info(Context context, String token) 
+	public static String [] get_user_friends_info(Context context, String token, Boolean isDetailCheck) 
 			throws JSONException {
     	String [] ret_array = {"1","³É¹¦"};
-	    ArrayList<UserInfo> user_infos = new  ArrayList<UserInfo>();
 	    ConsumeTb consume_tb = ConsumeTb.get_consume_tb(context);
-	    long max_consume_id = consume_tb.get_friends_max_consume_id();
+	    String ids = consume_tb.get_friends_ids();
+	    
 	    String url = URLs.URL_USER_FRIENDS+"?token="+ Uri.encode(token);
+	    if(!isDetailCheck) url = url + "&ids=" + ids;
+	    
         HashMap<String, Object> hash_map = ApiClient._Get(context, url);
         Log.w("getUserFriend","URL:"+ url);
         
@@ -352,7 +355,7 @@ public class NetUtils {
 	        UserListParse userListParse = new UserListParse();
 	    	HashMap<String, Object> parse_json = userListParse.parseJSON(response);
 	    	if((Boolean)parse_json.get("result")) {
-	    		
+	    	    ArrayList<UserInfo> user_infos = new  ArrayList<UserInfo>();
 	    		user_infos = (ArrayList<UserInfo>)parse_json.get("user_infos");
 	    		UserTb user_tb = UserTb.get_user_tb(context);
 	    		for(int i= 0; i< user_infos.size(); i++) {
@@ -369,8 +372,7 @@ public class NetUtils {
 	    return ret_array;
 	}
 	
-	public static void download_gravatar_with_email(String email) {    
-		
+	public static void download_gravatar_with_email(String email) {
 		if(email == null || email.length() == 0) return;
 
 		String gravatar_url = Gravatar.gravatar_url(email);
