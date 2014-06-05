@@ -27,6 +27,8 @@ import android.content.SharedPreferences;
 //import android.content.SharedPreferences.Editor;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
@@ -56,17 +58,23 @@ public class ConsumeForm extends BaseActivity {
 	private EditText editText_consume_form_value;
 	private EditText editText_consume_form_ymdhms;
 	private EditText editText_consume_form_remark;
+	private RadioGroup radioGroup_consume_klass;
 	private Button button_consume_form_submit;
 	private Button button_date_add;
 	private Button button_date_plus;
 	private Button mBack;
 	private Long row_id = (long)-1;
 	private String action  = "create" ;
+	private Integer klass = -1;
+	private Integer current_user_id;
 	
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
 		setContentView(R.layout.consume_form);
+		
+		radioGroup_consume_klass = (RadioGroup)findViewById(R.id.radioGroup_consumeKlass);
+		radioGroup_consume_klass.setOnCheckedChangeListener(radio_group_oncheck);
 		
 		textView_main_header = (TextView)findViewById(R.id.textView_main_header);
 		editText_consume_form_value      = (EditText) findViewById(R.id.editText_consume_form_value);
@@ -86,8 +94,8 @@ public class ConsumeForm extends BaseActivity {
     	mBack.setOnClickListener(UIHelper.finish(this));
 
 		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-	    long current_user_id = shared_preferences.getLong("current_user_id", -1);
-	    current_user = CurrentUser.get_current_user(getApplication(),Integer.parseInt(String.valueOf(current_user_id)));
+	    current_user_id = Integer.parseInt(String.valueOf(shared_preferences.getLong("current_user_id", -1)));
+	    current_user = CurrentUser.get_current_user(getApplication(), current_user_id);
 
 		//跳转至该界面状态
 		//创建/编辑
@@ -124,7 +132,22 @@ public class ConsumeForm extends BaseActivity {
 		button_consume_form_submit.setText("更新");
 	}
 	
-	
+	RadioGroup.OnCheckedChangeListener radio_group_oncheck = new RadioGroup.OnCheckedChangeListener() { 
+		 public void onCheckedChanged(RadioGroup group, int checkedId) { 
+			 RadioButton radioButton = (RadioButton)findViewById(radioGroup_consume_klass.getCheckedRadioButtonId());
+			 String whatIn = radioButton.getText().toString();
+			 switch(radioButton.getText().toString()) {
+				 case "衣": klass = 1; break;
+				 case "食": klass = 2; break;
+				 case "住": klass = 3; break;
+				 case "行": klass = 4; break;
+				 case "其他": klass = 5; break;
+				 default: klass = -1; break;
+			 }
+			 Log.i("whatIn", whatIn+ " - " + klass);
+		 }
+	};
+		 
 	private TextWatcher text_watcher = new TextWatcher(){
 		 
 	    @Override
@@ -182,29 +205,38 @@ public class ConsumeForm extends BaseActivity {
 			String value  = editText_consume_form_value.getText().toString();
 			String remark = editText_consume_form_remark.getText().toString();
 			String ymdhms = editText_consume_form_ymdhms.getText().toString();
-			Integer user_id = -1;
 			// 登陆用户密码及密码
 			// String created_at = "2013-12-29 9:1:1";
 			String token = "";
-			String[] ret_array = { "0", "login email is empty!" };
-
-			Log.w("ConsumeForm","value:["+value+"] remark:["+remark+"] ymdhms:["+ymdhms+"]");
 			
 			// login email不存在则提示用户无登陆
 			sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 			if (sharedPreferences.contains("current_user_token")
 					&& !sharedPreferences.getString("current_user_token", "").equals("")) {
 				token = sharedPreferences.getString("current_user_token", "");
-				
+
+				ConsumeInfo consume_info = new ConsumeInfo();
 				try {
 					if(action.equals("create")){
-						current_user.insert_record(Double.parseDouble(value), remark, ymdhms);
-						Log.e("ConsumeForm","Action:["+action+"]");
+						consume_info.set_user_id(current_user_id);
+						consume_info.set_consume_id(-1);
+                        consume_info.set_value(Double.parseDouble(value));
+                        consume_info.set_remark(remark);
+                        consume_info.set_ymdhms(ymdhms);
+                        consume_info.set_tags_list("");
+                        consume_info.set_klass(klass);
+                        consume_info.set_created_at(ymdhms.substring(0, 19));
+                        consume_info.set_sync((long)0);
+                        consume_info.set_state("create");
+						current_user.insert_record(consume_info);
+						Log.e("ConsumeForm["+action+"]",consume_info.to_string());
 					} else if(action.equals("update")){
-						ConsumeInfo consume_info = current_user.get_record(row_id);
+						consume_info = current_user.get_record(row_id);
 						consume_info.set_value(Double.parseDouble(value));
 						consume_info.set_remark(remark);
 						consume_info.set_ymdhms(ymdhms);
+                        consume_info.set_tags_list("");
+                        consume_info.set_klass(klass);
 						consume_info.set_created_at(ymdhms.substring(0,19));
 						
 						//修改未同步数据，无需修改sync,state
@@ -221,8 +253,10 @@ public class ConsumeForm extends BaseActivity {
 						Toast.makeText(ConsumeForm.this, "Action Not Found:["+action+"]", 0).show();
 					}
 
-					//后台同步
-					NetUtils.sync_upload_record_background(ConsumeForm.this,token);
+					if(NetUtils.has_network(getApplicationContext())) {
+					   //后台同步
+					   NetUtils.sync_upload_record_background(ConsumeForm.this,token);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -28,8 +28,8 @@ public class ApiClient {
 	public static final String DESC = "descend";
 	public static final String ASC = "ascend";
 	
-	private final static int TIMEOUT_CONNECTION = 20000;
-	private final static int TIMEOUT_SOCKET = 20000;
+	private final static int TIMEOUT_CONNECTION = 30000;
+	private final static int TIMEOUT_SOCKET = 30000;
 	private final static int RETRY_TIME = 3;
 
 	
@@ -69,6 +69,7 @@ public class ApiClient {
 	 * get«Î«ÛURL
 	 */
 	public static HashMap<String, Object> _Get(Context context, String url){	
+		Log.w("AplClient_Get", url);
 		HttpClient client = getHttpClient();
 		GetMethod httpGet = new GetMethod(url);
 		httpGet.getParams().setSoTimeout(TIMEOUT_SOCKET);
@@ -86,8 +87,9 @@ public class ApiClient {
 		return hash_map ;
 	}
 	
-	public static HashMap<String, Object> _post(String url, org.apache.commons.httpclient.NameValuePair[] params)
+	public static HashMap<String, Object> _Post(String url, org.apache.commons.httpclient.NameValuePair[] params)
 			throws HttpException, IOException{	
+		Log.w("AplClient_Post", url);
 		HttpClient http_client = getHttpClient();
 		PostMethod http_post = new PostMethod(url);
 		// «Î«ÛhttpRequest
@@ -108,8 +110,9 @@ public class ApiClient {
         Log.w("_POST", hash_map.toString());
         return hash_map;
 	}
-	public static HashMap<String, Object> _delete(String url)
+	public static HashMap<String, Object> _Delete(String url)
 			throws HttpException, IOException{	
+		Log.w("AplClient_Delete", url);
 		HttpClient http_client = getHttpClient();
 		DeleteMethod http_delete = new DeleteMethod(url);
 		// «Î«ÛhttpRequest     

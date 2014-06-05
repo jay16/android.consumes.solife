@@ -340,9 +340,8 @@ public class TabList extends BaseActivity{
 		};
 		
 		//同步数据库至本地
-		Button.OnClickListener imageButton_download_listener = new Button.OnClickListener(){//创建监听对象  
+		Button.OnClickListener imageButton_download_listener = new Button.OnClickListener(){  //创建监听对象  
 			public void onClick(View v){  
-				Toast.makeText(TabList.this, "下载数据中...", 0).show();
 
 		    	loading_progress_bar.setVisibility(View.VISIBLE);
 		    	if(loading_dialog != null) loading_dialog.dismiss();
@@ -351,6 +350,7 @@ public class TabList extends BaseActivity{
 				loading_dialog.show();
 				 
 				if(NetUtils.has_network(getApplicationContext())) {
+					Toast.makeText(TabList.this, "开始下载..", 0).show();
 					try {
 						NetUtils.get_self_records_with_del(TabList.this,current_user_token);
 					} catch (JSONException e) {

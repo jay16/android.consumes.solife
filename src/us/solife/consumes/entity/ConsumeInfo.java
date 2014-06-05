@@ -8,9 +8,9 @@ public class ConsumeInfo implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public long id;
-	public int consume_id, user_id;
+	public int consume_id, user_id, klass;
 	public double value;
-	public String ymdhms, remark, created_at;
+	public String ymdhms, remark, created_at, updated_at, tags_list;
 	public String state;
 	public Long sync; //Boolean ´æ·ÅÎªLong£¬true => 1, flase => 0
 
@@ -29,12 +29,19 @@ public class ConsumeInfo implements Serializable {
 	public void set_id(long id) {
 		this.id = id;
 	}
+	
 	public int get_user_id() {
 		return user_id;
 	}
-
 	public void set_user_id(int user_id) {
 		this.user_id = user_id;
+	}
+	
+	public int get_klass() {
+		return klass;
+	}
+	public void set_klass(int klass) {
+		this.klass = klass;
 	}
 
 	public int get_consume_id() {
@@ -78,12 +85,26 @@ public class ConsumeInfo implements Serializable {
 	public void set_state(String state) {
 		this.state = state;
 	}
+	
 	public String get_created_at() {
 		return created_at;
 	}
-
 	public void set_created_at(String created_at) {
 		this.created_at = created_at;
+	}
+	
+	public String get_updated_at() {
+		return updated_at;
+	}
+	public void set_updated_at(String updated_at) {
+		this.updated_at = updated_at;
+	}
+	
+	public String get_tags_list() {
+		return tags_list;
+	}
+	public void set_tags_list(String tags_list) {
+		this.tags_list = tags_list;
 	}
 
 	public String to_string() {
@@ -93,7 +114,10 @@ public class ConsumeInfo implements Serializable {
 		",value:" + this.value + 
 		",remark:" + this.remark + 
 		",ymdhms:" + this.ymdhms + 
+		",klass:" + this.klass + 
+		",tags_list:" + this.tags_list + 
 		",created_at:" + this.created_at + 
+		",updated_at:" + this.updated_at + 
 		",sync:" + this.sync +
 		",state:" + this.state;
 	}

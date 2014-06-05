@@ -59,7 +59,45 @@ public class CurrentUser {
 		}
 		return consume_info;
 	}
+	/**
+	 *  创建消费记录
+	 * @param ConsumeInfo
+	 * @return
+	 */
+	public long insert_record(ConsumeInfo consume_info) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		database.beginTransaction();
 
+		ContentValues values = new ContentValues();
+		values.put("user_id", user_id);
+		values.put("consume_id", consume_info.get_consume_id());
+		values.put("value", consume_info.get_value());
+		values.put("remark", consume_info.get_remark());
+		values.put("ymdhms", consume_info.get_ymdhms());
+		values.put("klass", consume_info.get_klass());
+		values.put("tags_list", consume_info.get_tags_list());
+		values.put("created_at", consume_info.get_created_at());
+		//是否与服务器数据已同步
+		values.put("sync", consume_info.get_sync());
+		values.put("state", consume_info.get_state());
+		/*
+		 * sync & state
+		 * sync:false state: create 待同步创建
+		 * sync:false state: update 待同步更新
+		 * sync:false state: delete 待同步删除
+		 */
+		Log.w("InsertRecord", "before: " + consume_info.to_string());
+		long row_id = database.insert(DT_CONSUME, null, values);
+
+		database.setTransactionSuccessful();
+		database.endTransaction();
+		database.close();
+		
+		consume_info = get_record(row_id);
+        Log.w("InsertRecord","after: "+consume_info.to_string());
+        
+		return row_id;
+	}
 	/**
 	 *  创建消费记录
 	 * @param value
@@ -126,6 +164,8 @@ public class CurrentUser {
 		cv.put("value", consume_info.get_value());
 		cv.put("remark", consume_info.get_remark());
 		cv.put("ymdhms", consume_info.get_ymdhms());
+		cv.put("klass", consume_info.get_klass());
+		cv.put("tags_list", consume_info.get_tags_list());
 		cv.put("created_at", consume_info.get_created_at());
 		cv.put("sync", consume_info.get_sync());
 		cv.put("state", consume_info.get_state());

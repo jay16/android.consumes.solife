@@ -105,11 +105,12 @@ public class NetUtils {
 		  new org.apache.commons.httpclient.NameValuePair("record[value]", consume_info.get_value()+""),
 		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_ymdhms()),
 		  new org.apache.commons.httpclient.NameValuePair("record[remark]", consume_info.get_remark()),
-		  new org.apache.commons.httpclient.NameValuePair("record[klass]", "-1"),
+		  new org.apache.commons.httpclient.NameValuePair("record[klass]", consume_info.get_klass()+""),
+		  new org.apache.commons.httpclient.NameValuePair("record[tags_list]", consume_info.get_tags_list()),
 		  new org.apache.commons.httpclient.NameValuePair("record[created_at]", consume_info.get_created_at())
 		};
 
-		HashMap<String, Object> hash_map = ApiClient._post(URLs.URL_RECORD, params);
+		HashMap<String, Object> hash_map = ApiClient._Post(URLs.URL_RECORD, params);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("response");
 			// 请求成功
@@ -135,11 +136,13 @@ public class NetUtils {
 		  new org.apache.commons.httpclient.NameValuePair("token", token),
 		  new org.apache.commons.httpclient.NameValuePair("record[value]", consume_info.get_value()+""),
 		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_ymdhms()),
+		  new org.apache.commons.httpclient.NameValuePair("record[klass]", consume_info.get_klass()+""),
+		  new org.apache.commons.httpclient.NameValuePair("record[tags_list]", consume_info.get_tags_list()),
 		  new org.apache.commons.httpclient.NameValuePair("record[created_at]", consume_info.get_created_at()),
 		  new org.apache.commons.httpclient.NameValuePair("record[remark]", consume_info.get_remark())
 		};
 
-		HashMap<String, Object> hash_map = ApiClient._post(URLs.URL_RECORD+"/"+consume_info.get_consume_id()+".json", params);
+		HashMap<String, Object> hash_map = ApiClient._Post(URLs.URL_RECORD+"/"+consume_info.get_consume_id()+".json", params);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("response");
 		if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) {
@@ -158,7 +161,7 @@ public class NetUtils {
 		String[] ret_array = { "0", "return null" };
        
 		String url = URLs.URL_RECORD+"/"+consume_info.get_consume_id()+".json?token="+Uri.encode(token);
-		HashMap<String, Object> hash_map = ApiClient._delete(url);
+		HashMap<String, Object> hash_map = ApiClient._Delete(url);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("response");
 		
@@ -450,7 +453,7 @@ public class NetUtils {
 	    		ConsumeTb consume_table = ConsumeTb.get_consume_tb(context);
 	    		consume_table.insert_all_record(consume_infos,false);
 	    		
-	    		UIHelper.push_notice(context,"朋友消费圈","近期有"+consume_infos+"笔消费记录",1000);
+	    		UIHelper.push_notice(context,"朋友消费圈","近期有"+consume_infos.size()+"笔消费记录",(int)Math.random()%66);
 	    	}
 	    }
 	}

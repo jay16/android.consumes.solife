@@ -149,6 +149,8 @@ public class ConsumeTb {
 	    consume_info.set_consume_id(cursor.getInt(cursor.getColumnIndex("consume_id")));
 		consume_info.set_value(cursor.getDouble(cursor.getColumnIndex("value")));
 		consume_info.set_ymdhms(cursor.getString(cursor.getColumnIndex("ymdhms")));
+		consume_info.set_tags_list(cursor.getString(cursor.getColumnIndex("tags_list")));
+		consume_info.set_klass(cursor.getInt(cursor.getColumnIndex("klass")));
 		consume_info.set_remark(cursor.getString(cursor.getColumnIndex("remark")).toString());
 		consume_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")).toString());
 		consume_info.set_sync(cursor.getLong(cursor.getColumnIndex("sync")));
