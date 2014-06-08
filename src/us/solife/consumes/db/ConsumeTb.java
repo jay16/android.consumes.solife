@@ -57,12 +57,14 @@ public class ConsumeTb {
 		if(isTruncate) truncate_table();
 		
 		for (int i = 0; i < consumeInfos.size(); i++) {
-			ConsumeInfo info = consumeInfos.get(i);
+			ConsumeInfo consume_info = consumeInfos.get(i);
 			//log调试用
-            Log.w("ConsumeDao",info.to_string());
-            
-			insert_record(info.get_user_id(), (int) info.get_id(), info.get_value(),
-					info.get_remark(), info.get_created_at(),true);
+            Log.w("ConsumeDao",consume_info.to_string());
+            consume_info.set_consume_id((int)consume_info.get_id());
+            consume_info.set_sync((long)1);
+            insert_record(consume_info);
+			//insert_record(info.get_user_id(), (int) info.get_id(), info.get_value(),
+			//		info.get_remark(), info.get_created_at(),true);
 		}
 
 	}
@@ -76,32 +78,55 @@ public class ConsumeTb {
 		database.close();
 		
 	}
+
 	// 插入一笔消费记录
-	public long insert_record(Integer user_id, Integer consume_id, Double value,
-			String remark, String created_at, Boolean sync) {
+	public long insert_record(ConsumeInfo consume_info) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		database.beginTransaction();
-
+        Log.w("InsertRecord","before:"+consume_info.to_string());
 		ContentValues values = new ContentValues();
-		values.put("user_id", user_id);
-		values.put("consume_id", consume_id);
-		values.put("value", value);
-		values.put("remark", remark);
-		values.put("created_at", created_at);
+		values.put("user_id", consume_info.get_user_id());
+		values.put("consume_id", consume_info.get_consume_id());
+		values.put("value", consume_info.get_value());
+		values.put("klass", consume_info.get_klass());
+		values.put("ymdhms", consume_info.get_ymdhms());
+		values.put("remark", consume_info.get_remark());
+		values.put("tags_list", consume_info.get_tags_list());
+		values.put("created_at", consume_info.get_created_at());
+		values.put("updated_at", consume_info.get_updated_at());
 		//是否与服务器数据已同步
-		values.put("sync", sync);
+		values.put("sync", consume_info.get_sync());
+		values.put("state", consume_info.get_state());
 		long rowid = database.insert("consumes", null, values);
-		//log调试用
-        Log.w("ConsumeDao","插入数据库动作完成id:["+rowid+"]");
 		database.setTransactionSuccessful();
 		database.endTransaction();
 		database.close();
 
+		//log调试用
+		consume_info = get_record(rowid);
+        Log.w("InsertRecord","after:"+consume_info.to_string());
 		return rowid;
+	}
+	//取得指定消费记录
+	public ConsumeInfo get_record(long rowid) {
+		// public Integer getAllRecords(Context context) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
+		String sql = "select * from consumes where id = " + rowid;
+		Cursor cursor = database.rawQuery(sql, null);
+	
+		ConsumeInfo consume_info = new ConsumeInfo();
+		if (cursor.getCount() > 0) {
+			cursor.moveToFirst(); 
+			consume_info= get_consume_info_from_cursor(cursor);
+		}
+		cursor.close();
+		database.close();
+		return consume_info;
 	}
 	
 	//取得所有消费记录
-	public ArrayList<ConsumeInfo> get_all_records(Context context) {
+	public ArrayList<ConsumeInfo> get_all_records() {
 		// public Integer getAllRecords(Context context) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
@@ -126,7 +151,7 @@ public class ConsumeTb {
 	public ArrayList<ConsumeInfo> get_unsync_records() {
 		// public Integer getAllRecords(Context context) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		Cursor cursor = database.rawQuery("select * from consumes where sync = 0", null);
+		Cursor cursor = database.rawQuery("select id,user_id,consume_id,value,remark,ymdhms,klass,tags_list,created_at,updated_at,sync,state from consumes where sync = 0", null);
 		
 		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();
 		if (cursor.getCount() > 0) {
@@ -153,6 +178,7 @@ public class ConsumeTb {
 		consume_info.set_klass(cursor.getInt(cursor.getColumnIndex("klass")));
 		consume_info.set_remark(cursor.getString(cursor.getColumnIndex("remark")).toString());
 		consume_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")).toString());
+		//consume_info.set_updated_at(cursor.getString(cursor.getColumnIndex("updated_at")).toString());
 		consume_info.set_sync(cursor.getLong(cursor.getColumnIndex("sync")));
 		consume_info.set_state(cursor.getString(cursor.getColumnIndex("state")));
 		

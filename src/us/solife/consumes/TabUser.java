@@ -49,10 +49,6 @@ public class TabUser extends BaseActivity {
 	protected void onResume() {
 		// TODO Auto-generated method stub
 		super.onResume();
-
-		String network  = NetUtils.network_type(getApplicationContext());
-		TextView  textView_network    = (TextView)findViewById(R.id.textView_current_network); 
-		textView_network.setText("当前网络: " + network);
 		
 		try {
 			initUserInfo();
@@ -67,6 +63,12 @@ public class TabUser extends BaseActivity {
 	}
 	
 	public void initUserInfo()  throws ParseException, JSONException{
+
+		String network  = NetUtils.network_type(getApplicationContext());
+		TextView  textView_network    = (TextView)findViewById(R.id.textView_current_network); 
+		//当前日期信息
+		TextView  textView_current_date = (TextView)findViewById(R.id.textView_current_date); 	
+
 		//加载用户信息
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		//Integer current_user_id      = sharedPreferences.getInt("current_user_id",-1);
@@ -74,14 +76,27 @@ public class TabUser extends BaseActivity {
 		String current_user_email    = sharedPreferences.getString("current_user_email","");
 		String current_user_area = sharedPreferences.getString("current_user_province","");
 		String current_user_register = sharedPreferences.getString("current_user_register","");
+		String current_user_updated = sharedPreferences.getString("current_user_updated","");
 		String current_user_gravatar = sharedPreferences.getString("current_user_gravatar","");
 		long current_user_id = sharedPreferences.getLong("current_user_id",-1);
 
+	    //login
+		TextView  textView_user_name     = (TextView)findViewById(R.id.textView_current_user_name); 
+		TextView  textView_user_email    = (TextView)findViewById(R.id.textView_current_user_email); 
+		TextView  textView_user_register = (TextView)findViewById(R.id.textView_current_user_registeration_time); 
+		TextView  textView_user_updated = (TextView)findViewById(R.id.textView_current_user_updated_time);
+		TextView  textView_user_area     = (TextView)findViewById(R.id.textView_current_user_area); 
+		textView_user_name.setText(current_user_name);
+		textView_user_email.setText(current_user_email);
+		textView_user_register.setText("注册日期:"+current_user_register);
+		textView_user_updated.setText("更新日期:"+current_user_updated);
+		textView_network.setText("(网络: " + network+")");
+		textView_user_area.setText(current_user_area);
+		
+		
 		String standard_date = ToolUtils.get_ymd_date();
 		String week_name = ToolUtils.get_week_name(standard_date);
 		int week_number = ToolUtils.get_week_number(standard_date);
-		//当前日期信息
-		TextView  textView_current_date = (TextView)findViewById(R.id.textView_current_date); 	
 		textView_current_date.setText("当前日期:"+standard_date+" "+week_name+" 第"+week_number+"周");
 		//textView_current_date.setText(current_user_gravatar);
 
@@ -100,15 +115,7 @@ public class TabUser extends BaseActivity {
         	NetUtils.chk_user_gravatar(getApplicationContext());
         		
         }
-	    //login
-		TextView  textView_user_name     = (TextView)findViewById(R.id.textView_current_user_name); 
-		TextView  textView_user_email    = (TextView)findViewById(R.id.textView_current_user_email); 
-		TextView  textView_user_register = (TextView)findViewById(R.id.textView_current_user_registeration_time); 
-		TextView  textView_user_area     = (TextView)findViewById(R.id.textView_current_user_area); 
-		textView_user_name.setText(current_user_name);
-		textView_user_email.setText(current_user_email);
-		textView_user_register.setText("注册日期:"+current_user_register);
-		textView_user_area.setText(current_user_area);
+
 	}
 	public void initControls() {
 		BigDecimal volue;
@@ -122,7 +129,10 @@ public class TabUser extends BaseActivity {
 		
 		TextView  consume_day_number = (TextView)findViewById(R.id.consume_day_number); 
 		consumeInfo = consumeinfos.get(0);
-		consume_day_number.setText((int)consumeInfo.get_value()+"天");
+		String day_and_records_count = (int)consumeInfo.get_value()+"天";
+		consumeInfo = consumeinfos.get(7);
+		day_and_records_count += "(" + (int)consumeInfo.get_value() + "笔)";
+		consume_day_number.setText(day_and_records_count);
 		
 		TextView  consume_max_value_by_once = (TextView)findViewById(R.id.consume_max_value_by_once); 
 		consumeInfo = consumeinfos.get(1);

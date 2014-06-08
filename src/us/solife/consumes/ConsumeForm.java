@@ -130,6 +130,18 @@ public class ConsumeForm extends BaseActivity {
 		editText_consume_form_remark.setText(consume_info.get_remark());
 		textView_main_header.setText("±à¼­¼ÇÂ¼");
 		button_consume_form_submit.setText("¸üÐÂ");
+		Integer id;
+		Log.w("UpdatedRecord",consume_info.to_string());
+		switch(consume_info.get_klass()+"") {
+		case "1": id = R.id.radio1; break;
+		case "2": id = R.id.radio2; break;
+		case "3": id = R.id.radio3; break;
+		case "4": id = R.id.radio4; break;
+		case "5": id = R.id.radio5; break; 
+		default: id = R.id.radio5; break;
+		}
+		Log.w("UpdatedRecord", "radio:"+id);
+		radioGroup_consume_klass.check(id);
 	}
 	
 	RadioGroup.OnCheckedChangeListener radio_group_oncheck = new RadioGroup.OnCheckedChangeListener() { 

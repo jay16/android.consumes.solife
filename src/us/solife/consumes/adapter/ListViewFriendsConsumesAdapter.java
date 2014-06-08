@@ -59,7 +59,7 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
 		ConsumeInfo consume_info = consume_infos.get(position);
-		String msg,date;
+		String remark,date;
 		
 		ViewHolder holder;
 		if (convertView != null) {
@@ -72,6 +72,7 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 			holder.value  = (TextView) convertView.findViewById(R.id.value);
 			holder.date   = (TextView) convertView.findViewById(R.id.created_at);
 			holder.desc   = (TextView) convertView.findViewById(R.id.describtion);
+			holder.sync_state   = (TextView) convertView.findViewById(R.id.sync_state);
 			holder.gravatar   = (ImageView) convertView.findViewById(R.id.gravatar_image);
 			
 			convertView.setTag(holder);
@@ -96,18 +97,30 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 
 		//消费值四舍五入，保留一位小数
 		BigDecimal volue = new BigDecimal(consume_info.get_value()).setScale(1, BigDecimal.ROUND_HALF_UP);	
-		msg = consume_info.get_remark().toString();	
-		if(msg.length()>17)
-			msg = msg.substring(0,18);
+		remark = consume_info.get_remark().toString();	
+		//if(remark.length()>17)
+		//	remark = remark.substring(0,18);
 		date = consume_info.get_created_at().toString();
-		if(date.length()>15)
-			date = date.substring(0,16);
+		if(date.length()>15) date = date.substring(0,16);
+		String klass;
+		switch(consume_info.get_klass()+"") {
+			case "1": klass = "衣"; break;
+			case "2": klass = "食"; break;
+			case "3": klass = "住"; break;
+			case "4": klass = "行"; break;
+			case "5": klass = ""; break; 
+			default: klass = ""; break;
+		}
 		holder.value.setText("￥"+volue);
 		holder.date.setText(date);
 		holder.desc.setTag(consume_info);//设置隐藏参数(实体类)
 		//holder.desc.setText("￥"+volue + " - " + msg.toString().replace("\n","-")+"...");
-		holder.desc.setText(msg.toString());
+		holder.desc.setText(remark.toString());
 		holder.desc.setOnClickListener(figClickListener);
+		
+		String sync_sate = "^_^";
+	    if(consume_info.get_sync() == (long)0)  sync_sate = "*_*";
+	    holder.sync_state.setText(sync_sate+"  ");
 		/*
 		if(consumeInfo.getCreated_at().length()>=10){
 			String week_name = ToolUtils.getWeekName(consumeInfo.getCreated_at());
@@ -118,7 +131,7 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 	}
 
 	class ViewHolder {
-		private TextView head,name,date,desc, value;
+		private TextView head,name,date,desc, value, sync_state;
 		private ImageView gravatar;
 	}	
 	

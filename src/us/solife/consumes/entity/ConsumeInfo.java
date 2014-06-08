@@ -48,9 +48,9 @@ public class ConsumeInfo implements Serializable {
 		return consume_id;
 	}
 
-	public void set_consume_id(int consume_id) {
+	public void set_consume_id(int l) {
 		
-		this.consume_id = consume_id;
+		this.consume_id = l;
 	}
 	public double get_value() {
 		return value;

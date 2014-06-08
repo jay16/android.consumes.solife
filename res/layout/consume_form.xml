@@ -5,12 +5,12 @@
     android:orientation="vertical" >
 
     <include layout="@layout/main_header" />
-        
+
     <EditText
-        android:id="@+id/editText_consume_form_value"  
-		android:background="@drawable/login_input"  
+        android:id="@+id/editText_consume_form_value"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/login_input"
         android:hint="消费值"
         android:inputType="numberDecimal" >
 
@@ -24,52 +24,94 @@
 
         <EditText
             android:id="@+id/editText_consume_form_ymdhms"
-		    android:background="@drawable/login_input"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="8"
+            android:background="@drawable/login_input"
             android:editable="false" />
 
         <Button
             android:id="@+id/button_date_add"
             style="?android:attr/buttonStyleSmall"
-		    android:background="@drawable/btn_style_white"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/btn_style_white"
             android:text="+" />
 
         <Button
             android:id="@+id/button_date_plus"
             style="?android:attr/buttonStyleSmall"
-		    android:background="@drawable/btn_style_white"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:background="@drawable/btn_style_white"
             android:text="-" />
     </LinearLayout>
 
     <EditText
         android:id="@+id/editText_consume_form_remark"
-		android:background="@drawable/login_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.72"
-        android:hint="消费备注"
+        android:background="@drawable/login_input"
         android:ems="10"
-        android:inputType="textMultiLine"
-        android:gravity="top" />
+        android:gravity="top"
+        android:hint="消费备注"
+        android:inputType="textMultiLine" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity=""
+        android:orientation="horizontal" >
 
+        <RadioGroup
+            android:id="@+id/radioGroup_consumeKlass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/radio1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="衣" />
+
+            <RadioButton
+                android:id="@+id/radio2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="食" />
+
+            <RadioButton
+                android:id="@+id/radio3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="住" />
+            <RadioButton
+                android:id="@+id/radio4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="行" />
+            <RadioButton
+                android:id="@+id/radio5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="其他" />
+        </RadioGroup>
+    </LinearLayout>
 
     <Button
         android:id="@+id/button_consume_form_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-		android:background="@drawable/btn_style_white"
-        android:textSize="20sp"
+        android:background="@drawable/btn_style_white"
         android:clickable="false"
         android:enabled="false"
-        android:text="提交" />
+        android:text="提交"
+        android:textSize="20sp" />
 
 </LinearLayout>

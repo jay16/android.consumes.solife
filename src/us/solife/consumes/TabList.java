@@ -140,14 +140,11 @@ public class TabList extends BaseActivity{
 				//Intent intent = new Intent (getApplication(),TabListMenu.class);			
 				//startActivity(intent);	
 				Context context = TabList.this;
-				LayoutInflater mLayoutInflater = (LayoutInflater) context  
-	                    .getSystemService(LAYOUT_INFLATER_SERVICE);  
-	            View mPopView = mLayoutInflater.inflate(  
-	                    R.layout.menu_tab_list_header, null); 
+				LayoutInflater mLayoutInflater = (LayoutInflater) context.getSystemService(LAYOUT_INFLATER_SERVICE);  
+	            View mPopView = mLayoutInflater.inflate(R.layout.menu_tab_list_header, null); 
 
 	    		if (mPopupWindow == null) {
-					mPopupWindow = new PopupWindow(mPopView, LayoutParams.FILL_PARENT,
-							LayoutParams.WRAP_CONTENT);
+					mPopupWindow = new PopupWindow(mPopView, LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 					//mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
 					tablist_1 = (LinearLayout)mPopView.findViewById(R.id.tablist_1);
 					tablist_2 = (LinearLayout)mPopView.findViewById(R.id.tablist_2);
@@ -210,9 +207,11 @@ public class TabList extends BaseActivity{
         mTopText.setText("消费列表["+top_text+"]");
         
         //无消费记录时提示错误
-		if (consume_infos == null && consume_infos.size() == 0) {
+		if (consume_infos == null || consume_infos.size() == 0) {
 			Toast.makeText(TabList.this, "No Data", 0).show();
 			return;
+		} else {
+			Toast.makeText(TabList.this, "共有["+consume_infos.size()+"]天记录", 0).show();
 		}
 		
 		//listView.addFooterView(lvQuestion_footer);//添加底部视图  必须在setAdapter前
@@ -221,24 +220,26 @@ public class TabList extends BaseActivity{
 		listView.setOnItemClickListener(new OnItemClickListener(){
 			 @Override
 	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ConsumeInfo consumeinfo = consume_infos.get(position);
-        		if(consumeinfo == null){
+	            Log.w("TabListOnclick","position:"+position);
+                ConsumeInfo consume_info = consume_infos.get(position);
+        		if(consume_info == null){
 	        		//判断是否是TextView
 	        		if(view instanceof TextView){
-	        			consumeinfo = (ConsumeInfo)view.getTag();
+	        			consume_info = (ConsumeInfo)view.getTag();
 	        		}else{
 	        			TextView tv = (TextView)view.findViewById(R.id.TextView_item_value);
-	        			consumeinfo = (ConsumeInfo)tv.getTag();
+	        			consume_info = (ConsumeInfo)tv.getTag();
 	        		}
         		}
-        		if(consumeinfo == null) return;
+        		Log.w("ConsumeInfo", consume_info.to_string());
+        		if(consume_info == null) return;
         		
                 //提示消费内容
-				Toast.makeText(TabList.this, "["+consumeinfo.get_created_at()+"]消费记录", 0).show();
+				Toast.makeText(TabList.this, "["+consume_info.get_created_at()+"]消费记录", 0).show();
 				
 				// 界面切换，显示具体记录
 				Intent intent = new Intent(TabList.this, ConsumeItem.class);
-				intent.putExtra("created_at",  consumeinfo.get_created_at());
+				intent.putExtra("created_at",  consume_info.get_created_at());
 				startActivity(intent);
 			 }
 		});

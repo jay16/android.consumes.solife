@@ -58,7 +58,7 @@ public class UserInfo implements Serializable {
     	return this.area;
     }
     
-    public void set_updated_at(String created_at){
+    public void set_updated_at(String updated_at){
     	this.updated_at = updated_at;
     }
     

@@ -97,7 +97,7 @@ public class NetUtils {
 	public static String[] create_record(String token, ConsumeInfo consume_info) 
 			throws HttpException, IOException, JSONException {
 		// 从服务器接口中获取当前账号和密码的配对情况
-		String[] ret_array = { "0", "return null","-1" };
+		String[] ret_array = { "0", "return null","" };
         Log.w("PostCreate", "beforePost:"+consume_info.to_string());
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
 		  new org.apache.commons.httpclient.NameValuePair("token", token),
@@ -119,7 +119,8 @@ public class NetUtils {
 			// 获取返回值
 			ret_array[0] = "1";
 			ret_array[1] = jsonObject.toString();
-			ret_array[2] = jsonObject.getInt("id")+"";
+			ret_array[2] = jsonObject.getInt("id")+"&"+jsonObject.getInt("updated_at");
+			
 		}
 		Log.w("CreateRecord", ret_array.toString());
 		return ret_array;
@@ -129,7 +130,7 @@ public class NetUtils {
 	//update a record
 	public static String[] update_record(String token, ConsumeInfo consume_info) 
 			throws HttpException, IOException, JSONException {
-		String[] ret_array = { "0", "return null" };
+		String[] ret_array = { "0", "return null", "" };
 
         Log.w("PostUpdate", "beforePost:"+consume_info.to_string());
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
@@ -149,6 +150,7 @@ public class NetUtils {
 			JSONObject jsonObject = new JSONObject(response);
 			ret_array[0] = "1";
 			ret_array[1] = jsonObject.toString();
+			ret_array[2] = jsonObject.getString("updated_at");
 		}
 		Log.w("UpdateRecord", ret_array.toString());
 		return ret_array;
@@ -205,7 +207,11 @@ public class NetUtils {
 					    ret_array = NetUtils.create_record(token, consume_info);
 						if (ret_array[0].equals("1")) {
 							//同步成功则修改数据库内容
-							consume_info.set_consume_id(Integer.valueOf(ret_array[2]));
+							String[] arr = ret_array[2].split("&");
+							Integer consume_id = Integer.valueOf(arr[0]);
+							String updated_at = arr[1];
+							consume_info.set_consume_id(consume_id);
+							consume_info.set_updated_at(updated_at);
 							consume_info.set_sync((long)1);
 							consume_info.set_state("");
 							Log.w("NetUtils",consume_info.to_string());
@@ -218,6 +224,7 @@ public class NetUtils {
 					} else if(consume_info.get_state().equals("update")){
 					    ret_array = NetUtils.update_record(token, consume_info);
 						if (ret_array[0].equals("1")) {
+							consume_info.set_updated_at(ret_array[2]);
 							consume_info.set_sync((long)1);
 							consume_info.set_state("");
 							Log.w("NetUtils",consume_info.to_string());
@@ -306,13 +313,14 @@ public class NetUtils {
 	         String user_email    = jsonObject.getString("email");
 	         String user_province = "china";//jsonObject.getString("user_province");
 	         String user_register = jsonObject.getString("created_at");
+	         String user_updated = jsonObject.getString("updated_at");
 	         String user_gravatar = "gravatar"; //jsonObject.getString("user_gravatar");
 	         UserInfo user_info = new UserInfo();
 	         user_info.set_user_id(user_id);
 	         user_info.set_name(user_name);
 	         user_info.set_email(user_email);
 	         user_info.set_created_at(user_register);
-	         user_info.set_updated_at(jsonObject.getString("updated_at"));
+	         user_info.set_updated_at(user_updated);
 	         user_info.set_info("current_user");
 	         
 	         UserTb user_tb = UserTb.get_user_tb(context);       
@@ -324,6 +332,7 @@ public class NetUtils {
 			Editor.putString("current_user_province", user_province);
 			Editor.putString("current_user_register", user_register);
 			Editor.putString("current_user_gravatar", user_gravatar);
+			Editor.putString("current_user_updated", user_updated);
 			Editor.putString("current_user_token", token);
 			Editor.putBoolean("is_login", true);
 			
