@@ -1,22 +1,26 @@
 package us.solife.consumes.util;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.apache.commons.httpclient.HttpStatus;
 import org.json.JSONException;
-
 import us.solife.consumes.ConsumeItem;
 import us.solife.consumes.Main;
 import us.solife.iconsumes.R;
 import us.solife.consumes.ConsumeForm;
 import us.solife.consumes.TabList;
+import us.solife.consumes.adapter.ListViewConsumeAdapter;
+import us.solife.consumes.adapter.ListViewTagSelectAdapter;
 import us.solife.consumes.api.ApiClient;
 import us.solife.consumes.api.URLs;
+import us.solife.consumes.db.TagTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
+import us.solife.consumes.entity.TagInfo;
 import us.solife.consumes.entity.UpdateInfo;
 import us.solife.consumes.parse.UpdateInfoParse;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -29,10 +33,18 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.text.Editable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 public class UIHelper {
 
@@ -185,6 +197,97 @@ public class UIHelper {
 		    Log.e("notifacation", "notifacation is ok");  
 		    mNotificationManager.notify(1000+uid, notification);  
 		} 
+	}
+	
+	@SuppressLint("CutPasteId")
+	public static void consume_tag_form(final Context context, final ListView listView, final int klass, String wathIn, final int user_id) {
+		//final ArrayList<TagInfo> tag_infos = new ArrayList<TagInfo>();
+		final TagTb tag_tb = TagTb.get_tag_tb(context);
+		final ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
+    	final ListViewTagSelectAdapter tag_adapter = new ListViewTagSelectAdapter(tag_infos, context);
+        if(tag_infos.size() > 0) {
+        	//UIHelper.initTagListView(context, listView, tag_adapter, tag_infos);
+        	//listView.setAdapter(new ListViewTagSelectAdapter(tag_infos, context));
+        }
+		
+		LayoutInflater layoutInflater = LayoutInflater.from(context);
+		View promptView = layoutInflater.inflate(R.layout.prompt_tag_form, null);
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		alertDialogBuilder.setTitle("["+wathIn+"]标签");
+		alertDialogBuilder.setView(promptView);
+		final EditText input = (EditText) promptView.findViewById(R.id.editText_tag_label);
+		 // setup a dialog window
+        alertDialogBuilder.setCancelable(false)
+            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    Log.w("TagForm",input.getText().toString());
+                }
+            })
+            .setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    	Log.w("TagForm","cancel");
+                        dialog.cancel();
+                    }
+             });
+        // create an alert dialog
+        AlertDialog alertD = alertDialogBuilder.create();
+        alertD.show();
+        
+        Button btn = (Button)promptView.findViewById(R.id.button_tag_submit);
+        final EditText text = (EditText)promptView.findViewById(R.id.editText_tag_label);
+        btn.setOnClickListener(new Button.OnClickListener(){  //创建监听对象  
+			public void onClick(View v){  
+				String label = text.getText().toString().trim();
+				if(label.length() == 0) return;
+				
+				TagInfo tag_info = new TagInfo();
+				tag_info.set_label(label);
+				tag_info.set_klass(klass);
+				tag_info.set_tag_id(-1);
+				tag_info.set_user_id(user_id);
+				tag_info.set_sync((long)0);
+				tag_info.set_state("create");
+				tag_info.set_created_at(ToolUtils.get_ymdhms_date());
+				tag_info.set_updated_at("");
+				Log.w("UIHelper", tag_info.to_string());
+				tag_tb.insert_tag(tag_info);
+				
+				ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
+		        if(tag_infos.size() > 0) {
+		        	tag_adapter.notifyDataSetChanged();
+		        	//ListViewTagSelectAdapter tag_adapter = new ListViewTagSelectAdapter(tag_infos, context);
+		        	
+		        }
+			}
+        });
+	}
+	public static void initTagListView(Context context, ListView listView, ListViewTagSelectAdapter tag_adapter, final ArrayList<TagInfo> tag_infos) {
+		listView.setAdapter(new ListViewTagSelectAdapter(tag_infos, context));
+		listView.setClickable(true);
+		listView.setOnItemClickListener(new OnItemClickListener(){
+			 @Override
+	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	            Log.w("TabListOnclick","position:"+position);
+	            TagInfo tag_info = tag_infos.get(position);
+        		if(tag_info == null){
+	        		//判断是否是TextView
+	        		if(view instanceof TextView){
+	        			tag_info = (TagInfo)view.getTag();
+	        		}else{
+	        			TextView tv = (TextView)view.findViewById(R.id.TextView_item_value);
+	        			tag_info = (TagInfo)tv.getTag();
+	        		}
+        		}
+        		Log.w("TagInfo", tag_info.to_string());
+        		if(tag_info == null) return;
+				// 界面切换，显示具体记录
+				//Intent intent = new Intent(TabList.this, ConsumeItem.class);
+				//intent.putExtra("created_at",  consume_info.get_created_at());
+				//startActivity(intent);
+			 }
+		});
+		listView.invalidate();
 	}
 
 }

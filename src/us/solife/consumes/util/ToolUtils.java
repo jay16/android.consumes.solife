@@ -60,8 +60,8 @@ public class ToolUtils {
 	@SuppressLint("SimpleDateFormat")
 	public static String get_ymdhms_date() {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String y_m_d = df.format(new Date());
-		return y_m_d;
+		String ymdhms = df.format(new Date());
+		return ymdhms;
 	}
 	
 	@SuppressLint("SimpleDateFormat")

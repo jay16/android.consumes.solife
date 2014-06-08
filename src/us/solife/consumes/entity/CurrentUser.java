@@ -265,7 +265,6 @@ public class CurrentUser {
 		consume_info.set_remark(cursor.getString(cursor.getColumnIndex("remark")).toString());
 		consume_info.set_klass(cursor.getInt(cursor.getColumnIndex("klass")));
 		consume_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")).toString());
-		Log.w("UpdatedAT","asf:"+cursor.getString(cursor.getColumnIndex("updated_at")).toString());
 		consume_info.set_updated_at(cursor.getString(cursor.getColumnIndex("updated_at")).toString());
 
 		consume_info.set_sync(cursor.getLong(cursor.getColumnIndex("sync")));

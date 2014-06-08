@@ -119,7 +119,7 @@ public class NetUtils {
 			// 获取返回值
 			ret_array[0] = "1";
 			ret_array[1] = jsonObject.toString();
-			ret_array[2] = jsonObject.getInt("id")+"&"+jsonObject.getInt("updated_at");
+			ret_array[2] = jsonObject.getInt("id")+"&"+jsonObject.getString("updated_at");
 			
 		}
 		Log.w("CreateRecord", ret_array.toString());

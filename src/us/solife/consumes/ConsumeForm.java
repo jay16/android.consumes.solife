@@ -27,6 +27,7 @@ import android.content.SharedPreferences;
 //import android.content.SharedPreferences.Editor;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -148,7 +149,7 @@ public class ConsumeForm extends BaseActivity {
 		 public void onCheckedChanged(RadioGroup group, int checkedId) { 
 			 RadioButton radioButton = (RadioButton)findViewById(radioGroup_consume_klass.getCheckedRadioButtonId());
 			 String whatIn = radioButton.getText().toString();
-			 switch(radioButton.getText().toString()) {
+			 switch(whatIn) {
 				 case "ÒÂ": klass = 1; break;
 				 case "Ê³": klass = 2; break;
 				 case "×¡": klass = 3; break;
@@ -157,6 +158,8 @@ public class ConsumeForm extends BaseActivity {
 				 default: klass = -1; break;
 			 }
 			 Log.i("whatIn", whatIn+ " - " + klass);
+			 ListView listView = (ListView)findViewById(R.id.tagListView);
+			 UIHelper.consume_tag_form(ConsumeForm.this, listView, klass, whatIn, current_user_id);
 		 }
 	};
 		 
@@ -280,7 +283,6 @@ public class ConsumeForm extends BaseActivity {
 			} else {
 				Toast.makeText(ConsumeForm.this, "Email Is Empty!", 0).show();
 			}
-
 		}
 	};
 
@@ -314,8 +316,6 @@ public class ConsumeForm extends BaseActivity {
 			v.invalidate();
 		}
 	};
-
-
 	
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		if(event.getKeyCode() == KeyEvent.KEYCODE_BACK){  

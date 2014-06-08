@@ -114,7 +114,6 @@ public class TabList extends BaseActivity{
 		ImageButton imageButton_refresh  = (ImageButton) findViewById(R.id.imageButton_refresh);
 		imageButton_download.setOnClickListener(imageButton_download_listener);
 		imageButton_refresh.setOnClickListener(imageButton_refresh_listener);
-		
 
 		if(loading_dialog != null)	loading_dialog.dismiss();
 	}
