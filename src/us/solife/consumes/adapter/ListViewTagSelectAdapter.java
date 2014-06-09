@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class ListViewTagSelectAdapter extends BaseAdapter{
 	ArrayList<TagInfo> tag_infos;
-	private Context    context;
+    Context            context;
 
 	public ListViewTagSelectAdapter(ArrayList<TagInfo> tag_infos, Context context) {
 		this.tag_infos = tag_infos;

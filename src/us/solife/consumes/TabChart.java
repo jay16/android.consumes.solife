@@ -6,6 +6,8 @@ import java.util.List;
 
 
 
+
+
 import us.solife.androidcharts.entity.LineEntity;
 import us.solife.androidcharts.entity.OHLCEntity;
 import us.solife.androidcharts.entity.StickEntity;
@@ -18,7 +20,6 @@ import us.solife.androidcharts.view.MAStickChart;
 import us.solife.androidcharts.view.MinusStickChart;
 import us.solife.androidcharts.view.StickChart;
 import us.solife.androidcharts.view.PieChart;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -26,23 +27,24 @@ import android.widget.TextView;
 import android.widget.AdapterView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-
 import us.solife.androidcharts.entity.TitleValueColorEntity;
 import us.solife.iconsumes.R;
 import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.adapter.ListViewFriendsConsumesAdapter;
+import us.solife.consumes.adapter.ListViewTagSelectAdapter;
 import us.solife.consumes.api.Gravatar;
 import us.solife.consumes.db.ConsumeTb;
+import us.solife.consumes.db.TagTb;
 import us.solife.consumes.db.UserTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
+import us.solife.consumes.entity.TagInfo;
 import us.solife.consumes.entity.UserInfo;
 
 public class TabChart extends BaseActivity {
@@ -105,13 +107,17 @@ public class TabChart extends BaseActivity {
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
 		consumeDao = ConsumeTb.get_consume_tb(TabChart.this);
-        consumeInfos = consumeDao.get_all_records();
+        consumeInfos = consumeDao.get_records(30);
 
 		UserTb user_table = UserTb.get_user_tb(TabChart.this);
 		ArrayList<UserInfo> user_infos = user_table.get_user_list();
 		
 		if (consumeInfos != null && consumeInfos.size() != 0) {
 			Toast.makeText(TabChart.this, "œ˚∑—≈Û”—»¶", 0).show();
+
+			//final TagTb tag_tb = TagTb.get_tag_tb(TabChart.this);
+			//final ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(2);
+			//listView.setAdapter(new ListViewTagSelectAdapter(tag_infos, TabChart.this));
 			listView.setAdapter(new ListViewFriendsConsumesAdapter(consumeInfos,user_infos,TabChart.this));
 			listView.setClickable(true);
 			listView.setOnItemClickListener(new OnItemClickListener(){

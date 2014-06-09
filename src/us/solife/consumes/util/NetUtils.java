@@ -83,12 +83,12 @@ public class NetUtils {
 	public static String network_type(Context context) {
 		ConnectivityManager con = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo workinfo = con.getActiveNetworkInfo();
-		String net_str = "none";
+		String net_str = "无";
 		if (workinfo != null && workinfo.isAvailable()) {
 			switch(workinfo.getType()) {
-			  case ConnectivityManager.TYPE_MOBILE: net_str = "mobile"; break;
+			  case ConnectivityManager.TYPE_MOBILE: net_str = "手机"; break;
 			  case ConnectivityManager.TYPE_WIFI: net_str = "wifi"; break;
-			  default: net_str = "other"; break;
+			  default: net_str = "无"; break;
 			}
 		}
 		return net_str;

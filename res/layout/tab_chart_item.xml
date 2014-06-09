@@ -17,7 +17,9 @@
                  android:layout_height="55dp"
                  android:layout_alignParentLeft="true"
                  android:layout_alignTop="@+id/user_name"
-                 android:paddingLeft="5dp"
+                 android:background="@anim/shape_rounded_rectangle"
+                 android:padding="2dp"
+                 android:scaleType="matrix"
                  android:src="@drawable/gravatar_default" />
              
             <TextView

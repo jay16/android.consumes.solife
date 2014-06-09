@@ -126,11 +126,12 @@ public class ConsumeTb {
 	}
 	
 	//取得所有消费记录
-	public ArrayList<ConsumeInfo> get_all_records() {
+	public ArrayList<ConsumeInfo> get_records(Integer limit) {
 		// public Integer getAllRecords(Context context) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
-		String sql = "select * from consumes order by created_at desc";
+		if(limit == null) limit = 50;
+		String sql = "select * from consumes order by created_at desc limit " + limit;
 		Cursor cursor = database.rawQuery(sql, null);
 	
 		ArrayList<ConsumeInfo> consumeInfos = new ArrayList<ConsumeInfo>();

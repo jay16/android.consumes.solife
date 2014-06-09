@@ -17,10 +17,13 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import us.solife.iconsumes.R;
+import us.solife.consumes.adapter.ListViewTagSelectAdapter;
+import us.solife.consumes.db.TagTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
 
 
+import us.solife.consumes.entity.TagInfo;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -159,7 +162,14 @@ public class ConsumeForm extends BaseActivity {
 			 }
 			 Log.i("whatIn", whatIn+ " - " + klass);
 			 ListView listView = (ListView)findViewById(R.id.tagListView);
-			 UIHelper.consume_tag_form(ConsumeForm.this, listView, klass, whatIn, current_user_id);
+
+			TagTb tag_tb = TagTb.get_tag_tb(context);
+			ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
+	        if(tag_infos.size() > 0) {
+	          //UIHelper.initTagListView(context, listView, tag_infos);
+	          ListViewTagSelectAdapter tag_adapter = new ListViewTagSelectAdapter(tag_infos, ConsumeForm.this);
+			  UIHelper.consume_tag_form(ConsumeForm.this, tag_adapter, klass, whatIn, current_user_id);
+	        }
 		 }
 	};
 		 

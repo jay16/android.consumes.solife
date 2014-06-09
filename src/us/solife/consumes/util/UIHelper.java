@@ -200,21 +200,23 @@ public class UIHelper {
 	}
 	
 	@SuppressLint("CutPasteId")
-	public static void consume_tag_form(final Context context, final ListView listView, final int klass, String wathIn, final int user_id) {
-		//final ArrayList<TagInfo> tag_infos = new ArrayList<TagInfo>();
-		final TagTb tag_tb = TagTb.get_tag_tb(context);
-		final ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
-    	final ListViewTagSelectAdapter tag_adapter = new ListViewTagSelectAdapter(tag_infos, context);
-        if(tag_infos.size() > 0) {
-        	//UIHelper.initTagListView(context, listView, tag_adapter, tag_infos);
-        	//listView.setAdapter(new ListViewTagSelectAdapter(tag_infos, context));
-        }
-		
+	public static void consume_tag_form(final Context context, ListViewTagSelectAdapter adapter, final int klass, String wathIn, final int user_id) {
 		LayoutInflater layoutInflater = LayoutInflater.from(context);
 		View promptView = layoutInflater.inflate(R.layout.prompt_tag_form, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-		alertDialogBuilder.setTitle("["+wathIn+"]标签");
+		alertDialogBuilder.setTitle("标签");//"["+wathIn+"]
 		alertDialogBuilder.setView(promptView);
+
+		
+		ListView listView = (ListView) promptView.findViewById(R.id.tagListView);
+        if(listView != null) {
+        	UIHelper.initTagListView(context, listView, adapter); 
+        } else {
+        	Log.e("UIHelperError", "ListViewIsNULL");
+        }
+		
+        
+        
 		final EditText input = (EditText) promptView.findViewById(R.id.editText_tag_label);
 		 // setup a dialog window
         alertDialogBuilder.setCancelable(false)
@@ -235,10 +237,9 @@ public class UIHelper {
         alertD.show();
         
         Button btn = (Button)promptView.findViewById(R.id.button_tag_submit);
-        final EditText text = (EditText)promptView.findViewById(R.id.editText_tag_label);
         btn.setOnClickListener(new Button.OnClickListener(){  //创建监听对象  
 			public void onClick(View v){  
-				String label = text.getText().toString().trim();
+				String label = input.getText().toString().trim();
 				if(label.length() == 0) return;
 				
 				TagInfo tag_info = new TagInfo();
@@ -251,20 +252,23 @@ public class UIHelper {
 				tag_info.set_created_at(ToolUtils.get_ymdhms_date());
 				tag_info.set_updated_at("");
 				Log.w("UIHelper", tag_info.to_string());
+
+				final TagTb tag_tb = TagTb.get_tag_tb(context);
 				tag_tb.insert_tag(tag_info);
 				
 				ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
 		        if(tag_infos.size() > 0) {
-		        	tag_adapter.notifyDataSetChanged();
+		        	//tag_adapter.notifyDataSetChanged();
 		        	//ListViewTagSelectAdapter tag_adapter = new ListViewTagSelectAdapter(tag_infos, context);
 		        	
 		        }
 			}
         });
 	}
-	public static void initTagListView(Context context, ListView listView, ListViewTagSelectAdapter tag_adapter, final ArrayList<TagInfo> tag_infos) {
-		listView.setAdapter(new ListViewTagSelectAdapter(tag_infos, context));
+	public static void initTagListView(Context context, ListView listView, ListViewTagSelectAdapter adapter) {
+		listView.setAdapter(adapter);
 		listView.setClickable(true);
+		/*
 		listView.setOnItemClickListener(new OnItemClickListener(){
 			 @Override
 	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -286,7 +290,7 @@ public class UIHelper {
 				//intent.putExtra("created_at",  consume_info.get_created_at());
 				//startActivity(intent);
 			 }
-		});
+		});*/
 		listView.invalidate();
 	}
 
