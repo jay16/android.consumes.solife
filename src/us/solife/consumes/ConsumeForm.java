@@ -70,7 +70,7 @@ public class ConsumeForm extends BaseActivity {
 	private Long row_id = (long)-1;
 	private String action  = "create" ;
 	private Integer klass = -1;
-	private Integer current_user_id;
+	private Long current_user_id;
 	
 	@Override
 	public void init() {
@@ -98,7 +98,7 @@ public class ConsumeForm extends BaseActivity {
     	mBack.setOnClickListener(UIHelper.finish(this));
 
 		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-	    current_user_id = Integer.parseInt(String.valueOf(shared_preferences.getLong("current_user_id", -1)));
+	    current_user_id = shared_preferences.getLong("current_user_id", -1);
 	    current_user = CurrentUser.get_current_user(getApplication(), current_user_id);
 
 		//跳转至该界面状态
@@ -161,15 +161,7 @@ public class ConsumeForm extends BaseActivity {
 				 default: klass = -1; break;
 			 }
 			 Log.i("whatIn", whatIn+ " - " + klass);
-			 ListView listView = (ListView)findViewById(R.id.tagListView);
-
-			TagTb tag_tb = TagTb.get_tag_tb(context);
-			ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
-	        if(tag_infos.size() > 0) {
-	          //UIHelper.initTagListView(context, listView, tag_infos);
-	          ListViewTagSelectAdapter tag_adapter = new ListViewTagSelectAdapter(tag_infos, ConsumeForm.this);
-			  UIHelper.consume_tag_form(ConsumeForm.this, tag_adapter, klass, whatIn, current_user_id);
-	        }
+	        UIHelper.consume_tag_form(ConsumeForm.this, klass, whatIn, current_user_id);
 		 }
 	};
 		 
@@ -243,7 +235,7 @@ public class ConsumeForm extends BaseActivity {
 				ConsumeInfo consume_info = new ConsumeInfo();
 				try {
 					if(action.equals("create")){
-						consume_info.set_user_id(current_user_id);
+						consume_info.set_user_id(Integer.valueOf(String.valueOf(current_user_id)));
 						consume_info.set_consume_id(-1);
                         consume_info.set_value(Double.parseDouble(value));
                         consume_info.set_remark(remark);
@@ -280,7 +272,7 @@ public class ConsumeForm extends BaseActivity {
 
 					if(NetUtils.has_network(getApplicationContext())) {
 					   //后台同步
-					   NetUtils.sync_upload_record_background(ConsumeForm.this,token);
+					   NetUtils.sync_upload_background(ConsumeForm.this,token, current_user_id);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

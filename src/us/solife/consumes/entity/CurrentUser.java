@@ -22,22 +22,23 @@ import android.util.Log;
 public class CurrentUser {
 	public static final String KEY_ROWID = "id";
 	private static final String DT_CONSUME = "consumes";
+	private static final String DT_TAG     = "tags";
 
-	private int    user_id;
+	private Long    user_id;
 	private Context context;
 	public ConsumeDatabaseHelper consumeDatabaseHelper;
 	static CurrentUser consume_user;
 	
-	private CurrentUser(Context context,int user_id) {
-		this.user_id = user_id;
+	private CurrentUser(Context context,Long current_user_id) {
+		this.user_id = current_user_id;
 		this.context = context;
 		this.consumeDatabaseHelper = new ConsumeDatabaseHelper(context);
 	}
 
-	public static CurrentUser get_current_user(Context context,int user_id) {
+	public static CurrentUser get_current_user(Context context,Long current_user_id) {
 		if (consume_user != null) {
 		} else {
-			consume_user = new CurrentUser(context,user_id);
+			consume_user = new CurrentUser(context,current_user_id);
 
 		}
 		return consume_user;
@@ -419,7 +420,81 @@ public class CurrentUser {
 		}
     	return user_info;
     }
-    
+   
+	
+    /**
+     * 根据row_id获取消费信息
+     * 编辑消费消费时使用
+     * @param row_id
+     * @return
+     */
+	public TagInfo get_tag(long row_id) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		Cursor cursor = database.rawQuery("select * from tags where id = "+row_id + " and user_id = "+ user_id, null);
+        TagInfo tag_info = new TagInfo();
+		if (cursor != null) {
+			cursor.moveToFirst();
+			tag_info = get_tag_info_from_cursor(cursor);
+		}
+		return tag_info;
+	}
+	/**
+	 * cursor内容存入consumeInfo
+	 * @param cursor
+	 * @return
+	 */
+	public TagInfo get_tag_info_from_cursor(Cursor cursor){
+		TagInfo tag_info = new TagInfo();
+		
+		tag_info.set_id(cursor.getInt(cursor.getColumnIndex("id")));
+		tag_info.set_user_id(cursor.getInt(cursor.getColumnIndex("user_id")));
+		tag_info.set_tag_id(cursor.getInt(cursor.getColumnIndex("tag_id")));
+		tag_info.set_label(cursor.getString(cursor.getColumnIndex("label")));
+		tag_info.set_klass(cursor.getInt(cursor.getColumnIndex("klass")));
+		tag_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")).toString());
+		tag_info.set_updated_at(cursor.getString(cursor.getColumnIndex("updated_at")).toString());
+		tag_info.set_sync(cursor.getLong(cursor.getColumnIndex("sync")));
+		tag_info.set_state(cursor.getString(cursor.getColumnIndex("state")).toString());
+		
+		return tag_info;
+	}
+	public long update_tag(TagInfo tag_info){
+		SQLiteDatabase db = consumeDatabaseHelper.getWritableDatabase();
+		ContentValues cv = new ContentValues();
+		cv.put("user_id", user_id);
+		cv.put("tag_id", tag_info.get_tag_id());
+		cv.put("label", tag_info.get_label());
+		cv.put("klass", tag_info.get_klass());
+		cv.put("created_at", tag_info.get_created_at());
+		cv.put("updated_at", tag_info.get_updated_at());
+		cv.put("sync", tag_info.get_sync());
+		cv.put("state", tag_info.get_state());
+		String[] args = {String.valueOf(tag_info.get_id())};
+		//log调试用
+		Log.w("updatetag", "before: " + tag_info.to_string());
+		long row_id = db.update(DT_TAG, cv, "id=?",args);
+		
+		tag_info = get_tag(tag_info.get_id());
+        Log.w("updatetag","after:"+tag_info.to_string());
+		return row_id;
+	}
+	/**
+	 * 直接删除
+	 * @param row_id
+	 */
+	public void delete_tag(long row_id) {	
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		database.beginTransaction();
+		database.execSQL("delete from tags where id = "+row_id + " and user_id = " + user_id);
+		database.setTransactionSuccessful();
+		database.endTransaction();
+		database.close();
+		//log调试用
+        Log.w("delete_Tag","删除数据:"+row_id);
+	}
+
+
+	
 
 
 }

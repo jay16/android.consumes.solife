@@ -8,6 +8,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 public class ListViewTagSelectAdapter extends BaseAdapter{
@@ -51,18 +52,21 @@ public class ListViewTagSelectAdapter extends BaseAdapter{
 		} else {
 			convertView   = View.inflate(context, R.layout.tag_list_view, null);
 			holder        = new ViewHolder();
-			holder.label   = (TextView) convertView.findViewById(R.id.checkBox_label);
+			holder.label   = (CheckBox) convertView.findViewById(R.id.checkBox_label);
+			holder.state   = (TextView) convertView.findViewById(R.id.textView_state);
 			
 			convertView.setTag(holder);
 		}			
 
 		holder.label.setText(tag_info.get_label());
 		holder.label.setTag(tag_info);
+		holder.state.setText(tag_info.get_sync()==(long)0 ? "*_*" : "^_^");
 
 		return convertView;
 	}
 
 	class ViewHolder {
-		private TextView label;
+		private TextView state;
+		private CheckBox label;
 	}	
 }

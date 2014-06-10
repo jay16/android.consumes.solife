@@ -23,10 +23,8 @@ public class TagTb {
 	}
 
 	public static TagTb get_tag_tb(Context context) {
-		if (TagDao != null) {
-		} else {
-			TagDao = new TagTb(context);
-		}
+		if (TagDao == null) TagDao = new TagTb(context);
+
 		return TagDao;
 	}
 	
@@ -36,7 +34,9 @@ public class TagTb {
      */
 	public ArrayList<TagInfo> get_tags_with_klass(Integer klass) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
-		Cursor cursor = database.rawQuery("select * from tags where klass = "+klass, null);
+		String sql = "select * from tags where klass = "+klass;
+		Log.w("KlassSQL", sql);
+		Cursor cursor = database.rawQuery(sql, null);
 
 		ArrayList<TagInfo> tag_infos = new ArrayList<TagInfo>();
 		if (cursor != null && cursor.getCount() > 0) {
@@ -100,6 +100,30 @@ public class TagTb {
 		tag_info.set_state(cursor.getString(cursor.getColumnIndex("state")));
 		Log.w("FromCursor", tag_info.to_string());
 		return tag_info;
+	}
+	
+
+	  
+	//取得所有未同步至服务器的消费记录
+	public ArrayList<TagInfo> get_unsync_tags() {
+		// public Integer getAllRecords(Context context) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		Cursor cursor = database.rawQuery("select * from tags where sync = 0 ", null);
+		
+		ArrayList<TagInfo> tag_infos = new ArrayList<TagInfo>();
+		TagInfo tag_info;
+		if (cursor !=null && cursor.getCount() > 0) {
+			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+				tag_info = get_tag_info_from_cursor(cursor);
+				Log.w("UnsyncTags", tag_info.to_string());
+				tag_infos.add(tag_info);
+			}
+		} else {
+			Log.w("UNsyncTag", "isEmpty!");
+		}
+		cursor.close();
+		database.close();
+		return tag_infos;
 	}
 
 }

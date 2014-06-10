@@ -3,8 +3,10 @@ package us.solife.consumes.util;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import org.apache.commons.httpclient.HttpStatus;
 import org.json.JSONException;
+
 import us.solife.consumes.ConsumeItem;
 import us.solife.consumes.Main;
 import us.solife.iconsumes.R;
@@ -143,7 +145,7 @@ public class UIHelper {
 		builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int arg1) {
-				CurrentUser current_user = CurrentUser.get_current_user(context, consume_info.get_user_id());
+				CurrentUser current_user = CurrentUser.get_current_user(context, (long)consume_info.get_user_id());
 				current_user.destroy_record(consume_info.get_id());
 				Log.w("UIHelper","Delete YES");
 				Intent intent = new Intent(context, ConsumeItem.class);
@@ -200,17 +202,19 @@ public class UIHelper {
 	}
 	
 	@SuppressLint("CutPasteId")
-	public static void consume_tag_form(final Context context, ListViewTagSelectAdapter adapter, final int klass, String wathIn, final int user_id) {
+	public static void consume_tag_form(final Context context, final int klass, String wathIn, final Long current_user_id) {
 		LayoutInflater layoutInflater = LayoutInflater.from(context);
 		View promptView = layoutInflater.inflate(R.layout.prompt_tag_form, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-		alertDialogBuilder.setTitle("±Í«©");//"["+wathIn+"]
+		alertDialogBuilder.setTitle("["+wathIn+"]±Í«©");//"["+wathIn+"]
 		alertDialogBuilder.setView(promptView);
 
 		
-		ListView listView = (ListView) promptView.findViewById(R.id.tagListView);
+		final ListView listView = (ListView) promptView.findViewById(R.id.tagListView);
         if(listView != null) {
-        	UIHelper.initTagListView(context, listView, adapter); 
+			TagTb tag_tb = TagTb.get_tag_tb(context);
+			ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
+        	UIHelper.initTagListView(context, listView, tag_infos); 
         } else {
         	Log.e("UIHelperError", "ListViewIsNULL");
         }
@@ -246,7 +250,7 @@ public class UIHelper {
 				tag_info.set_label(label);
 				tag_info.set_klass(klass);
 				tag_info.set_tag_id(-1);
-				tag_info.set_user_id(user_id);
+				tag_info.set_user_id(Integer.valueOf(String.valueOf(current_user_id)));
 				tag_info.set_sync((long)0);
 				tag_info.set_state("create");
 				tag_info.set_created_at(ToolUtils.get_ymdhms_date());
@@ -258,6 +262,7 @@ public class UIHelper {
 				
 				ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
 		        if(tag_infos.size() > 0) {
+		        	UIHelper.initTagListView(context, listView, tag_infos); 
 		        	//tag_adapter.notifyDataSetChanged();
 		        	//ListViewTagSelectAdapter tag_adapter = new ListViewTagSelectAdapter(tag_infos, context);
 		        	
@@ -265,8 +270,8 @@ public class UIHelper {
 			}
         });
 	}
-	public static void initTagListView(Context context, ListView listView, ListViewTagSelectAdapter adapter) {
-		listView.setAdapter(adapter);
+	public static void initTagListView(Context context, ListView listView, ArrayList<TagInfo> tag_infos) {
+		listView.setAdapter( new ListViewTagSelectAdapter(tag_infos, context));
 		listView.setClickable(true);
 		/*
 		listView.setOnItemClickListener(new OnItemClickListener(){

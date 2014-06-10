@@ -122,7 +122,7 @@ public class TabUser extends BaseActivity {
 
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-		current_user = CurrentUser.get_current_user(getApplication(),Integer.parseInt(String.valueOf(current_user_id)));
+		current_user = CurrentUser.get_current_user(getApplication(),current_user_id);
 		
 		ArrayList<ConsumeInfo> consumeinfos = current_user.consume_info_list();
 		ConsumeInfo consumeInfo = new ConsumeInfo();

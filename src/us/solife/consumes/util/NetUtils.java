@@ -5,6 +5,12 @@ import java.io.BufferedOutputStream;
 
 
 
+
+
+
+
+
+
 import android.util.Base64;
 
 import java.io.File;
@@ -35,9 +41,11 @@ import us.solife.consumes.api.ApiClient;
 import us.solife.consumes.api.Gravatar;
 import us.solife.consumes.api.URLs;
 import us.solife.consumes.db.ConsumeTb;
+import us.solife.consumes.db.TagTb;
 import us.solife.consumes.db.UserTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
+import us.solife.consumes.entity.TagInfo;
 import us.solife.consumes.entity.UpdateInfo;
 import us.solife.consumes.entity.UserInfo;
 import us.solife.consumes.parse.ConsumeListParse;
@@ -181,14 +189,14 @@ public class NetUtils {
 	}
 	
 	/**
-	 * 独立处理未同步数据
+	 * 独立处理未同步Record数据
 	 * @param context
 	 * @param login_email
 	 * @throws JSONException 
 	 * @throws IOException 
 	 * @throws HttpException 
 	 */
-	public static void sync_upload_record(Context context,String token) 
+	public static void sync_upload_records(Context context,String token, Long current_user_id) 
 			throws HttpException, IOException, JSONException {
 		    ArrayList<ConsumeInfo> consume_infos;
 		    ConsumeTb              consumeDao;
@@ -199,9 +207,9 @@ public class NetUtils {
 			Integer un_sync_count = consume_infos.size();
 			
 			if(un_sync_count > 0){
+				CurrentUser current_user = CurrentUser.get_current_user(context, current_user_id);
 				for(int i = 0; i < consume_infos.size(); i++) {
 					ConsumeInfo consume_info = consume_infos.get(i);
-					CurrentUser current_user = CurrentUser.get_current_user(context, consume_info.get_user_id());
 					String[] ret_array = {"0","","-1"};
 					if(consume_info.get_state().equals("create")){
 					    ret_array = NetUtils.create_record(token, consume_info);
@@ -270,14 +278,20 @@ public class NetUtils {
 		} 
 	}
 	
-	public static void sync_upload_record_background(final Context context,final String token) {
+	public static void sync_upload_background(final Context context,final String token, final Long current_user_id) {
 		if(NetUtils.has_network(context))
 			 new Thread() {
 				 public void run() {
 					try {
-						sync_upload_record(context, token);
-						get_friend_records(context, token);
-						get_user_friends_info(context, token, false);
+						Integer unsync_count = sync_upload_tags(context, token, current_user_id);
+						//record与tag关联，如果有未更新的tag则跳过更新record
+						if(unsync_count == 0) {
+							sync_upload_records(context, token, current_user_id);
+							get_friend_records(context, token);
+							get_user_friends_info(context, token, false);
+						} else {
+							Log.w("SyncBackGround",unsync_count+"tag没有成功更新!");
+						}
 						chk_user_gravatar(context);
 					} catch (HttpException e) {
 						e.printStackTrace();
@@ -517,4 +531,154 @@ public class NetUtils {
 			}
 		}
 	}
+	
+	
+	//创建consume
+		public static String[] create_tag(String token, TagInfo tag_info) 
+				throws HttpException, IOException, JSONException {
+			// 从服务器接口中获取当前账号和密码的配对情况
+			String[] ret_array = { "0", "return null","" };
+	        Log.w("PostCreateTag", "beforePost:"+tag_info.to_string());
+			org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
+			  new org.apache.commons.httpclient.NameValuePair("token", token),
+			  new org.apache.commons.httpclient.NameValuePair("format", "json"),
+			  new org.apache.commons.httpclient.NameValuePair("tag[label]", tag_info.get_label()),
+			  new org.apache.commons.httpclient.NameValuePair("tag[klass]", tag_info.get_klass()+"")
+			};
+
+			HashMap<String, Object> hash_map = ApiClient._Post(URLs.URL_TAG, params);
+			int statusCode  = (Integer)hash_map.get("statusCode");
+			String response = (String)hash_map.get("response");
+				// 请求成功
+			if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) {
+				JSONObject jsonObject = new JSONObject(response);
+				// 获取返回值
+				ret_array[0] = "1";
+				ret_array[1] = jsonObject.toString();
+				ret_array[2] = jsonObject.getInt("id")+"&"+jsonObject.getString("updated_at");
+				
+			}
+			Log.w("CreateTag", ret_array.toString());
+			return ret_array;
+		}
+
+		
+		//update a record
+		public static String[] update_tag(String token, TagInfo tag_info) 
+				throws HttpException, IOException, JSONException {
+			String[] ret_array = { "0", "return null", "" };
+
+	        Log.w("PostUpdate", "beforePost:"+tag_info.to_string());
+			org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
+			  new org.apache.commons.httpclient.NameValuePair("token", token),
+			  new org.apache.commons.httpclient.NameValuePair("tag[label]", tag_info.get_label()),
+			  new org.apache.commons.httpclient.NameValuePair("tag[klass]", tag_info.get_klass()+"")
+			};
+
+			HashMap<String, Object> hash_map = ApiClient._Post(URLs.URL_TAG+"/"+tag_info.get_tag_id()+".json", params);
+			int statusCode  = (Integer)hash_map.get("statusCode");
+			String response = (String)hash_map.get("response");
+			if (statusCode == HttpStatus.SC_OK || statusCode == HttpStatus.SC_CREATED) {
+				JSONObject jsonObject = new JSONObject(response);
+				ret_array[0] = "1";
+				ret_array[1] = jsonObject.toString();
+				ret_array[2] = jsonObject.getString("updated_at");
+			}
+			Log.w("UpdateTag", ret_array.toString());
+			return ret_array;
+		}
+		
+
+		//创建consume
+		public static String[] delete_tag(String token, TagInfo tag_info) 
+				throws HttpException, IOException, JSONException {
+			String[] ret_array = { "0", "return null" };
+	       
+			String url = URLs.URL_TAG+"/"+tag_info.get_tag_id()+".json?token="+Uri.encode(token);
+			HashMap<String, Object> hash_map = ApiClient._Delete(url);
+			int statusCode  = (Integer)hash_map.get("statusCode");
+			String response = (String)hash_map.get("response");
+			
+			// 未认证成功
+			if (statusCode == HttpStatus.SC_UNAUTHORIZED) {;
+				// 获取返回值
+				ret_array[0] = "-1";
+			} else {
+				ret_array[0] = "1";
+			}
+			JSONObject jsonObject = new JSONObject(response);
+			ret_array[1] = jsonObject.toString();
+
+			return ret_array;
+		}
+		/**
+		 * 独立处理未同步Tag数据
+		 * @param context
+		 * @param login_email
+		 * @throws JSONException 
+		 * @throws IOException 
+		 * @throws HttpException 
+		 */
+		public static Integer sync_upload_tags(Context context,String token, Long current_user_id) 
+				throws HttpException, IOException, JSONException {
+			    ArrayList<TagInfo> tag_infos;
+			    TagTb              tag_tb;
+			    
+			    tag_tb    = TagTb.get_tag_tb(context);
+			    tag_infos = tag_tb.get_unsync_tags();
+			    
+				Integer un_sync_count = tag_infos.size();
+				
+				if(un_sync_count > 0){
+					CurrentUser current_user = CurrentUser.get_current_user(context, current_user_id);
+					for(int i = 0; i < tag_infos.size(); i++) {
+						TagInfo tag_info = tag_infos.get(i);
+						String[] ret_array = {"0","","-1"};
+						if(tag_info.get_state().equals("create")){
+						    ret_array = NetUtils.create_tag(token, tag_info);
+							if (ret_array[0].equals("1")) {
+								//同步成功则修改数据库内容
+								String[] arr = ret_array[2].split("&");
+								Integer tag_id = Integer.valueOf(arr[0]);
+								String updated_at = arr[1];
+								tag_info.set_tag_id(tag_id);
+								tag_info.set_updated_at(updated_at);
+								tag_info.set_sync((long)1);
+								tag_info.set_state("");
+								Log.w("NetUtils",tag_info.to_string());
+								current_user.update_tag(tag_info);
+	                            Log.w("NetUtils","Action:"+tag_info.get_state()+"-YES");
+							} else {
+								//同步失败则不做任何动作
+	                            Log.w("NetUtils","Action:"+tag_info.get_state()+"-NO");
+							}	
+						} else if(tag_info.get_state().equals("update")){
+						    ret_array = NetUtils.update_tag(token, tag_info);
+							if (ret_array[0].equals("1")) {
+								tag_info.set_updated_at(ret_array[2]);
+								tag_info.set_sync((long)1);
+								tag_info.set_state("");
+								Log.w("NetUtils",tag_info.to_string());
+								current_user.update_tag(tag_info);
+	                            Log.w("NetUtils","Action:"+tag_info.get_state()+"-YES");
+							} else {
+	                            Log.w("NetUtils","Action:"+tag_info.get_state()+"-NO");
+							}	
+						} else if(tag_info.get_state().equals("delete")) {
+						  ret_array = NetUtils.delete_tag(token, tag_info);
+							if (ret_array[0].equals("1")) {
+								Log.w("NetUtils",tag_info.to_string());
+								current_user.destroy_record(tag_info.get_id());
+	                            Log.w("NetUtils","Action:"+tag_info.to_string()+"-YES");
+							} else {
+	                            Log.w("NetUtils","Action:"+tag_info.to_string()+"-NO");
+							}	
+						} else {
+							Log.e("NetUtils","Action Not Found:["+tag_info.to_string()+"]");
+						}
+					}	
+				}
+				tag_infos = tag_tb.get_unsync_tags();
+				return tag_infos.size();
+	    }
 }
