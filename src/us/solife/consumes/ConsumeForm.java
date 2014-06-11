@@ -243,6 +243,7 @@ public class ConsumeForm extends BaseActivity {
                         consume_info.set_tags_list("");
                         consume_info.set_klass(klass);
                         consume_info.set_created_at(ymdhms.substring(0, 19));
+                        consume_info.set_updated_at(ymdhms.substring(0, 19));
                         consume_info.set_sync((long)0);
                         consume_info.set_state("create");
 						current_user.insert_record(consume_info);

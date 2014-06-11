@@ -42,6 +42,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -208,25 +209,25 @@ public class UIHelper {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		alertDialogBuilder.setTitle("["+wathIn+"]标签");//"["+wathIn+"]
 		alertDialogBuilder.setView(promptView);
+		final EditText tags_list = (EditText) promptView.findViewById(R.id.editText_tag_label);
 
 		
 		final ListView listView = (ListView) promptView.findViewById(R.id.tagListView);
         if(listView != null) {
 			TagTb tag_tb = TagTb.get_tag_tb(context);
 			ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
-        	UIHelper.initTagListView(context, listView, tag_infos); 
+        	UIHelper.initTagListView(context, listView, tag_infos, tags_list); 
         } else {
         	Log.e("UIHelperError", "ListViewIsNULL");
         }
 		
         
         
-		final EditText input = (EditText) promptView.findViewById(R.id.editText_tag_label);
 		 // setup a dialog window
         alertDialogBuilder.setCancelable(false)
             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    Log.w("TagForm",input.getText().toString());
+                    Log.w("TagForm",tags_list.getText().toString());
                 }
             })
             .setNegativeButton("Cancel",
@@ -243,7 +244,7 @@ public class UIHelper {
         Button btn = (Button)promptView.findViewById(R.id.button_tag_submit);
         btn.setOnClickListener(new Button.OnClickListener(){  //创建监听对象  
 			public void onClick(View v){  
-				String label = input.getText().toString().trim();
+				String label = tags_list.getText().toString().trim();
 				if(label.length() == 0) return;
 				
 				TagInfo tag_info = new TagInfo();
@@ -261,19 +262,14 @@ public class UIHelper {
 				tag_tb.insert_tag(tag_info);
 				
 				ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
-		        if(tag_infos.size() > 0) {
-		        	UIHelper.initTagListView(context, listView, tag_infos); 
-		        	//tag_adapter.notifyDataSetChanged();
-		        	//ListViewTagSelectAdapter tag_adapter = new ListViewTagSelectAdapter(tag_infos, context);
-		        	
-		        }
+		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, listView, tag_infos, tags_list); 
 			}
         });
 	}
-	public static void initTagListView(Context context, ListView listView, ArrayList<TagInfo> tag_infos) {
-		listView.setAdapter( new ListViewTagSelectAdapter(tag_infos, context));
+	public static void initTagListView(Context context, ListView listView, final ArrayList<TagInfo> tag_infos, EditText tags_list) {
+		listView.setAdapter( new ListViewTagSelectAdapter(tag_infos, context, tags_list));
 		listView.setClickable(true);
-		/*
+		
 		listView.setOnItemClickListener(new OnItemClickListener(){
 			 @Override
 	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -281,10 +277,10 @@ public class UIHelper {
 	            TagInfo tag_info = tag_infos.get(position);
         		if(tag_info == null){
 	        		//判断是否是TextView
-	        		if(view instanceof TextView){
+	        		if(view instanceof CheckBox){
 	        			tag_info = (TagInfo)view.getTag();
 	        		}else{
-	        			TextView tv = (TextView)view.findViewById(R.id.TextView_item_value);
+	        			CheckBox tv = (CheckBox)view.findViewById(R.id.checkBox_label);
 	        			tag_info = (TagInfo)tv.getTag();
 	        		}
         		}
@@ -295,7 +291,7 @@ public class UIHelper {
 				//intent.putExtra("created_at",  consume_info.get_created_at());
 				//startActivity(intent);
 			 }
-		});*/
+		});
 		listView.invalidate();
 	}
 

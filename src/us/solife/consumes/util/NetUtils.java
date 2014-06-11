@@ -143,6 +143,7 @@ public class NetUtils {
         Log.w("PostUpdate", "beforePost:"+consume_info.to_string());
 		org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
 		  new org.apache.commons.httpclient.NameValuePair("token", token),
+		  new org.apache.commons.httpclient.NameValuePair("format", "json"),
 		  new org.apache.commons.httpclient.NameValuePair("record[value]", consume_info.get_value()+""),
 		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_ymdhms()),
 		  new org.apache.commons.httpclient.NameValuePair("record[klass]", consume_info.get_klass()+""),
