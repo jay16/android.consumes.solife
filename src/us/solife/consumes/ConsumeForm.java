@@ -99,7 +99,7 @@ public class ConsumeForm extends BaseActivity {
 
 		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 	    current_user_id = shared_preferences.getLong("current_user_id", -1);
-	    current_user = CurrentUser.get_current_user(getApplication(), current_user_id);
+	    current_user = CurrentUser.getCurrentUser(getApplication(), current_user_id);
 	}
 	
 	/**

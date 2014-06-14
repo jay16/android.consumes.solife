@@ -99,6 +99,7 @@ public class Login extends BaseActivity {
 			String login_pwd   = editText_login_pwd.getText().toString();
 			
     		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);	
+    		Long currentUserId = sharedPreferences.getLong("current_user_id", -1);
             //Editor Editor = sharedPreferences.edit();
             
             String token = ToolUtils.generate_user_token(login_email, login_pwd);
@@ -115,7 +116,7 @@ public class Login extends BaseActivity {
 	            
 				//后台同步更新未同步的数据
 				try {
-					NetUtils.get_self_records_with_del(Login.this,token);
+					NetUtils.get_self_records(Login.this,token, "getAll", currentUserId);
 					NetUtils.get_user_friends_info(getApplicationContext(),token, true);
 					NetUtils.get_friend_records(Login.this, token);
 				} catch (JSONException e) {

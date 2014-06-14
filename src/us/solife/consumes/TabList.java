@@ -72,7 +72,7 @@ public class TabList extends BaseActivity{
 	private ProgressBar loading_progress_bar;
 	private LoadingDialog loading_dialog;
 	private String current_user_token;
-	private Long current_user_id;
+	private Long currentUserId;
 
 	@Override
 	public void init() { // TODO Auto-generated method stub
@@ -85,7 +85,7 @@ public class TabList extends BaseActivity{
 
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		current_user_token = sharedPreferences.getString("current_user_token", "");
-		current_user_id = sharedPreferences.getLong("current_user_id", -1);
+		currentUserId = sharedPreferences.getLong("current_user_id", -1);
 		
 		/**
 		 * 消费记录列表展示方式
@@ -105,8 +105,8 @@ public class TabList extends BaseActivity{
          */
 		sharedPreferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 		long current_user_id = sharedPreferences.getLong("current_user_id", -1);
-		consumeDao = ConsumeTb.get_consume_tb(getApplication());
-		current_user = CurrentUser.get_current_user(getApplication(),current_user_id);
+		consumeDao = ConsumeTb.getConsumeTb(getApplication());
+		current_user = CurrentUser.getCurrentUser(getApplication(),current_user_id);
 		/**
 		 * 同步/下载数据按钮
 		 */
@@ -315,7 +315,7 @@ public class TabList extends BaseActivity{
 							Toast.makeText(TabList.this, "开始同步数据2", 0).show();
 							//log调试用
 				            Log.w("TabList callback","消费列表数量:"+consume_infos.size());
-							consumeDao.insert_all_record(consume_infos, true);
+							consumeDao.insertAllRecord(consume_infos, true);
 				            Log.w("TabList callback","消费列表插入数据库完毕");
 							message.what = 1000;
 							message.obj  = consume_infos;
@@ -352,7 +352,7 @@ public class TabList extends BaseActivity{
 				if(NetUtils.has_network(getApplicationContext())) {
 					Toast.makeText(TabList.this, "开始下载..", 0).show();
 					try {
-						NetUtils.get_self_records_with_del(TabList.this,current_user_token);
+						NetUtils.get_self_records(TabList.this,current_user_token, "syncWithServer", currentUserId);
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
@@ -379,7 +379,7 @@ public class TabList extends BaseActivity{
 				loading_dialog.show();
 
 				if( NetUtils.has_network(getApplicationContext())) {
-				    NetUtils.sync_upload_background(TabList.this,current_user_token,current_user_id);
+				    NetUtils.sync_upload_background(TabList.this,current_user_token,currentUserId);
 				    init_view_list("day");
 				    Toast.makeText(TabList.this, "同步完毕", 0).show();
 				} else {

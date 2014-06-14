@@ -40,7 +40,7 @@ public class ConsumeTb {
 		this.consumeDatabaseHelper = new ConsumeDatabaseHelper(context);
 	}
 
-	public static ConsumeTb get_consume_tb(Context context) {
+	public static ConsumeTb getConsumeTb(Context context) {
 		if (consumeDao != null) {
 		} else {
 			consumeDao = new ConsumeTb(context);
@@ -53,7 +53,7 @@ public class ConsumeTb {
 	 *  插入前会先清空实体表
 	 * @param consumeInfos
 	 */
-	public void insert_all_record(ArrayList<ConsumeInfo> consumeInfos, Boolean isTruncate) {
+	public void insertAllRecord(ArrayList<ConsumeInfo> consumeInfos, Boolean isTruncate) {
 		if(isTruncate) truncate_table();
 		
 		for (int i = 0; i < consumeInfos.size(); i++) {

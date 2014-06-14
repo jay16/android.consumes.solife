@@ -128,7 +128,6 @@ public class NetUtils {
 			ret_array[0] = "1";
 			ret_array[1] = jsonObject.toString();
 			ret_array[2] = jsonObject.getInt("id")+"&"+jsonObject.getString("updated_at");
-			
 		}
 		Log.w("CreateRecord", ret_array.toString());
 		return ret_array;
@@ -202,13 +201,13 @@ public class NetUtils {
 		    ArrayList<ConsumeInfo> consume_infos;
 		    ConsumeTb              consumeDao;
 		    
-		    consumeDao    = ConsumeTb.get_consume_tb(context);
+		    consumeDao    = ConsumeTb.getConsumeTb(context);
 		    consume_infos = consumeDao.get_unsync_records();
 		    
 			Integer un_sync_count = consume_infos.size();
 			
 			if(un_sync_count > 0){
-				CurrentUser current_user = CurrentUser.get_current_user(context, current_user_id);
+				CurrentUser current_user = CurrentUser.getCurrentUser(context, current_user_id);
 				for(int i = 0; i < consume_infos.size(); i++) {
 					ConsumeInfo consume_info = consume_infos.get(i);
 					String[] ret_array = {"0","","-1"};
@@ -364,7 +363,7 @@ public class NetUtils {
 	public static String [] get_user_friends_info(Context context, String token, Boolean isDetailCheck) 
 			throws JSONException {
     	String [] ret_array = {"1","成功"};
-	    ConsumeTb consume_tb = ConsumeTb.get_consume_tb(context);
+	    ConsumeTb consume_tb = ConsumeTb.getConsumeTb(context);
 	    String ids = consume_tb.get_friends_ids();
 	    
 	    String url = URLs.URL_USER_FRIENDS+"?token="+ Uri.encode(token);
@@ -456,7 +455,7 @@ public class NetUtils {
 	public static void get_friend_records(Context context, String token) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
-	    ConsumeTb consume_tb = ConsumeTb.get_consume_tb(context);
+	    ConsumeTb consume_tb = ConsumeTb.getConsumeTb(context);
 	    long max_consume_id = consume_tb.get_friends_max_consume_id();
 	    String url = URLs.URL_RECORD_FRIENDS+"?token="+Uri.encode(token)+"&id="+max_consume_id;
 	    Log.w("FriendsRecords", url);
@@ -474,18 +473,25 @@ public class NetUtils {
 	    	Log.w("friendRecords","records:"+consume_infos.size());
 	    	
 	    	if(consume_infos.size()>0) {
-	    		ConsumeTb consume_table = ConsumeTb.get_consume_tb(context);
-	    		consume_table.insert_all_record(consume_infos,false);
+	    		ConsumeTb consume_table = ConsumeTb.getConsumeTb(context);
+	    		consume_table.insertAllRecord(consume_infos,false);
 	    		
 	    		UIHelper.push_notice(context,"朋友消费圈","近期有"+consume_infos.size()+"笔消费记录",(int)Math.random()%66);
 	    	}
 	    }
 	}
 	
-	public static void get_self_records_with_del(Context context, String token) 
+	public static void get_self_records(Context context, String token, String type, Long user_id) 
 			throws JSONException {
-	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
-        HashMap<String, Object> hash_map = ApiClient._Get(context,URLs.URL_RECORD+"?token="+Uri.encode(token));
+	    ArrayList<ConsumeInfo> consumeInfos = new  ArrayList<ConsumeInfo>();
+	    String url = URLs.URL_RECORD+"?token="+Uri.encode(token);
+    	CurrentUser currentUser = CurrentUser.getCurrentUser(context, user_id);
+	    if(type == "getAll") {
+	    	url += "&id=0";
+	    } else if(type == "syncWithServer") {
+	    	url += "&updated_at="+Uri.encode(currentUser.getLatestUpdatedAt());
+	    }
+        HashMap<String, Object> hash_map = ApiClient._Get(context,url);
 		int statusCode  = (Integer)hash_map.get("statusCode");
 		String response = (String)hash_map.get("json_str");
 
@@ -493,13 +499,17 @@ public class NetUtils {
 	    if(statusCode==HttpStatus.SC_OK) {
 	    	ConsumeListParse consumeListParse = new ConsumeListParse();
 	    	HashMap<String, Object> parse_json = consumeListParse.parseJSON(response);
-	    	if((Boolean)parse_json.get("result")) consume_infos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
+	    	if((Boolean)parse_json.get("result")) consumeInfos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
 
 	    	Log.w("currentUserRecords","parseJson:"+(Boolean)parse_json.get("result"));
-	    	Log.w("currentUserRecords","records:"+consume_infos.size());
-	    	if(consume_infos.size()>0) {
-	    		ConsumeTb consume_table = ConsumeTb.get_consume_tb(context);
-	    		consume_table.insert_all_record(consume_infos,true);
+	    	Log.w("currentUserRecords","records:"+consumeInfos.size());
+	    	if(consumeInfos.size()>0) {
+	    		ConsumeTb consumeTable = ConsumeTb.getConsumeTb(context);
+	    		if(type == "getAll") {
+	    		  consumeTable.insertAllRecord(consumeInfos,true);
+	    		} else {
+	    		  currentUser.syncWithServer(consumeInfos);
+	    		}
 	    	}
 	    }
 
@@ -631,7 +641,7 @@ public class NetUtils {
 				Integer un_sync_count = tag_infos.size();
 				
 				if(un_sync_count > 0){
-					CurrentUser current_user = CurrentUser.get_current_user(context, current_user_id);
+					CurrentUser current_user = CurrentUser.getCurrentUser(context, current_user_id);
 					for(int i = 0; i < tag_infos.size(); i++) {
 						TagInfo tag_info = tag_infos.get(i);
 						String[] ret_array = {"0","","-1"};

@@ -35,11 +35,9 @@ public class CurrentUser {
 		this.consumeDatabaseHelper = new ConsumeDatabaseHelper(context);
 	}
 
-	public static CurrentUser get_current_user(Context context,Long current_user_id) {
-		if (consume_user != null) {
-		} else {
+	public static CurrentUser getCurrentUser(Context context,Long current_user_id) {
+		if (consume_user == null) {
 			consume_user = new CurrentUser(context,current_user_id);
-
 		}
 		return consume_user;
 	}
@@ -125,6 +123,12 @@ public class CurrentUser {
         Log.w("update_record","after:"+consume_info.to_string());
 		return row_id;
 	}
+	
+	public void syncWithServer(ArrayList<ConsumeInfo> consumeInfos) {
+		if(consumeInfos.size() > 0) {
+			for(int i = 0; i < consumeInfos.size(); i++) update_record(consumeInfos.get(i));
+		}
+	}
 	/**
 	 * 直接删除
 	 * @param row_id
@@ -178,6 +182,25 @@ public class CurrentUser {
 		cursor.close();
 		database.close();
 		return consumeInfos;
+	}
+	
+
+
+	public String getLatestUpdatedAt() {
+		// public Integer getAllRecords(Context context) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
+		String sql = "select max(updated_at) as updated_at from consumes where user_id = " + user_id;
+		Cursor cursor = database.rawQuery(sql, null);
+	    String updated_at = "";
+		if (cursor != null && cursor.getCount() > 0) {
+			cursor.moveToFirst(); 
+			updated_at = cursor.getString(cursor.getColumnIndex("updated_at")).toString();
+		}
+		cursor.close();
+		database.close();
+		if(updated_at.length() < 11) updated_at = ToolUtils.get_ymdhms_date();
+		return updated_at;
 	}
 
 	//取得所有消费记录
