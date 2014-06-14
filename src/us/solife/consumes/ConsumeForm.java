@@ -62,6 +62,7 @@ public class ConsumeForm extends BaseActivity {
 	private EditText editText_consume_form_value;
 	private EditText editText_consume_form_ymdhms;
 	private EditText editText_consume_form_remark;
+	private TextView  textView_consume_form_tags;
 	private RadioGroup radioGroup_consume_klass;
 	private Button button_consume_form_submit;
 	private Button button_date_add;
@@ -77,15 +78,14 @@ public class ConsumeForm extends BaseActivity {
 		// TODO Auto-generated method stub
 		setContentView(R.layout.consume_form);
 		
-		radioGroup_consume_klass = (RadioGroup)findViewById(R.id.radioGroup_consumeKlass);
-		radioGroup_consume_klass.setOnCheckedChangeListener(radio_group_oncheck);
-		
-		textView_main_header = (TextView)findViewById(R.id.textView_main_header);
-		editText_consume_form_value      = (EditText) findViewById(R.id.editText_consume_form_value);
+		radioGroup_consume_klass     = (RadioGroup)findViewById(R.id.radioGroup_consumeKlass);
+		textView_main_header         = (TextView)findViewById(R.id.textView_main_header);
+		editText_consume_form_value  = (EditText) findViewById(R.id.editText_consume_form_value);
 		editText_consume_form_ymdhms = (EditText) findViewById(R.id.editText_consume_form_ymdhms);
 		editText_consume_form_remark = (EditText) findViewById(R.id.editText_consume_form_remark);
 		editText_consume_form_remark.addTextChangedListener(text_watcher);
-
+		textView_consume_form_tags   = (TextView) findViewById(R.id.textView_consume_form_tags);
+		
 		// consume_form
 		button_date_add = (Button) findViewById(R.id.button_date_add);
 		button_date_add.setOnClickListener(button_date_add_listener);
@@ -100,7 +100,16 @@ public class ConsumeForm extends BaseActivity {
 		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
 	    current_user_id = shared_preferences.getLong("current_user_id", -1);
 	    current_user = CurrentUser.get_current_user(getApplication(), current_user_id);
-
+	}
+	
+	/**
+	 * 每当跳转到该界面时加载该项
+	 */
+	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		
 		//跳转至该界面状态
 		//创建/编辑
 		Intent intent = getIntent();
@@ -110,28 +119,38 @@ public class ConsumeForm extends BaseActivity {
 	    } else {
 	    	action = "create";
 	    }
-	    if(action.equals("update")){
-	    	init_update_consume(row_id);
+	    Integer radioGroupId = -1;
+	    if(action.equals("update")) {
+	    	radioGroupId = init_update_consume(row_id);
 	    } else {
-			init_create_consume();
+	    	radioGroupId = init_create_consume();
 	    }
+
+		radioGroup_consume_klass.setOnCheckedChangeListener(null);
+		radioGroup_consume_klass.check(radioGroupId);
+		radioGroup_consume_klass.setOnCheckedChangeListener(radio_group_oncheck);
+		
 	    TextView time = (TextView)findViewById(R.id.textView_main_time);
 	    time.setText(ToolUtils.get_ymdw_date());
 	}
 	
-	private void init_create_consume() {
+	private Integer init_create_consume() {
 		// 初始化创建日期时间
 		editText_consume_form_ymdhms.setText(ToolUtils.get_ymdhmsw_date());
 		textView_main_header.setText("创建记录");
 		button_consume_form_submit.setText("提交");
+		textView_consume_form_tags.setText(""); 
+		
+		return R.id.radio5;
 	}
 
-	private void init_update_consume(Long row_id) {		
+	private Integer init_update_consume(Long row_id) {		
 		ConsumeInfo consume_info = current_user.get_record(row_id);
 		Log.w("get_record", consume_info.to_string());
 		editText_consume_form_value.setText(consume_info.get_value()+"");
 		editText_consume_form_ymdhms.setText(consume_info.get_ymdhms());
 		editText_consume_form_remark.setText(consume_info.get_remark());
+		textView_consume_form_tags.setText(consume_info.get_tags_list());
 		textView_main_header.setText("编辑记录");
 		button_consume_form_submit.setText("更新");
 		Integer id;
@@ -145,7 +164,8 @@ public class ConsumeForm extends BaseActivity {
 		default: id = R.id.radio5; break;
 		}
 		Log.w("UpdatedRecord", "radio:"+id);
-		radioGroup_consume_klass.check(id);
+ 
+		return id;
 	}
 	
 	RadioGroup.OnCheckedChangeListener radio_group_oncheck = new RadioGroup.OnCheckedChangeListener() { 
@@ -161,7 +181,8 @@ public class ConsumeForm extends BaseActivity {
 				 default: klass = -1; break;
 			 }
 			 Log.i("whatIn", whatIn+ " - " + klass);
-	        UIHelper.consume_tag_form(ConsumeForm.this, klass, whatIn, current_user_id);
+			 
+	         UIHelper.consume_tag_form(ConsumeForm.this, klass, whatIn, current_user_id, textView_consume_form_tags);
 		 }
 	};
 		 
@@ -240,7 +261,7 @@ public class ConsumeForm extends BaseActivity {
                         consume_info.set_value(Double.parseDouble(value));
                         consume_info.set_remark(remark);
                         consume_info.set_ymdhms(ymdhms);
-                        consume_info.set_tags_list("");
+                        consume_info.set_tags_list(textView_consume_form_tags.getText().toString());
                         consume_info.set_klass(klass);
                         consume_info.set_created_at(ymdhms.substring(0, 19));
                         consume_info.set_updated_at(ymdhms.substring(0, 19));
@@ -253,7 +274,7 @@ public class ConsumeForm extends BaseActivity {
 						consume_info.set_value(Double.parseDouble(value));
 						consume_info.set_remark(remark);
 						consume_info.set_ymdhms(ymdhms);
-                        consume_info.set_tags_list("");
+                        consume_info.set_tags_list(textView_consume_form_tags.getText().toString());
                         consume_info.set_klass(klass);
 						consume_info.set_created_at(ymdhms.substring(0,19));
 						

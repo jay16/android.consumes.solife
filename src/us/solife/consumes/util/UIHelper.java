@@ -203,20 +203,22 @@ public class UIHelper {
 	}
 	
 	@SuppressLint("CutPasteId")
-	public static void consume_tag_form(final Context context, final int klass, String wathIn, final Long current_user_id) {
+	public static void consume_tag_form(final Context context, final Integer klass, String wathIn, final Long current_user_id, final TextView record_form_tags) {
 		LayoutInflater layoutInflater = LayoutInflater.from(context);
 		View promptView = layoutInflater.inflate(R.layout.prompt_tag_form, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
 		alertDialogBuilder.setTitle("["+wathIn+"]标签");//"["+wathIn+"]
 		alertDialogBuilder.setView(promptView);
-		final EditText tags_list = (EditText) promptView.findViewById(R.id.editText_tag_label);
+		final EditText tag_form_label = (EditText) promptView.findViewById(R.id.editText_tag_label);
+		final TextView textView_tags = (TextView) promptView.findViewById(R.id.textView_tags);
 
 		
 		final ListView listView = (ListView) promptView.findViewById(R.id.tagListView);
         if(listView != null) {
 			TagTb tag_tb = TagTb.get_tag_tb(context);
 			ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
-        	UIHelper.initTagListView(context, listView, tag_infos, tags_list); 
+        	UIHelper.initTagListView(context, listView, tag_infos, textView_tags); 
         } else {
         	Log.e("UIHelperError", "ListViewIsNULL");
         }
@@ -227,7 +229,8 @@ public class UIHelper {
         alertDialogBuilder.setCancelable(false)
             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    Log.w("TagForm",tags_list.getText().toString());
+                    Log.w("TagForm",tag_form_label.getText().toString());
+                    record_form_tags.setText(textView_tags.getText().toString());
                 }
             })
             .setNegativeButton("Cancel",
@@ -244,7 +247,7 @@ public class UIHelper {
         Button btn = (Button)promptView.findViewById(R.id.button_tag_submit);
         btn.setOnClickListener(new Button.OnClickListener(){  //创建监听对象  
 			public void onClick(View v){  
-				String label = tags_list.getText().toString().trim();
+				String label = tag_form_label.getText().toString().trim();
 				if(label.length() == 0) return;
 				
 				TagInfo tag_info = new TagInfo();
@@ -262,36 +265,13 @@ public class UIHelper {
 				tag_tb.insert_tag(tag_info);
 				
 				ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
-		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, listView, tag_infos, tags_list); 
+		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, listView, tag_infos, textView_tags); 
 			}
         });
 	}
-	public static void initTagListView(Context context, ListView listView, final ArrayList<TagInfo> tag_infos, EditText tags_list) {
-		listView.setAdapter( new ListViewTagSelectAdapter(tag_infos, context, tags_list));
+	public static void initTagListView(Context context, ListView listView, final ArrayList<TagInfo> tag_infos, TextView textView_tags) {
+		listView.setAdapter( new ListViewTagSelectAdapter(tag_infos, context, textView_tags));
 		listView.setClickable(true);
-		
-		listView.setOnItemClickListener(new OnItemClickListener(){
-			 @Override
-	         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-	            Log.w("TabListOnclick","position:"+position);
-	            TagInfo tag_info = tag_infos.get(position);
-        		if(tag_info == null){
-	        		//判断是否是TextView
-	        		if(view instanceof CheckBox){
-	        			tag_info = (TagInfo)view.getTag();
-	        		}else{
-	        			CheckBox tv = (CheckBox)view.findViewById(R.id.checkBox_label);
-	        			tag_info = (TagInfo)tv.getTag();
-	        		}
-        		}
-        		Log.w("TagInfo", tag_info.to_string());
-        		if(tag_info == null) return;
-				// 界面切换，显示具体记录
-				//Intent intent = new Intent(TabList.this, ConsumeItem.class);
-				//intent.putExtra("created_at",  consume_info.get_created_at());
-				//startActivity(intent);
-			 }
-		});
 		listView.invalidate();
 	}
 

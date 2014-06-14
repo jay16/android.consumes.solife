@@ -120,7 +120,11 @@ public class ListViewFriendsConsumesAdapter extends BaseAdapter{
 		
 		String sync_sate = "^_^";
 	    if(consume_info.get_sync() == (long)0)  sync_sate = "*_*";
-	    holder.sync_state.setText(sync_sate+"  ");
+	    String tags_list = consume_info.get_tags_list();
+	    if(tags_list.length() > 0)
+	        holder.sync_state.setText(consume_info.get_tags_list() + " - " + sync_sate+"  ");
+	    else
+	    	holder.sync_state.setText(sync_sate+"  ");
 		/*
 		if(consumeInfo.getCreated_at().length()>=10){
 			String week_name = ToolUtils.getWeekName(consumeInfo.getCreated_at());

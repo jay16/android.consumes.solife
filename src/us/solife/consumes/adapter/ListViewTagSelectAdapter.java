@@ -22,12 +22,13 @@ import android.widget.TextView;
 public class ListViewTagSelectAdapter extends BaseAdapter{
 	ArrayList<TagInfo> tag_infos;
     Context            context;
-    EditText           tags_list;
+    TextView           editText_tags;
+    ArrayList<String>  tags_checked = new ArrayList<String>();
 
-	public ListViewTagSelectAdapter(ArrayList<TagInfo> tag_infos, Context context, EditText tags_list) {
+	public ListViewTagSelectAdapter(ArrayList<TagInfo> tag_infos, Context context, TextView editText_tags) {
 		this.tag_infos = tag_infos;
 		this.context   = context;
-		this.tags_list = tags_list;
+		this.editText_tags = editText_tags;
 	}
 	
 
@@ -76,43 +77,23 @@ public class ListViewTagSelectAdapter extends BaseAdapter{
 	        @Override
 	        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             	String label = tag_info.get_label();
-            	String tags_label  = tags_list.getText().toString();
-            	List<String> list;
 	            if(isChecked){
 	            	Log.w("TagClick", label + "- checked");
-	            	if(tags_label.length() == 0) {
-	            		tags_list.setText(label);
-	            	} else if(tags_label.indexOf(label) >= 0) {
-	            		Log.w("TagsList", label + "- exist");
+	            	tags_checked.add(label);
+	            } else {
+	            	Log.w("TagClick", label + "- unchecked");
+	            	tags_checked.remove(tags_checked.indexOf(label));
+	            }
+	            Log.w("TagsChecked", tags_checked.toString());
+	            String checked_tags = "";
+	            for(int i=0; i < tags_checked.size(); i++) {
+	            	if(i == 0) {
+	            		checked_tags += tags_checked.get(i);
 	            	} else {
-	            		tags_list.setText(tags_label+","+label);
-	            	}
-	            }else{
-	            	Log.w("TagClick", tag_info.get_label() + "- unchecked");
-	            	if(tags_label.length() == 0) {
-	            	} else if(tags_label.indexOf(label) >= 0) {
-	            		/*
-	            		list = Arrays.asList(tags_label.split(","));
-	            		for(int i=list.size()-1; i >= 0; i--)
-	            		  if(list.get(i).toString() == label) {
-	            			  Log.w("ListRemove", label);
-	            			  list.remove(i);
-	            		  }
-	            		
-	            		tags_label = "";
-	            		for(int i=0; i < list.size(); i++)
-	            	      if(i == 0) 
-	            	    	  tags_label = list.get(i);
-	            	      else
-	            	    	  tags_label += "," + list.get(i);
-	            	    	  */
-
-        			    tags_list.setText(tags_label.replace(label+",", ""));
-        			    if(tags_label.indexOf(label) >= 0) tags_list.setText(tags_label.replace(label, ""));
-	            	} else {
-	            		Log.w("TagsList", label + "- not exist");
+	            		checked_tags += "," + tags_checked.get(i);
 	            	}
 	            }
+	            editText_tags.setText(checked_tags);
 	        }
 	    });
 
