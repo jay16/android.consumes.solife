@@ -38,8 +38,8 @@ public class TabAbout extends BaseActivity implements OnClickListener {
 			dd += "-" + user_ids.get(i);
 		}
 		
-		TextView  textView1 = (TextView)findViewById(R.id.textView1);
-		textView1.setText(dd);
+		//TextView  textView1 = (TextView)findViewById(R.id.textView1);
+		//textView1.setText(dd);
 		
 		RelativeLayout tab_about_info = (RelativeLayout)findViewById(R.id.tab_about_info);
 		RelativeLayout tab_about_msg  = (RelativeLayout)findViewById(R.id.tab_about_msg);

@@ -105,7 +105,7 @@ public class Login extends BaseActivity {
             String token = ToolUtils.generate_user_token(login_email, login_pwd);
 			String[] ret_array = { "-1", "fail" };
 			try {
-				ret_array = NetUtils.get_user_info(sharedPreferences,token, getApplicationContext());
+				ret_array = NetUtils.getUserInfo(sharedPreferences,token, getApplicationContext());
 			} catch (JSONException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -116,9 +116,10 @@ public class Login extends BaseActivity {
 	            
 				//后台同步更新未同步的数据
 				try {
-					NetUtils.get_self_records(Login.this,token, "getAll", currentUserId);
+					NetUtils.getSelfTags(Login.this,token, "getAll", currentUserId);
+					NetUtils.getSelfRecords(Login.this,token, "getAll", currentUserId);
 					NetUtils.get_user_friends_info(getApplicationContext(),token, true);
-					NetUtils.get_friend_records(Login.this, token);
+					NetUtils.getFriendRecords(Login.this, token);
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}

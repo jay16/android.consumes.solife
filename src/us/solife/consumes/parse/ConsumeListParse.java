@@ -20,14 +20,14 @@ public class ConsumeListParse extends BaseParse<HashMap<String, Object>> {
 		if (jsonStr == null || jsonStr.length() == 0) {
 			hashMap.put("result", false);
 		} else {
-			ArrayList<ConsumeInfo> consume_infos = (ArrayList<ConsumeInfo>) JSON.parseArray(jsonStr, ConsumeInfo.class);
-			Log.w("ConsumeListParse","Consume Size:"+consume_infos.size());
+			ArrayList<ConsumeInfo> consumeInfos = (ArrayList<ConsumeInfo>) JSON.parseArray(jsonStr, ConsumeInfo.class);
+			Log.w("ConsumeListParse","ConsumeSize:"+consumeInfos.size());
 
 			//for(int i=0; i<consume_infos.size(); i++ ) {
 			//	ConsumeInfo consume_info = consume_infos.get(i);
 			//	Log.w("ConsumeListParse","ConsumeInfo:"+consume_info.get_msg());
 			//}
-			hashMap.put("consume_infos", consume_infos);
+			hashMap.put("consumeInfos", consumeInfos);
 			hashMap.put("result", true);
 		}
 

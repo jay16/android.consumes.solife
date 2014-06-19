@@ -22,12 +22,42 @@ public class TagTb {
 		this.consumeDatabaseHelper = new ConsumeDatabaseHelper(this.context);
 	}
 
-	public static TagTb get_tag_tb(Context context) {
+	public static TagTb getTagTb(Context context) {
 		if (TagDao == null) TagDao = new TagTb(context);
 
 		return TagDao;
 	}
-	
+
+	/**
+	 *  插入当前登陆用户所有消费记录
+	 *  插入前会先清空实体表
+	 * @param consumeInfos
+	 */
+	public void insertAllTag(ArrayList<TagInfo> tagInfos, Boolean isTruncate) {
+		if(isTruncate) truncate_table();
+		
+		for (int i = 0; i < tagInfos.size(); i++) {
+			TagInfo taginfo = tagInfos.get(i);
+			//log调试用
+            Log.w("TagDao",taginfo.to_string());
+            taginfo.set_tag_id((int)taginfo.get_id());
+            taginfo.set_sync((long)1);
+            insertTag(taginfo);
+			//insert_record(info.get_user_id(), (int) info.get_id(), info.get_value(),
+			//		info.get_remark(), info.get_created_at(),true);
+		}
+
+	}
+
+	public void truncate_table(){
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		database.beginTransaction();
+		database.execSQL("delete from tags");
+		database.setTransactionSuccessful();
+		database.endTransaction();
+		database.close();
+		
+	}
 
     /**
      * @return
@@ -47,7 +77,7 @@ public class TagTb {
 		return tag_infos;
 	}
 	
-	public long insert_tag(TagInfo tag_info) {
+	public long insertTag(TagInfo tag_info) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		database.beginTransaction();
         Log.w("InsertTag","before:"+tag_info.to_string());

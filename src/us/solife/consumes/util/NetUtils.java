@@ -11,6 +11,8 @@ import java.io.BufferedOutputStream;
 
 
 
+
+
 import android.util.Base64;
 
 import java.io.File;
@@ -49,6 +51,7 @@ import us.solife.consumes.entity.TagInfo;
 import us.solife.consumes.entity.UpdateInfo;
 import us.solife.consumes.entity.UserInfo;
 import us.solife.consumes.parse.ConsumeListParse;
+import us.solife.consumes.parse.TagListParse;
 import us.solife.consumes.parse.UpdateInfoParse;
 import us.solife.consumes.parse.UserListParse;
 import android.content.Context;
@@ -287,8 +290,12 @@ public class NetUtils {
 						//record与tag关联，如果有未更新的tag则跳过更新record
 						if(unsync_count == 0) {
 							sync_upload_records(context, token, current_user_id);
-							get_friend_records(context, token);
+							getFriendRecords(context, token);
 							get_user_friends_info(context, token, false);
+							getSelfTags(context, token, "syncWithId", current_user_id);
+							getSelfRecords(context, token, "syncWithId", current_user_id);
+							//SharedPreferences sharedPreferences = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+							//getUserInfo(sharedPreferences,token, context);
 						} else {
 							Log.w("SyncBackGround",unsync_count+"tag没有成功更新!");
 						}
@@ -308,7 +315,7 @@ public class NetUtils {
 	}
 	
 
-	public static String [] get_user_info(SharedPreferences preferences,String token, Context context) 
+	public static String [] getUserInfo(SharedPreferences preferences,String token, Context context) 
 			throws JSONException {
     	String [] ret_array = {"1","成功"};
 	    Editor Editor = preferences.edit();
@@ -452,7 +459,7 @@ public class NetUtils {
    }
 	
 	// friend's records
-	public static void get_friend_records(Context context, String token) 
+	public static void getFriendRecords(Context context, String token) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consume_infos = new  ArrayList<ConsumeInfo>();
 	    ConsumeTb consume_tb = ConsumeTb.getConsumeTb(context);
@@ -466,10 +473,10 @@ public class NetUtils {
     	Log.w("friendRecords","statusCode:"+statusCode);
 	    if(statusCode==HttpStatus.SC_OK || statusCode==HttpStatus.SC_CREATED) {
 	    	ConsumeListParse consumeListParse = new ConsumeListParse();
-	    	HashMap<String, Object> parse_json = consumeListParse.parseJSON(response);
-	    	if((Boolean)parse_json.get("result")) consume_infos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
+	    	HashMap<String, Object> parseJson = consumeListParse.parseJSON(response);
+	    	if((Boolean)parseJson.get("result")) consume_infos = (ArrayList<ConsumeInfo>)parseJson.get("consumeInfos");
 	    	 
-	    	Log.w("friendRecords","parseJson:"+(Boolean)parse_json.get("result"));
+	    	Log.w("friendRecords","parseJson:"+(Boolean)parseJson.get("result"));
 	    	Log.w("friendRecords","records:"+consume_infos.size());
 	    	
 	    	if(consume_infos.size()>0) {
@@ -481,15 +488,20 @@ public class NetUtils {
 	    }
 	}
 	
-	public static void get_self_records(Context context, String token, String type, Long user_id) 
+	public static void getSelfRecords(Context context, String token, String type, Long user_id) 
 			throws JSONException {
 	    ArrayList<ConsumeInfo> consumeInfos = new  ArrayList<ConsumeInfo>();
 	    String url = URLs.URL_RECORD+"?token="+Uri.encode(token);
     	CurrentUser currentUser = CurrentUser.getCurrentUser(context, user_id);
 	    if(type == "getAll") {
 	    	url += "&id=0";
-	    } else if(type == "syncWithServer") {
-	    	url += "&updated_at="+Uri.encode(currentUser.getLatestUpdatedAt());
+	    } else if(type == "syncWithUpdatedAt") {
+	    	url += "&updated_at="+Uri.encode(currentUser.getLatestRecordUpdatedAt());
+	    } else if(type == "syncWithId") {
+	    	url += "&id="+currentUser.getMaxRecordId();
+	    } else {
+	    	Log.e("getSelfRecord", "Type is null!");
+	    	return;
 	    }
         HashMap<String, Object> hash_map = ApiClient._Get(context,url);
 		int statusCode  = (Integer)hash_map.get("statusCode");
@@ -498,17 +510,60 @@ public class NetUtils {
     	Log.w("currentUserRecords","statusCode:"+statusCode);
 	    if(statusCode==HttpStatus.SC_OK) {
 	    	ConsumeListParse consumeListParse = new ConsumeListParse();
-	    	HashMap<String, Object> parse_json = consumeListParse.parseJSON(response);
-	    	if((Boolean)parse_json.get("result")) consumeInfos = (ArrayList<ConsumeInfo>)parse_json.get("consume_infos");
+	    	HashMap<String, Object> parseJson = consumeListParse.parseJSON(response);
+	    	if((Boolean)parseJson.get("result")) consumeInfos = (ArrayList<ConsumeInfo>)parseJson.get("consumeInfos");
 
-	    	Log.w("currentUserRecords","parseJson:"+(Boolean)parse_json.get("result"));
+	    	Log.w("currentUserRecords","parseJson:"+(Boolean)parseJson.get("result"));
 	    	Log.w("currentUserRecords","records:"+consumeInfos.size());
 	    	if(consumeInfos.size()>0) {
 	    		ConsumeTb consumeTable = ConsumeTb.getConsumeTb(context);
 	    		if(type == "getAll") {
 	    		  consumeTable.insertAllRecord(consumeInfos,true);
+	    		} else if(type == "syncWithId") {
+		    		  consumeTable.insertAllRecord(consumeInfos,false);
 	    		} else {
-	    		  currentUser.syncWithServer(consumeInfos);
+	    		  currentUser.syncRecordWithServer(consumeInfos);
+	    		}
+	    	}
+	    }
+
+	}
+	public static void getSelfTags(Context context, String token, String type, Long userId) 
+			throws JSONException {
+	    ArrayList<TagInfo> tagInfos = new  ArrayList<TagInfo>();
+	    String url = URLs.URL_TAG+"?token="+Uri.encode(token);
+    	CurrentUser currentUser = CurrentUser.getCurrentUser(context, userId);
+	    if(type == "getAll") {
+	    	url += "&id=0";
+	    } else if(type == "syncWithUpdatedAt") {
+	    	url += "&updated_at="+Uri.encode(currentUser.getLatestTagUpdatedAt());
+	    } else if(type == "syncWithId") {
+	    	url += "&id="+currentUser.getMaxTagId();
+	    } else {
+	    	Log.e("getSelfTag", "Type is null!");
+	    	return;
+	    }
+	    
+        HashMap<String, Object> hash_map = ApiClient._Get(context,url);
+		int statusCode  = (Integer)hash_map.get("statusCode");
+		String response = (String)hash_map.get("json_str");
+
+    	Log.w("currentUserRecords","statusCode:"+statusCode);
+	    if(statusCode==HttpStatus.SC_OK) {
+	    	TagListParse consumeListParse = new TagListParse();
+	    	HashMap<String, Object> parseJson = consumeListParse.parseJSON(response);
+	    	if((Boolean)parseJson.get("result")) tagInfos = (ArrayList<TagInfo>)parseJson.get("tagInfos");
+
+	    	Log.w("currentUserRecords","parseJson:"+(Boolean)parseJson.get("result"));
+	    	Log.w("currentUserRecords","records:"+tagInfos.size());
+	    	if(tagInfos.size()>0) {
+	    		TagTb tagTable = TagTb.getTagTb(context);
+	    		if(type == "getAll") {
+	    			tagTable.insertAllTag(tagInfos,true);
+	    		} else if (type == "syncWithId") {
+	    			tagTable.insertAllTag(tagInfos,false);
+	    		} else {
+	    		  currentUser.syncTagWithServer(tagInfos);
 	    		}
 	    	}
 	    }
@@ -635,7 +690,7 @@ public class NetUtils {
 			    ArrayList<TagInfo> tag_infos;
 			    TagTb              tag_tb;
 			    
-			    tag_tb    = TagTb.get_tag_tb(context);
+			    tag_tb    = TagTb.getTagTb(context);
 			    tag_infos = tag_tb.get_unsync_tags();
 			    
 				Integer un_sync_count = tag_infos.size();

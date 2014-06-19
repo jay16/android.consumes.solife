@@ -182,13 +182,13 @@ public class TabUser extends BaseActivity {
 					Log.w("Token", token);
 					try {
 						NetUtils.get_user_friends_info(getApplicationContext(), token, true);
-		                NetUtils.get_friend_records(getApplicationContext(), token);
+		                NetUtils.getFriendRecords(getApplicationContext(), token);
 		                if(ToolUtils.has_sdcard()) {
 		                   NetUtils.chk_user_gravatar(getApplicationContext());
 		                } else {
 		                   Toast.makeText(TabUser.this, "´æ´¢¿¨ÒÑÒÆ³ý£¬Í·ÏñÍ¼Æ¬¶ÁÈ¡Ê§°Ü", 0).show();
 		                }
-						String [] ret_array = NetUtils.get_user_info(sharedPreferences,token, getApplicationContext());
+						String [] ret_array = NetUtils.getUserInfo(sharedPreferences,token, getApplicationContext());
 						if(ret_array[0].equals("1")){
 						    try {
 								initUserInfo();

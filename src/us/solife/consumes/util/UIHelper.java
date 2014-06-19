@@ -216,7 +216,7 @@ public class UIHelper {
 		
 		final ListView listView = (ListView) promptView.findViewById(R.id.tagListView);
         if(listView != null) {
-			TagTb tag_tb = TagTb.get_tag_tb(context);
+			TagTb tag_tb = TagTb.getTagTb(context);
 			ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
         	UIHelper.initTagListView(context, listView, tag_infos, textView_tags); 
         } else {
@@ -261,8 +261,8 @@ public class UIHelper {
 				tag_info.set_updated_at("");
 				Log.w("UIHelper", tag_info.to_string());
 
-				final TagTb tag_tb = TagTb.get_tag_tb(context);
-				tag_tb.insert_tag(tag_info);
+				final TagTb tag_tb = TagTb.getTagTb(context);
+				tag_tb.insertTag(tag_info);
 				
 				ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
 		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, listView, tag_infos, textView_tags); 

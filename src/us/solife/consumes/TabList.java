@@ -352,7 +352,7 @@ public class TabList extends BaseActivity{
 				if(NetUtils.has_network(getApplicationContext())) {
 					Toast.makeText(TabList.this, "¿ªÊ¼ÏÂÔØ..", 0).show();
 					try {
-						NetUtils.get_self_records(TabList.this,current_user_token, "syncWithServer", currentUserId);
+						NetUtils.getSelfRecords(TabList.this,current_user_token, "syncWithUpdatedAt", currentUserId);
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}

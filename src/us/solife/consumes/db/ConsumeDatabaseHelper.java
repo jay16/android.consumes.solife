@@ -9,7 +9,7 @@ public class ConsumeDatabaseHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_TABLE_CONSUME = "consumes"; 
 	private static final String DATABASE_TABLE_USER    = "users"; 
 	private static final String DATABASE_TABLE_TAG    = "tags"; 
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 	
 	//consume消费记录表
 	String tb_consumes = "create table "+ DATABASE_TABLE_CONSUME +"(" +

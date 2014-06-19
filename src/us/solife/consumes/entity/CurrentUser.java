@@ -124,10 +124,16 @@ public class CurrentUser {
 		return row_id;
 	}
 	
-	public void syncWithServer(ArrayList<ConsumeInfo> consumeInfos) {
-		if(consumeInfos.size() > 0) {
-			for(int i = 0; i < consumeInfos.size(); i++) update_record(consumeInfos.get(i));
-		}
+	public void syncRecordWithServer(ArrayList<ConsumeInfo> consumeInfos) {
+		if(consumeInfos.size() > 0) 
+			for(int i = 0; i < consumeInfos.size(); i++) 
+				update_record(consumeInfos.get(i)); 
+	}
+	
+	public void syncTagWithServer(ArrayList<TagInfo> tagInfos) {
+		if(tagInfos.size() > 0) 
+			for(int i = 0; i < tagInfos.size(); i++) 
+				update_tag(tagInfos.get(i)); 
 	}
 	/**
 	 * 直接删除
@@ -183,10 +189,8 @@ public class CurrentUser {
 		database.close();
 		return consumeInfos;
 	}
-	
 
-
-	public String getLatestUpdatedAt() {
+	public String getLatestRecordUpdatedAt() {
 		// public Integer getAllRecords(Context context) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
@@ -199,8 +203,59 @@ public class CurrentUser {
 		}
 		cursor.close();
 		database.close();
-		if(updated_at.length() < 11) updated_at = ToolUtils.get_ymdhms_date();
+		if(updated_at.length() < 11) updated_at = "2013-01-01 01:01:01";
 		return updated_at;
+	}
+
+	public String getLatestTagUpdatedAt() {
+		// public Integer getAllRecords(Context context) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
+		String sql = "select max(updated_at) as updated_at from tags where user_id = " + user_id;
+		Cursor cursor = database.rawQuery(sql, null);
+	    String updated_at = "";
+		if (cursor != null && cursor.getCount() > 0) {
+			cursor.moveToFirst(); 
+			updated_at = cursor.getString(cursor.getColumnIndex("updated_at")).toString();
+		}
+		cursor.close();
+		database.close();
+		if(updated_at == null || updated_at.length() < 11) updated_at = "2013-01-01 01:01:01";
+		return updated_at;
+	}
+
+	public Integer getMaxTagId() {
+		// public Integer getAllRecords(Context context) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
+		String sql = "select max(tag_id) as tag_id from tags where user_id = " + user_id;
+		Cursor cursor = database.rawQuery(sql, null);
+	    Integer tagId = 0;
+		if (cursor != null && cursor.getCount() > 0) {
+			cursor.moveToFirst(); 
+			tagId = cursor.getInt(cursor.getColumnIndex("tag_id"));
+		}
+		cursor.close();
+		database.close();
+		if(tagId == null || tagId <= 0) tagId = 0;
+		return tagId;
+	}
+
+	public Integer getMaxRecordId() {
+		// public Integer getAllRecords(Context context) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
+		String sql = "select max(record_id) as record_id from consumes where user_id = " + user_id;
+		Cursor cursor = database.rawQuery(sql, null);
+	    Integer recordId = 0;
+		if (cursor != null && cursor.getCount() > 0) {
+			cursor.moveToFirst(); 
+			recordId = cursor.getInt(cursor.getColumnIndex("record_id"));
+		}
+		cursor.close();
+		database.close();
+		if(recordId == null || recordId <= 0) recordId = 0;
+		return recordId;
 	}
 
 	//取得所有消费记录
