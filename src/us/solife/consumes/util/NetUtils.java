@@ -13,6 +13,7 @@ import java.io.BufferedOutputStream;
 
 
 
+
 import android.util.Base64;
 
 import java.io.File;
@@ -65,6 +66,7 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
@@ -118,7 +120,8 @@ public class NetUtils {
 		  new org.apache.commons.httpclient.NameValuePair("record[remark]", consume_info.get_remark()),
 		  new org.apache.commons.httpclient.NameValuePair("record[klass]", consume_info.get_klass()+""),
 		  new org.apache.commons.httpclient.NameValuePair("record[tags_list]", consume_info.get_tags_list()),
-		  new org.apache.commons.httpclient.NameValuePair("record[created_at]", consume_info.get_created_at())
+		  new org.apache.commons.httpclient.NameValuePair("record[created_at]", consume_info.get_created_at()),
+		  new org.apache.commons.httpclient.NameValuePair("record[browser]", Build.BRAND+"_"+Build.MODEL)
 		};
 
 		HashMap<String, Object> hash_map = ApiClient._Post(URLs.URL_RECORD, params);
@@ -150,8 +153,9 @@ public class NetUtils {
 		  new org.apache.commons.httpclient.NameValuePair("record[ymdhms]", consume_info.get_ymdhms()),
 		  new org.apache.commons.httpclient.NameValuePair("record[klass]", consume_info.get_klass()+""),
 		  new org.apache.commons.httpclient.NameValuePair("record[tags_list]", consume_info.get_tags_list()),
+		  new org.apache.commons.httpclient.NameValuePair("record[remark]", consume_info.get_remark()),
 		  new org.apache.commons.httpclient.NameValuePair("record[created_at]", consume_info.get_created_at()),
-		  new org.apache.commons.httpclient.NameValuePair("record[remark]", consume_info.get_remark())
+		  new org.apache.commons.httpclient.NameValuePair("record[browser]", Build.BRAND+"_"+Build.MODEL)
 		};
 
 		HashMap<String, Object> hash_map = ApiClient._Post(URLs.URL_RECORD+"/"+consume_info.get_consume_id()+".json", params);

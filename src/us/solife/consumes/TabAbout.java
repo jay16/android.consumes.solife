@@ -9,6 +9,10 @@ import us.solife.consumes.entity.UserInfo;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -20,7 +24,7 @@ public class TabAbout extends BaseActivity implements OnClickListener {
 	SharedPreferences sharedPreferences;
 	
 	@Override
-	public void init() { // TODO Auto-generated method stub
+	public void init() throws NameNotFoundException { // TODO Auto-generated method stub
 		setContentView(R.layout.tab_about);
 
 		TextView  textView_main_header = (TextView)findViewById(R.id.textView_main_header);
@@ -45,6 +49,14 @@ public class TabAbout extends BaseActivity implements OnClickListener {
 		RelativeLayout tab_about_msg  = (RelativeLayout)findViewById(R.id.tab_about_msg);
 		RelativeLayout tab_about_feedback = (RelativeLayout)findViewById(R.id.tab_about_feedback);
 		RelativeLayout tab_about_solife  = (RelativeLayout)findViewById(R.id.tab_about_solife);
+		TextView tab_about_version  = (TextView)findViewById(R.id.tab_about_version);
+		TextView tab_about_client  = (TextView)findViewById(R.id.tab_about_client);
+		
+		final PackageManager pm = getApplicationContext().getPackageManager();
+		PackageInfo packInfo = pm.getPackageInfo("us.solife.iconsumes", PackageManager.GET_ACTIVITIES);
+		final String version = packInfo.versionName;
+		tab_about_version.setText("°æ±¾: " + version);
+		tab_about_client.setText("ÊÖ»ú: " + Build.MODEL);
 		tab_about_info.setOnClickListener(new View.OnClickListener(){
 		     @Override
 		     public void onClick(View v){

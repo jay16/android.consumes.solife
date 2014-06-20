@@ -245,12 +245,12 @@ public class CurrentUser {
 		// public Integer getAllRecords(Context context) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		//String sql = "select * from consumes where user_id not null and state <> 'delete' " +
-		String sql = "select max(record_id) as record_id from consumes where user_id = " + user_id;
+		String sql = "select max(consume_id) as consume_id from consumes where user_id = " + user_id;
 		Cursor cursor = database.rawQuery(sql, null);
 	    Integer recordId = 0;
 		if (cursor != null && cursor.getCount() > 0) {
 			cursor.moveToFirst(); 
-			recordId = cursor.getInt(cursor.getColumnIndex("record_id"));
+			recordId = cursor.getInt(cursor.getColumnIndex("consume_id"));
 		}
 		cursor.close();
 		database.close();

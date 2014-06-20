@@ -28,10 +28,10 @@ import us.solife.consumes.util.ThreadPoolManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-
 import android.widget.Toast;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -91,7 +91,12 @@ public abstract class BaseActivity extends Activity {
 		//添加Activity到堆栈
 		AppManager.getAppManager().addActivity(this);
 		try {
-			init();
+			try {
+				init();
+			} catch (NameNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -119,7 +124,7 @@ public abstract class BaseActivity extends Activity {
 		manager.addTask(task);
 	}
 
-	public abstract void init() throws ParseException;
+	public abstract void init() throws ParseException, NameNotFoundException;
 
 
 	//接口，继承类可以自定义处理
