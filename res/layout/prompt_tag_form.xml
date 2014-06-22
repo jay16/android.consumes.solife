@@ -11,15 +11,24 @@
 
         <TextView
             android:id="@+id/textView_tags"
-            android:layout_width="match_parent"
+            android:layout_width="190dp"
             android:layout_height="match_parent"
+            android:layout_weight="0.61"
             android:gravity="left|center"
-            android:text="" />
+            android:text="未选择标签" />
+
+        <CheckBox
+            android:id="@+id/checkBoxTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="创建标签" />
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/linearLayoutForm"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:visibility="gone" >
 
         <EditText
             android:id="@+id/editText_tag_label"
@@ -46,9 +55,10 @@
         <ListView
             android:id="@+id/tagListView"
             android:layout_width="fill_parent"
-            android:layout_height="452dp"
+            android:layout_height="316dp"
             android:cacheColorHint="#00000000" >
         </ListView>
+
     </LinearLayout>
 
 </LinearLayout>

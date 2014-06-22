@@ -84,12 +84,12 @@ public class TabUser extends BaseActivity {
 		TextView  textView_user_name     = (TextView)findViewById(R.id.textView_current_user_name); 
 		TextView  textView_user_email    = (TextView)findViewById(R.id.textView_current_user_email); 
 		TextView  textView_user_register = (TextView)findViewById(R.id.textView_current_user_registeration_time); 
-		TextView  textView_user_updated = (TextView)findViewById(R.id.textView_current_user_updated_time);
+		//TextView  textView_user_updated = (TextView)findViewById(R.id.textView_current_user_updated_time);
 		TextView  textView_user_area     = (TextView)findViewById(R.id.textView_current_user_area); 
 		textView_user_name.setText(current_user_name);
 		textView_user_email.setText(current_user_email);
 		textView_user_register.setText("注册日期:"+current_user_register);
-		textView_user_updated.setText("更新日期:"+current_user_updated);
+		//textView_user_updated.setText("更新日期:"+current_user_updated);
 		textView_network.setText("(网络: " + network+")");
 		textView_user_area.setText(current_user_area);
 		

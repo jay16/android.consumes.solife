@@ -42,24 +42,12 @@
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_alignLeft="@+id/textView_current_network"
-			        android:layout_alignRight="@+id/textView_current_network"
 			        android:layout_alignTop="@+id/imageView_current_user_gravatar_image"
-			        android:padding="5dp"
 			        android:gravity="center"
+			        android:padding="5dp"
 			        android:text="名称"
 			        android:textColor="#000"
 			        android:textSize="18sp" />
-
-			    <TextView
-			        android:id="@+id/textView_current_user_registeration_time"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_above="@+id/textView_current_user_updated_time"
-			        android:layout_alignLeft="@+id/textView_current_user_updated_time"
-			        android:padding="1dp"
-			        android:text="注册时间：2014/01/01 01:01"
-			        android:textColor="#333"
-			        android:textSize="10sp" />
 
 			    <TextView
 			        android:id="@+id/textView_current_network"
@@ -74,17 +62,6 @@
 			        android:textColor="#666"
 			        android:textSize="10sp" />
 
-
-			    <TextView
-			        android:id="@+id/textView_current_user_updated_time"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_above="@+id/textView_current_date"
-			        android:layout_alignLeft="@+id/textView_current_date"
-			        android:padding="1dp"
-			        android:text="更新时间：2014/01/01 01:01"
-			        android:textColor="#333"
-			        android:textSize="10sp" />
 			    <TextView
 			        android:id="@+id/textView_current_date"
 			        android:layout_width="wrap_content"
@@ -94,6 +71,17 @@
 			        android:layout_toRightOf="@+id/textView_current_network"
 			        android:padding="1dp"
 			        android:text="当前时间：2014/01/01 第12周  周二"
+			        android:textColor="#333"
+			        android:textSize="10sp" />
+
+			    <TextView
+			        android:id="@+id/textView_current_user_registeration_time"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_above="@+id/textView_current_date"
+			        android:layout_alignLeft="@+id/textView_current_date"
+			        android:padding="1dp"
+			        android:text="注册时间：2014/01/01 01:01"
 			        android:textColor="#333"
 			        android:textSize="10sp" />
 

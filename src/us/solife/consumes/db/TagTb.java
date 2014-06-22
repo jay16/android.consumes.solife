@@ -62,7 +62,7 @@ public class TagTb {
     /**
      * @return
      */
-	public ArrayList<TagInfo> get_tags_with_klass(Integer klass) {
+	public ArrayList<TagInfo> getTagWithKlass(Integer klass) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		String sql = "select * from tags where klass = "+klass;
 		Log.w("KlassSQL", sql);
@@ -75,6 +75,25 @@ public class TagTb {
 		}
 		Log.w("TagKlassCount", "size:" + tag_infos.size());
 		return tag_infos;
+	}
+	
+	public TagInfo findOrCreateTag(TagInfo tagInfo) {
+		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
+		String sql = "select * from tags where klass = " + tagInfo.get_klass();
+		sql += " and label = '" + tagInfo.get_label()+"'";
+		sql += " and user_id = " + tagInfo.get_user_id();
+		Log.w("findOrCreateTag", sql);
+		Cursor cursor = database.rawQuery(sql, null);
+
+
+		if (cursor != null && cursor.getCount() > 0) {
+			cursor.moveToFirst();  
+			tagInfo = get_tag_info_from_cursor(cursor);
+		} else {
+			insertTag(tagInfo);
+		}
+		
+		return tagInfo;
 	}
 	
 	public long insertTag(TagInfo tag_info) {

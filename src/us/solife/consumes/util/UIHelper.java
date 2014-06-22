@@ -36,6 +36,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,9 @@ import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -203,22 +206,60 @@ public class UIHelper {
 	}
 	
 	@SuppressLint("CutPasteId")
-	public static void consume_tag_form(final Context context, final Integer klass, String wathIn, final Long current_user_id, final TextView record_form_tags) {
+	public static void consume_tag_form(final Context context, final Integer klass, String wathIn, final Long current_user_id, final TextView record_form_tags) {	
 		LayoutInflater layoutInflater = LayoutInflater.from(context);
 		View promptView = layoutInflater.inflate(R.layout.prompt_tag_form, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 
 		alertDialogBuilder.setTitle("["+wathIn+"]标签");//"["+wathIn+"]
 		alertDialogBuilder.setView(promptView);
-		final EditText tag_form_label = (EditText) promptView.findViewById(R.id.editText_tag_label);
-		final TextView textView_tags = (TextView) promptView.findViewById(R.id.textView_tags);
-
 		
+		
+
+		final EditText tagFormLabel = (EditText) promptView.findViewById(R.id.editText_tag_label);
+        final Button tagFormSubmit = (Button)promptView.findViewById(R.id.button_tag_submit);
+		final TextView textViewTags = (TextView) promptView.findViewById(R.id.textView_tags);
+		final LinearLayout linearLayoutForm = (LinearLayout)promptView.findViewById(R.id.linearLayoutForm);
+        final CheckBox checkBoxTag = (CheckBox)promptView.findViewById(R.id.checkBoxTag);
+        
+        tagFormSubmit.setEnabled(false);
+        tagFormSubmit.setClickable(false);
+	  	TextWatcher tag_form_text_watcher = new TextWatcher(){
+    	    @Override
+    	    public void afterTextChanged(Editable s) { }
+    	 
+    	    @Override
+    	    public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+    	 
+    	    @Override
+    	    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length()>0) {
+    		        tagFormSubmit.setEnabled(true);
+    		        tagFormSubmit.setClickable(true);
+                } else {
+    		        tagFormSubmit.setEnabled(false);
+    		        tagFormSubmit.setClickable(false);
+                }
+    	    }
+    	     
+    	};
+    	checkBoxTag.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+	        @Override
+	        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+	            if(isChecked){
+	            	linearLayoutForm.setVisibility(View.VISIBLE);
+	            } else {
+	            	linearLayoutForm.setVisibility(View.GONE);
+	            }
+	        }
+	    });
+		
+		tagFormLabel.addTextChangedListener(tag_form_text_watcher);
 		final ListView listView = (ListView) promptView.findViewById(R.id.tagListView);
         if(listView != null) {
-			TagTb tag_tb = TagTb.getTagTb(context);
-			ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
-        	UIHelper.initTagListView(context, listView, tag_infos, textView_tags); 
+			TagTb tagTable = TagTb.getTagTb(context);
+			ArrayList<TagInfo> tag_infos = tagTable.getTagWithKlass(klass);
+        	UIHelper.initTagListView(context, listView, tag_infos, textViewTags); 
         } else {
         	Log.e("UIHelperError", "ListViewIsNULL");
         }
@@ -229,8 +270,8 @@ public class UIHelper {
         alertDialogBuilder.setCancelable(false)
             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    Log.w("TagForm",tag_form_label.getText().toString());
-                    record_form_tags.setText(textView_tags.getText().toString());
+                    Log.w("TagForm",tagFormLabel.getText().toString());
+                    record_form_tags.setText(textViewTags.getText().toString());
                 }
             })
             .setNegativeButton("Cancel",
@@ -244,10 +285,9 @@ public class UIHelper {
         AlertDialog alertD = alertDialogBuilder.create();
         alertD.show();
         
-        Button btn = (Button)promptView.findViewById(R.id.button_tag_submit);
-        btn.setOnClickListener(new Button.OnClickListener(){  //创建监听对象  
+        tagFormSubmit.setOnClickListener(new Button.OnClickListener(){  //创建监听对象  
 			public void onClick(View v){  
-				String label = tag_form_label.getText().toString().trim();
+				String label = tagFormLabel.getText().toString().trim();
 				if(label.length() == 0) return;
 				
 				TagInfo tag_info = new TagInfo();
@@ -261,11 +301,14 @@ public class UIHelper {
 				tag_info.set_updated_at("");
 				Log.w("UIHelper", tag_info.to_string());
 
-				final TagTb tag_tb = TagTb.getTagTb(context);
-				tag_tb.insertTag(tag_info);
+				final TagTb tagTable = TagTb.getTagTb(context);
+				tagTable.findOrCreateTag(tag_info);
 				
-				ArrayList<TagInfo> tag_infos = tag_tb.get_tags_with_klass(klass);
-		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, listView, tag_infos, textView_tags); 
+				ArrayList<TagInfo> tag_infos = tagTable.getTagWithKlass(klass);
+		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, listView, tag_infos, textViewTags); 
+		        tagFormLabel.setText("");
+		        tagFormSubmit.setEnabled(false);
+		        tagFormSubmit.setClickable(false);
 			}
         });
 	}

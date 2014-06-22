@@ -56,7 +56,7 @@ public class TabAbout extends BaseActivity implements OnClickListener {
 		PackageInfo packInfo = pm.getPackageInfo("us.solife.iconsumes", PackageManager.GET_ACTIVITIES);
 		final String version = packInfo.versionName;
 		tab_about_version.setText("井云: " + version);
-		tab_about_client.setText("返字: " + Build.MODEL);
+		tab_about_client.setText("返字: " + Build.BRAND+"_"+Build.MODEL);
 		tab_about_info.setOnClickListener(new View.OnClickListener(){
 		     @Override
 		     public void onClick(View v){
