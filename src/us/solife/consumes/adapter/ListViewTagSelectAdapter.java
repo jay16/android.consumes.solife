@@ -20,28 +20,30 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class ListViewTagSelectAdapter extends BaseAdapter{
-	ArrayList<TagInfo> tag_infos;
+	ArrayList<TagInfo> tagInfos;
     Context            context;
-    TextView           editText_tags;
-    ArrayList<String>  tags_checked = new ArrayList<String>();
+    TextView           editTextTags;
+    ConsumeInfo        recordInfo;
+    ArrayList<String>  tagsChecked = new ArrayList<String>();
 
-	public ListViewTagSelectAdapter(ArrayList<TagInfo> tag_infos, Context context, TextView editText_tags) {
-		this.tag_infos = tag_infos;
+	public ListViewTagSelectAdapter(ConsumeInfo recordInfo, ArrayList<TagInfo> tagInfos, Context context, TextView editTextTags) {
+		this.tagInfos = tagInfos;
 		this.context   = context;
-		this.editText_tags = editText_tags;
+		this.editTextTags = editTextTags;
+		this.recordInfo   = recordInfo;
 	}
 	
 
 	@Override
 	public int getCount() {
 		// TODO Auto-generated method stub
-		return tag_infos.size();
+		return tagInfos.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
 		// TODO Auto-generated method stub
-		return tag_infos.get(position);
+		return tagInfos.get(position);
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class ListViewTagSelectAdapter extends BaseAdapter{
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-		final TagInfo tag_info = tag_infos.get(position);
+		final TagInfo tagInfo = tagInfos.get(position);
 
 		//自定义视图
 		ViewHolder holder = null;
@@ -63,47 +65,60 @@ public class ListViewTagSelectAdapter extends BaseAdapter{
 		} else {
 			convertView   = View.inflate(context, R.layout.tag_list_view, null);
 			holder        = new ViewHolder();
-			holder.label   = (CheckBox) convertView.findViewById(R.id.checkBox_label);
+			holder.checkBox   = (CheckBox) convertView.findViewById(R.id.checkBox_label);
 			holder.state   = (TextView) convertView.findViewById(R.id.textView_state);
 			
 			convertView.setTag(holder);
 		}			
 
-		holder.label.setText(tag_info.get_label());
-		holder.label.setTag(tag_info);
-		holder.state.setText(tag_info.get_sync()==(long)0 ? "*_*" : "^_^");
+		holder.checkBox.setText(tagInfo.get_label());
+
+		holder.checkBox.setTag(tagInfo);
+		holder.state.setText(tagInfo.get_sync()==(long)0 ? "*_*" : "^_^");
    
-		holder.label.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+		holder.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
 	        @Override
 	        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            	String label = tag_info.get_label();
+            	String label = tagInfo.get_label();
 	            if(isChecked){
 	            	Log.w("TagClick", label + "- checked");
-	            	tags_checked.add(label);
+	            	tagsChecked.add(label);
 	            } else {
 	            	Log.w("TagClick", label + "- unchecked");
-	            	tags_checked.remove(tags_checked.indexOf(label));
+	            	tagsChecked.remove(tagsChecked.indexOf(label));
 	            }
-	            Log.w("TagsChecked", tags_checked.toString());
+	            Log.w("TagsChecked", tagsChecked.toString());
 	            String checked_tags = "";
-	            for(int i=0; i < tags_checked.size(); i++) {
+	            for(int i=0; i < tagsChecked.size(); i++) {
 	            	if(i == 0) {
-	            		checked_tags += tags_checked.get(i);
+	            		checked_tags += tagsChecked.get(i);
 	            	} else {
-	            		checked_tags += "," + tags_checked.get(i);
+	            		checked_tags += "," + tagsChecked.get(i);
 	            	}
 	            }
-	            editText_tags.setText(checked_tags);
+	            editTextTags.setText(checked_tags);
 	        }
 	    });
+	    holder.checkBox.setOnClickListener(new RadioGroup.OnClickListener(){
+            public void onClick(View v){
+            }
+        });
 
-		
+		if(recordInfo.get_tags_list() != null &&
+		   recordInfo.get_tags_list().length() >= 0) {
+			String[] tmpArr =recordInfo.get_tags_list().split(",");
+			
+			for (int i = 0 ; i <tmpArr.length ; i++ ) { 
+			  if(tmpArr[i].equals(tagInfo.get_label()))
+		        holder.checkBox.setChecked(true);
+			}
+		}
 		return convertView;
 	}
 
 	class ViewHolder {
 		private TextView state;
-		private CheckBox label;
+		private CheckBox checkBox;
 	}	
 	
 	private View.OnClickListener figClickListener = new View.OnClickListener(){

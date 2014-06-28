@@ -16,6 +16,7 @@ import us.solife.consumes.adapter.ListViewConsumeAdapter;
 import us.solife.consumes.adapter.ListViewTagSelectAdapter;
 import us.solife.consumes.api.ApiClient;
 import us.solife.consumes.api.URLs;
+import us.solife.consumes.db.ConsumeTb;
 import us.solife.consumes.db.TagTb;
 import us.solife.consumes.entity.ConsumeInfo;
 import us.solife.consumes.entity.CurrentUser;
@@ -206,7 +207,11 @@ public class UIHelper {
 	}
 	
 	@SuppressLint("CutPasteId")
-	public static void consume_tag_form(final Context context, final Integer klass, String wathIn, final Long current_user_id, final TextView record_form_tags) {	
+	public static void consume_tag_form(final Context context, Integer rowId, final Integer klass, String wathIn, final Long currentUserId, final TextView textViewRecordFormTags) {	
+
+		CurrentUser currentUser = CurrentUser.getCurrentUser(context, currentUserId);
+		final ConsumeInfo recordInfo = currentUser.findRecordById(rowId);
+		
 		LayoutInflater layoutInflater = LayoutInflater.from(context);
 		View promptView = layoutInflater.inflate(R.layout.prompt_tag_form, null);
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -227,10 +232,8 @@ public class UIHelper {
 	  	TextWatcher tag_form_text_watcher = new TextWatcher(){
     	    @Override
     	    public void afterTextChanged(Editable s) { }
-    	 
     	    @Override
     	    public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
-    	 
     	    @Override
     	    public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length()>0) {
@@ -258,20 +261,18 @@ public class UIHelper {
 		final ListView listView = (ListView) promptView.findViewById(R.id.tagListView);
         if(listView != null) {
 			TagTb tagTable = TagTb.getTagTb(context);
-			ArrayList<TagInfo> tag_infos = tagTable.getTagWithKlass(klass);
-        	UIHelper.initTagListView(context, listView, tag_infos, textViewTags); 
+			ArrayList<TagInfo> tagInfos = tagTable.getTagWithKlass(klass);
+        	UIHelper.initTagListView(context, recordInfo, listView, tagInfos, textViewTags); 
         } else {
         	Log.e("UIHelperError", "ListViewIsNULL");
         }
 		
-        
-        
 		 // setup a dialog window
         alertDialogBuilder.setCancelable(false)
             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Log.w("TagForm",tagFormLabel.getText().toString());
-                    record_form_tags.setText(textViewTags.getText().toString());
+                    textViewRecordFormTags.setText(textViewTags.getText().toString());
                 }
             })
             .setNegativeButton("Cancel",
@@ -294,7 +295,7 @@ public class UIHelper {
 				tag_info.set_label(label);
 				tag_info.set_klass(klass);
 				tag_info.set_tag_id(-1);
-				tag_info.set_user_id(Integer.valueOf(String.valueOf(current_user_id)));
+				tag_info.set_user_id(Integer.valueOf(String.valueOf(currentUserId)));
 				tag_info.set_sync((long)0);
 				tag_info.set_state("create");
 				tag_info.set_created_at(ToolUtils.get_ymdhms_date());
@@ -305,15 +306,15 @@ public class UIHelper {
 				tagTable.findOrCreateTag(tag_info);
 				
 				ArrayList<TagInfo> tag_infos = tagTable.getTagWithKlass(klass);
-		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, listView, tag_infos, textViewTags); 
+		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, recordInfo, listView, tag_infos, textViewTags); 
 		        tagFormLabel.setText("");
 		        tagFormSubmit.setEnabled(false);
 		        tagFormSubmit.setClickable(false);
 			}
         });
 	}
-	public static void initTagListView(Context context, ListView listView, final ArrayList<TagInfo> tag_infos, TextView textView_tags) {
-		listView.setAdapter( new ListViewTagSelectAdapter(tag_infos, context, textView_tags));
+	public static void initTagListView(Context context, ConsumeInfo recordInfo, ListView listView, final ArrayList<TagInfo> tagInfos, TextView textViewTags) {
+		listView.setAdapter( new ListViewTagSelectAdapter(recordInfo, tagInfos, context, textViewTags));
 		listView.setClickable(true);
 		listView.invalidate();
 	}

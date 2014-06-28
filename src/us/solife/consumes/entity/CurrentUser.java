@@ -48,7 +48,7 @@ public class CurrentUser {
      * @param row_id
      * @return
      */
-	public ConsumeInfo get_record(long row_id) {
+	public ConsumeInfo findRecordById(long row_id) {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		Cursor cursor = database.rawQuery("select * from consumes where id = "+row_id + " and user_id = "+ user_id, null);
         ConsumeInfo consume_info = new ConsumeInfo();
@@ -93,7 +93,7 @@ public class CurrentUser {
 		database.endTransaction();
 		database.close();
 		
-		consume_info = get_record(row_id);
+		consume_info = findRecordById(row_id);
         Log.w("InsertRecord","after: "+consume_info.to_string());
         
 		return row_id;
@@ -119,7 +119,7 @@ public class CurrentUser {
 		Log.w("update_record", "before: " + consume_info.to_string());
 		long row_id = db.update(DT_CONSUME, cv, "id=?",args);
 		
-		consume_info = get_record(consume_info.get_id());
+		consume_info = findRecordById(consume_info.get_id());
         Log.w("update_record","after:"+consume_info.to_string());
 		return row_id;
 	}
@@ -156,7 +156,7 @@ public class CurrentUser {
 	 * @param row_id
 	 */
 	public void destroy_record(long row_id) {	
-		ConsumeInfo consume_info = get_record(row_id);
+		ConsumeInfo consume_info = findRecordById(row_id);
 		long sync = consume_info.get_sync();
 		//未同步时直接删除即可
 		if(sync == (long)0) {
@@ -345,6 +345,7 @@ public class CurrentUser {
 		consume_info.set_klass(cursor.getInt(cursor.getColumnIndex("klass")));
 		consume_info.set_created_at(cursor.getString(cursor.getColumnIndex("created_at")).toString());
 		consume_info.set_updated_at(cursor.getString(cursor.getColumnIndex("updated_at")).toString());
+		consume_info.set_tags_list(cursor.getString(cursor.getColumnIndex("tags_list")).toString());
 
 		consume_info.set_sync(cursor.getLong(cursor.getColumnIndex("sync")));
 		consume_info.set_state(cursor.getString(cursor.getColumnIndex("state")));

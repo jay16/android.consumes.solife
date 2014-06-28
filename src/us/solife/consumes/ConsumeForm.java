@@ -30,6 +30,7 @@ import android.content.SharedPreferences;
 //import android.content.SharedPreferences.Editor;
 import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -63,6 +64,8 @@ public class ConsumeForm extends BaseActivity {
 	private EditText editText_consume_form_ymdhms;
 	private EditText editText_consume_form_remark;
 	private TextView  textView_consume_form_tags;
+
+	LinearLayout linearLayout;
 	private RadioGroup radioGroup_consume_klass;
 	private Button button_consume_form_submit;
 	private Button button_date_add;
@@ -85,6 +88,7 @@ public class ConsumeForm extends BaseActivity {
 		editText_consume_form_remark = (EditText) findViewById(R.id.editText_consume_form_remark);
 		editText_consume_form_remark.addTextChangedListener(text_watcher);
 		textView_consume_form_tags   = (TextView) findViewById(R.id.textView_consume_form_tags);
+		linearLayout = (LinearLayout)findViewById(R.id.linearLayout_consume_form_tags);
 		
 		// consume_form
 		button_date_add = (Button) findViewById(R.id.button_date_add);
@@ -140,22 +144,31 @@ public class ConsumeForm extends BaseActivity {
 		textView_main_header.setText("创建记录");
 		button_consume_form_submit.setText("提交");
 		textView_consume_form_tags.setText(""); 
-		
+		linearLayout.setVisibility(View.GONE);
 		return R.id.radio5;
 	}
 
 	private Integer init_update_consume(Long row_id) {		
-		ConsumeInfo consume_info = current_user.get_record(row_id);
-		Log.w("get_record", consume_info.to_string());
-		editText_consume_form_value.setText(consume_info.get_value()+"");
-		editText_consume_form_ymdhms.setText(consume_info.get_ymdhms());
-		editText_consume_form_remark.setText(consume_info.get_remark());
-		textView_consume_form_tags.setText(consume_info.get_tags_list());
+		ConsumeInfo recordInfo = current_user.findRecordById(row_id);
+		Log.w("get_record", recordInfo.to_string());
+		editText_consume_form_value.setText(recordInfo.get_value()+"");
+		editText_consume_form_ymdhms.setText(recordInfo.get_ymdhms());
+		editText_consume_form_remark.setText(recordInfo.get_remark());
+		textView_consume_form_tags.setText(recordInfo.get_tags_list());
 		textView_main_header.setText("编辑记录");
 		button_consume_form_submit.setText("更新");
+		LinearLayout linearLayout = (LinearLayout)findViewById(R.id.linearLayout_consume_form_tags);
+        if(recordInfo.get_tags_list()==null || 
+           recordInfo.get_tags_list().length() == 0) {
+            linearLayout.setVisibility(View.GONE);
+        } else {
+        	linearLayout.setVisibility(View.VISIBLE);
+            textView_consume_form_tags.setText(recordInfo.get_tags_list());
+        }
+        
 		Integer id;
-		Log.w("UpdatedRecord",consume_info.to_string());
-		switch(consume_info.get_klass()+"") {
+		Log.w("UpdatedRecord",recordInfo.to_string());
+		switch(recordInfo.get_klass()+"") {
 		case "1": id = R.id.radio1; break;
 		case "2": id = R.id.radio2; break;
 		case "3": id = R.id.radio3; break;
@@ -167,7 +180,7 @@ public class ConsumeForm extends BaseActivity {
  
 		return id;
 	}
-	
+
 	RadioGroup.OnCheckedChangeListener radio_group_oncheck = new RadioGroup.OnCheckedChangeListener() { 
 		 public void onCheckedChanged(RadioGroup group, int checkedId) { 
 			 RadioButton radioButton = (RadioButton)findViewById(radioGroup_consume_klass.getCheckedRadioButtonId());
@@ -182,7 +195,7 @@ public class ConsumeForm extends BaseActivity {
 			 }
 			 Log.i("whatIn", whatIn+ " - " + klass);
 			 
-	         UIHelper.consume_tag_form(ConsumeForm.this, klass, whatIn, current_user_id, textView_consume_form_tags);
+	         UIHelper.consume_tag_form(ConsumeForm.this, Integer.valueOf(String.valueOf(row_id)), klass, whatIn, current_user_id, textView_consume_form_tags);
 		 }
 	};
 		 
@@ -270,7 +283,7 @@ public class ConsumeForm extends BaseActivity {
 						current_user.insert_record(consume_info);
 						Log.e("ConsumeForm["+action+"]",consume_info.to_string());
 					} else if(action.equals("update")){
-						consume_info = current_user.get_record(row_id);
+						consume_info = current_user.findRecordById(row_id);
 						consume_info.set_value(Double.parseDouble(value));
 						consume_info.set_remark(remark);
 						consume_info.set_ymdhms(ymdhms);
