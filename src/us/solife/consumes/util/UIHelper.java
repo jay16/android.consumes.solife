@@ -207,7 +207,7 @@ public class UIHelper {
 	}
 	
 	@SuppressLint("CutPasteId")
-	public static void consume_tag_form(final Context context, Integer rowId, final Integer klass, String wathIn, final Long currentUserId, final TextView textViewRecordFormTags) {	
+	public static void consume_tag_form(final Context context, Integer rowId, final Integer klass, String wathIn, final Long currentUserId, final TextView textViewRecordFormTags, final LinearLayout linearLayoutRecordFormTags) {	
 
 		CurrentUser currentUser = CurrentUser.getCurrentUser(context, currentUserId);
 		final ConsumeInfo recordInfo = currentUser.findRecordById(rowId);
@@ -262,7 +262,7 @@ public class UIHelper {
         if(listView != null) {
 			TagTb tagTable = TagTb.getTagTb(context);
 			ArrayList<TagInfo> tagInfos = tagTable.getTagWithKlass(klass);
-        	UIHelper.initTagListView(context, recordInfo, listView, tagInfos, textViewTags); 
+        	UIHelper.initTagListView(context, recordInfo, listView, tagInfos, textViewTags, linearLayoutRecordFormTags); 
         } else {
         	Log.e("UIHelperError", "ListViewIsNULL");
         }
@@ -306,15 +306,15 @@ public class UIHelper {
 				tagTable.findOrCreateTag(tag_info);
 				
 				ArrayList<TagInfo> tag_infos = tagTable.getTagWithKlass(klass);
-		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, recordInfo, listView, tag_infos, textViewTags); 
+		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, recordInfo, listView, tag_infos, textViewTags, linearLayoutRecordFormTags); 
 		        tagFormLabel.setText("");
 		        tagFormSubmit.setEnabled(false);
 		        tagFormSubmit.setClickable(false);
 			}
         });
 	}
-	public static void initTagListView(Context context, ConsumeInfo recordInfo, ListView listView, final ArrayList<TagInfo> tagInfos, TextView textViewTags) {
-		listView.setAdapter( new ListViewTagSelectAdapter(recordInfo, tagInfos, context, textViewTags));
+	public static void initTagListView(Context context, ConsumeInfo recordInfo, ListView listView, final ArrayList<TagInfo> tagInfos, TextView textViewTags, LinearLayout linearLayoutRecordFormTags) {
+		listView.setAdapter( new ListViewTagSelectAdapter(recordInfo, tagInfos, context, textViewTags, linearLayoutRecordFormTags));
 		listView.setClickable(true);
 		listView.invalidate();
 	}

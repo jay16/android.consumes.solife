@@ -60,50 +60,49 @@ public class ConsumeForm extends BaseActivity {
 	private SharedPreferences shared_preferences;
 	private CurrentUser       current_user;
 	private TextView  textView_main_header;
-	private EditText editText_consume_form_value;
-	private EditText editText_consume_form_ymdhms;
-	private EditText editText_consume_form_remark;
-	private TextView  textView_consume_form_tags;
-
-	LinearLayout linearLayout;
-	private RadioGroup radioGroup_consume_klass;
-	private Button button_consume_form_submit;
-	private Button button_date_add;
-	private Button button_date_plus;
+	private EditText editTextRecordFormValue;
+	private EditText editTextRecordFormYmdhms;
+	private EditText editTextRecordFormRemark;
+	private TextView  textViewRecordFormTags;
+	private LinearLayout linearLayoutRecordFormTag;
+	private RadioGroup radioGroupRecordKlass;
+	private Button buttonRecordFormSubmit;
+	private Button buttonDateAdd;
+	private Button buttonDatePlus;
 	private Button mBack;
-	private Long row_id = (long)-1;
-	private String action  = "create" ;
+	private Long   row_id = (long)-1;
+	private String action = "create" ;
 	private Integer klass = -1;
-	private Long current_user_id;
+	private Long currentUserId;
 	
 	@Override
 	public void init() {
 		// TODO Auto-generated method stub
 		setContentView(R.layout.consume_form);
 		
-		radioGroup_consume_klass     = (RadioGroup)findViewById(R.id.radioGroup_consumeKlass);
+		radioGroupRecordKlass     = (RadioGroup)findViewById(R.id.radioGroup_consumeKlass);
 		textView_main_header         = (TextView)findViewById(R.id.textView_main_header);
-		editText_consume_form_value  = (EditText) findViewById(R.id.editText_consume_form_value);
-		editText_consume_form_ymdhms = (EditText) findViewById(R.id.editText_consume_form_ymdhms);
-		editText_consume_form_remark = (EditText) findViewById(R.id.editText_consume_form_remark);
-		editText_consume_form_remark.addTextChangedListener(text_watcher);
-		textView_consume_form_tags   = (TextView) findViewById(R.id.textView_consume_form_tags);
-		linearLayout = (LinearLayout)findViewById(R.id.linearLayout_consume_form_tags);
+		editTextRecordFormValue  = (EditText) findViewById(R.id.editText_consume_form_value);
+		editTextRecordFormYmdhms = (EditText) findViewById(R.id.editText_consume_form_ymdhms);
+		editTextRecordFormRemark = (EditText) findViewById(R.id.editText_consume_form_remark);
+		editTextRecordFormRemark.addTextChangedListener(text_watcher);
+		textViewRecordFormTags   = (TextView) findViewById(R.id.textView_consume_form_tags);
+		linearLayoutRecordFormTag = (LinearLayout)findViewById(R.id.linearLayout_consume_form_tags);
 		
 		// consume_form
-		button_date_add = (Button) findViewById(R.id.button_date_add);
-		button_date_add.setOnClickListener(button_date_add_listener);
-		button_date_plus = (Button) findViewById(R.id.button_date_plus);
-		button_date_plus.setOnClickListener(button_date_plus_listener);
-		button_consume_form_submit = (Button) findViewById(R.id.button_consume_form_submit);
-		button_consume_form_submit.setOnClickListener(button_consume_form_submit_listener);
+		buttonDateAdd = (Button) findViewById(R.id.button_date_add);
+		buttonDateAdd.setOnClickListener(button_date_add_listener);
+		buttonDatePlus = (Button) findViewById(R.id.button_date_plus);
+		buttonDatePlus.setOnClickListener(button_date_plus_listener);
+		buttonRecordFormSubmit = (Button) findViewById(R.id.button_consume_form_submit);
+		buttonRecordFormSubmit.setOnClickListener(button_consume_form_submit_listener);
 		//返回主界面
     	mBack = (Button)findViewById(R.id.menu_btn_back);
     	mBack.setOnClickListener(UIHelper.finish(this));
 
 		shared_preferences = getSharedPreferences("config", Context.MODE_PRIVATE);
-	    current_user_id = shared_preferences.getLong("current_user_id", -1);
-	    current_user = CurrentUser.getCurrentUser(getApplication(), current_user_id);
+	    currentUserId = shared_preferences.getLong("current_user_id", -1);
+	    current_user = CurrentUser.getCurrentUser(getApplication(), currentUserId);
 	}
 	
 	/**
@@ -130,9 +129,9 @@ public class ConsumeForm extends BaseActivity {
 	    	radioGroupId = init_create_consume();
 	    }
 
-		radioGroup_consume_klass.setOnCheckedChangeListener(null);
-		radioGroup_consume_klass.check(radioGroupId);
-		radioGroup_consume_klass.setOnCheckedChangeListener(radio_group_oncheck);
+		radioGroupRecordKlass.setOnCheckedChangeListener(null);
+		radioGroupRecordKlass.check(radioGroupId);
+		radioGroupRecordKlass.setOnCheckedChangeListener(radio_group_oncheck);
 		
 	    TextView time = (TextView)findViewById(R.id.textView_main_time);
 	    time.setText(ToolUtils.get_ymdw_date());
@@ -140,30 +139,30 @@ public class ConsumeForm extends BaseActivity {
 	
 	private Integer init_create_consume() {
 		// 初始化创建日期时间
-		editText_consume_form_ymdhms.setText(ToolUtils.get_ymdhmsw_date());
+		editTextRecordFormYmdhms.setText(ToolUtils.get_ymdhmsw_date());
 		textView_main_header.setText("创建记录");
-		button_consume_form_submit.setText("提交");
-		textView_consume_form_tags.setText(""); 
-		linearLayout.setVisibility(View.GONE);
+		buttonRecordFormSubmit.setText("提交");
+		textViewRecordFormTags.setText(""); 
+		linearLayoutRecordFormTag.setVisibility(View.GONE);
 		return R.id.radio5;
 	}
 
 	private Integer init_update_consume(Long row_id) {		
 		ConsumeInfo recordInfo = current_user.findRecordById(row_id);
 		Log.w("get_record", recordInfo.to_string());
-		editText_consume_form_value.setText(recordInfo.get_value()+"");
-		editText_consume_form_ymdhms.setText(recordInfo.get_ymdhms());
-		editText_consume_form_remark.setText(recordInfo.get_remark());
-		textView_consume_form_tags.setText(recordInfo.get_tags_list());
+		editTextRecordFormValue.setText(recordInfo.get_value()+"");
+		editTextRecordFormYmdhms.setText(recordInfo.get_ymdhms());
+		editTextRecordFormRemark.setText(recordInfo.get_remark());
+		textViewRecordFormTags.setText(recordInfo.get_tags_list());
 		textView_main_header.setText("编辑记录");
-		button_consume_form_submit.setText("更新");
+		buttonRecordFormSubmit.setText("更新");
 		LinearLayout linearLayout = (LinearLayout)findViewById(R.id.linearLayout_consume_form_tags);
         if(recordInfo.get_tags_list()==null || 
            recordInfo.get_tags_list().length() == 0) {
             linearLayout.setVisibility(View.GONE);
         } else {
         	linearLayout.setVisibility(View.VISIBLE);
-            textView_consume_form_tags.setText(recordInfo.get_tags_list());
+            textViewRecordFormTags.setText(recordInfo.get_tags_list());
         }
         
 		Integer id;
@@ -183,7 +182,7 @@ public class ConsumeForm extends BaseActivity {
 
 	RadioGroup.OnCheckedChangeListener radio_group_oncheck = new RadioGroup.OnCheckedChangeListener() { 
 		 public void onCheckedChanged(RadioGroup group, int checkedId) { 
-			 RadioButton radioButton = (RadioButton)findViewById(radioGroup_consume_klass.getCheckedRadioButtonId());
+			 RadioButton radioButton = (RadioButton)findViewById(radioGroupRecordKlass.getCheckedRadioButtonId());
 			 String whatIn = radioButton.getText().toString();
 			 switch(whatIn) {
 				 case "衣": klass = 1; break;
@@ -194,8 +193,8 @@ public class ConsumeForm extends BaseActivity {
 				 default: klass = -1; break;
 			 }
 			 Log.i("whatIn", whatIn+ " - " + klass);
-			 
-	         UIHelper.consume_tag_form(ConsumeForm.this, Integer.valueOf(String.valueOf(row_id)), klass, whatIn, current_user_id, textView_consume_form_tags);
+
+	         UIHelper.consume_tag_form(ConsumeForm.this, Integer.valueOf(String.valueOf(row_id)), klass, whatIn, currentUserId, textViewRecordFormTags, linearLayoutRecordFormTag);
 		 }
 	};
 		 
@@ -216,13 +215,17 @@ public class ConsumeForm extends BaseActivity {
 	    	String[] rows = new String[20];
 	    	String row = "";
 	    	String tmp = "";
+	    	Boolean isAllBlank = true;
 	    	Float value = (float)0;
 	    	TextView  editText_consume_form_value = (TextView)findViewById(R.id.editText_consume_form_value);
 	    	
-            rows = s.toString().split("\n");
+            rows = s.toString().trim().split("\n");
             for (int i = 0; i < rows.length; i++) {
 				String[] aa = rows[i].split("-");
 				if(aa.length==0) continue;
+				
+				isAllBlank = false;
+				
 				tmp = aa[0].trim();
 				if(tmp.length()==0) continue;
 				  
@@ -234,12 +237,12 @@ public class ConsumeForm extends BaseActivity {
             }
 	    	//Toast.makeText(TabConsume.this, ""+value, 0).show();
             editText_consume_form_value.setText(Float.toString(value));
-            if(value > 0) {
-            	button_consume_form_submit.setEnabled(true);
-            	button_consume_form_submit.setClickable(true);
+            if(isAllBlank == false) {
+            	buttonRecordFormSubmit.setEnabled(true);
+            	buttonRecordFormSubmit.setClickable(true);
             } else {
-            	button_consume_form_submit.setEnabled(false);
-            	button_consume_form_submit.setClickable(false);
+            	buttonRecordFormSubmit.setEnabled(false);
+            	buttonRecordFormSubmit.setClickable(false);
             }
 	    }
 	     
@@ -249,13 +252,13 @@ public class ConsumeForm extends BaseActivity {
 	 */
 	Button.OnClickListener button_consume_form_submit_listener = new Button.OnClickListener() {
 		public void onClick(View v) {
-			EditText editText_consume_form_value = (EditText) findViewById(R.id.editText_consume_form_value);
-			EditText editText_consume_form_ymdhms = (EditText) findViewById(R.id.editText_consume_form_ymdhms);
-			EditText editText_consume_form_remark = (EditText) findViewById(R.id.editText_consume_form_remark);
+			EditText editTextConsumeFormValue = (EditText) findViewById(R.id.editText_consume_form_value);
+			EditText editTextConsumeFormYmdhms = (EditText) findViewById(R.id.editText_consume_form_ymdhms);
+			EditText editTextConsumeFormRemark = (EditText) findViewById(R.id.editText_consume_form_remark);
 
-			String value  = editText_consume_form_value.getText().toString();
-			String remark = editText_consume_form_remark.getText().toString();
-			String ymdhms = editText_consume_form_ymdhms.getText().toString();
+			String value  = editTextConsumeFormValue.getText().toString().trim();
+			String remark = editTextConsumeFormRemark.getText().toString().trim();
+			String ymdhms = editTextConsumeFormYmdhms.getText().toString().trim();
 			// 登陆用户密码及密码
 			// String created_at = "2013-12-29 9:1:1";
 			String token = "";
@@ -269,12 +272,12 @@ public class ConsumeForm extends BaseActivity {
 				ConsumeInfo consume_info = new ConsumeInfo();
 				try {
 					if(action.equals("create")){
-						consume_info.set_user_id(Integer.valueOf(String.valueOf(current_user_id)));
+						consume_info.set_user_id(Integer.valueOf(String.valueOf(currentUserId)));
 						consume_info.set_consume_id(-1);
                         consume_info.set_value(Double.parseDouble(value));
                         consume_info.set_remark(remark);
                         consume_info.set_ymdhms(ymdhms);
-                        consume_info.set_tags_list(textView_consume_form_tags.getText().toString());
+                        consume_info.set_tags_list(textViewRecordFormTags.getText().toString());
                         consume_info.set_klass(klass);
                         consume_info.set_created_at(ymdhms.substring(0, 19));
                         consume_info.set_updated_at(ymdhms.substring(0, 19));
@@ -287,7 +290,7 @@ public class ConsumeForm extends BaseActivity {
 						consume_info.set_value(Double.parseDouble(value));
 						consume_info.set_remark(remark);
 						consume_info.set_ymdhms(ymdhms);
-                        consume_info.set_tags_list(textView_consume_form_tags.getText().toString());
+                        consume_info.set_tags_list(textViewRecordFormTags.getText().toString());
                         consume_info.set_klass(klass);
 						consume_info.set_created_at(ymdhms.substring(0,19));
 						
@@ -307,7 +310,7 @@ public class ConsumeForm extends BaseActivity {
 
 					if(NetUtils.has_network(getApplicationContext())) {
 					   //后台同步
-					   NetUtils.sync_upload_background(ConsumeForm.this,token, current_user_id);
+					   NetUtils.sync_upload_background(ConsumeForm.this,token, currentUserId);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

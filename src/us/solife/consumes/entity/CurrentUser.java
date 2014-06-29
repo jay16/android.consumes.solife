@@ -52,7 +52,7 @@ public class CurrentUser {
 		SQLiteDatabase database = consumeDatabaseHelper.getWritableDatabase();
 		Cursor cursor = database.rawQuery("select * from consumes where id = "+row_id + " and user_id = "+ user_id, null);
         ConsumeInfo consume_info = new ConsumeInfo();
-		if (cursor != null) {
+		if (cursor != null && cursor.getCount() > 0) {
 			cursor.moveToFirst();
 			consume_info = get_consume_info_from_cursor(cursor);
 		}

@@ -17,19 +17,22 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ListViewTagSelectAdapter extends BaseAdapter{
 	ArrayList<TagInfo> tagInfos;
     Context            context;
     TextView           editTextTags;
+    LinearLayout       linearLayoutTags;
     ConsumeInfo        recordInfo;
     ArrayList<String>  tagsChecked = new ArrayList<String>();
 
-	public ListViewTagSelectAdapter(ConsumeInfo recordInfo, ArrayList<TagInfo> tagInfos, Context context, TextView editTextTags) {
-		this.tagInfos = tagInfos;
-		this.context   = context;
+	public ListViewTagSelectAdapter(ConsumeInfo recordInfo, ArrayList<TagInfo> tagInfos, Context context, TextView editTextTags, LinearLayout linearLayoutTags) {
+		this.tagInfos     = tagInfos;
+		this.context      = context;
 		this.editTextTags = editTextTags;
+		this.linearLayoutTags = linearLayoutTags;
 		this.recordInfo   = recordInfo;
 	}
 	
@@ -96,14 +99,10 @@ public class ListViewTagSelectAdapter extends BaseAdapter{
 	            		checked_tags += "," + tagsChecked.get(i);
 	            	}
 	            }
+	            linearLayoutTags.setVisibility(View.VISIBLE);
 	            editTextTags.setText(checked_tags);
 	        }
 	    });
-	    holder.checkBox.setOnClickListener(new RadioGroup.OnClickListener(){
-            public void onClick(View v){
-            }
-        });
-
 		if(recordInfo.get_tags_list() != null &&
 		   recordInfo.get_tags_list().length() >= 0) {
 			String[] tmpArr =recordInfo.get_tags_list().split(",");
