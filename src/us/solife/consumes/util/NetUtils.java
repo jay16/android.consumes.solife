@@ -613,7 +613,8 @@ public class NetUtils {
 			  new org.apache.commons.httpclient.NameValuePair("token", token),
 			  new org.apache.commons.httpclient.NameValuePair("format", "json"),
 			  new org.apache.commons.httpclient.NameValuePair("tag[label]", tag_info.get_label()),
-			  new org.apache.commons.httpclient.NameValuePair("tag[klass]", tag_info.get_klass()+"")
+			  new org.apache.commons.httpclient.NameValuePair("tag[klass]", tag_info.get_klass()+""),
+			  new org.apache.commons.httpclient.NameValuePair("tag[browser]", Build.BRAND+"_"+Build.MODEL)
 			};
 
 			HashMap<String, Object> hash_map = ApiClient._Post(URLs.URL_TAG, params);
@@ -642,7 +643,8 @@ public class NetUtils {
 			org.apache.commons.httpclient.NameValuePair[] params = new org.apache.commons.httpclient.NameValuePair[] {
 			  new org.apache.commons.httpclient.NameValuePair("token", token),
 			  new org.apache.commons.httpclient.NameValuePair("tag[label]", tag_info.get_label()),
-			  new org.apache.commons.httpclient.NameValuePair("tag[klass]", tag_info.get_klass()+"")
+			  new org.apache.commons.httpclient.NameValuePair("tag[klass]", tag_info.get_klass()+""),
+			  new org.apache.commons.httpclient.NameValuePair("tag[browser]", Build.BRAND+"_"+Build.MODEL)
 			};
 
 			HashMap<String, Object> hash_map = ApiClient._Post(URLs.URL_TAG+"/"+tag_info.get_tag_id()+".json", params);

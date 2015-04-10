@@ -23,17 +23,19 @@ import android.widget.TextView;
 public class ListViewTagSelectAdapter extends BaseAdapter{
 	ArrayList<TagInfo> tagInfos;
     Context            context;
-    TextView           editTextTags;
+    TextView           dialogLabelTags;
+    TextView           recordLabelTags;
     LinearLayout       linearLayoutTags;
     ConsumeInfo        recordInfo;
     ArrayList<String>  tagsChecked = new ArrayList<String>();
 
-	public ListViewTagSelectAdapter(ConsumeInfo recordInfo, ArrayList<TagInfo> tagInfos, Context context, TextView editTextTags, LinearLayout linearLayoutTags) {
+	public ListViewTagSelectAdapter(ConsumeInfo recordInfo, ArrayList<TagInfo> tagInfos, Context context, TextView editTextTags, TextView textViewRecordFormTags, LinearLayout linearLayoutTags) {
 		this.tagInfos     = tagInfos;
 		this.context      = context;
-		this.editTextTags = editTextTags;
+		this.dialogLabelTags  = editTextTags;
+		this.recordLabelTags  = textViewRecordFormTags;
 		this.linearLayoutTags = linearLayoutTags;
-		this.recordInfo   = recordInfo;
+		this.recordInfo       = recordInfo;
 	}
 	
 
@@ -100,16 +102,27 @@ public class ListViewTagSelectAdapter extends BaseAdapter{
 	            	}
 	            }
 	            linearLayoutTags.setVisibility(View.VISIBLE);
-	            editTextTags.setText(checked_tags);
+	            dialogLabelTags.setText(checked_tags);
 	        }
 	    });
+		
+		
 		if(recordInfo.get_tags_list() != null &&
 		   recordInfo.get_tags_list().length() >= 0) {
 			String[] tmpArr =recordInfo.get_tags_list().split(",");
 			
 			for (int i = 0 ; i <tmpArr.length ; i++ ) { 
-			  if(tmpArr[i].equals(tagInfo.get_label()))
-		        holder.checkBox.setChecked(true);
+			  if(tmpArr[i].equals(tagInfo.get_label())) holder.checkBox.setChecked(true);
+			}
+		}
+		//新建消费记录窗口中，recordInfo.tag_list()初始为空
+		//有选择某klass的tag后，切换klass回来时应该checked
+		if(recordLabelTags.getText().toString() != null &&
+				recordLabelTags.getText().toString().length() > 0) {
+            String[] tmpArr = recordLabelTags.getText().toString().split(",");
+			
+			for (int i = 0 ; i <tmpArr.length ; i++ ) { 
+			  if(tmpArr[i].equals(tagInfo.get_label())) holder.checkBox.setChecked(true);
 			}
 		}
 		return convertView;

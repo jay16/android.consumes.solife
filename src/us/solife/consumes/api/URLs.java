@@ -26,15 +26,18 @@ public class URLs implements Serializable {
 	private final static String URL_SPLITTER = "/";
 	private final static String URL_UNDERLINE = "_";
 	
-	private final static String URL_API_HOST = HTTP + HOST + URL_SPLITTER;
+	private final static String URL_API_HOST = HTTP + HOST;// + URL_SPLITTER;
+
+	public final static String API_VERSION = "v1";
+	
 	//users
-	public final static String URL_USER  = URL_API_HOST + "api/users.json";
-	public final static String URL_USER_FRIENDS  = URL_API_HOST + "api/users/friends.json";
+	public final static String URL_USER  = String.format("%s/api/%s/%s", URL_API_HOST,API_VERSION,"users.json");
+	public final static String URL_USER_FRIENDS  = String.format("%s/api/%s/%s",URL_API_HOST,API_VERSION,"users/friends.json");
 	//consumes
 	
-	public final static String URL_RECORD   = URL_API_HOST + "api/records";
-	public final static String URL_RECORD_FRIENDS   = URL_API_HOST + "api/records/friends.json";
-	public final static String URL_TAG   = URL_API_HOST + "api/tags";
+	public final static String URL_RECORD   = String.format("%s/api/%s/%s",URL_API_HOST,API_VERSION,"records");
+	public final static String URL_RECORD_FRIENDS   = String.format("%s/api/%s/%s",URL_API_HOST,API_VERSION,"records/friends.json");
+	public final static String URL_TAG   = String.format("%s/api/%s/%s",URL_API_HOST,API_VERSION,"tags");
 	//android app
 	public final static String URL_VERSION   = URL_API_HOST + "api/version.json?os=android";
 	

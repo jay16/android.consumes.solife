@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,6 +66,9 @@ public class Loading extends BaseActivity {
 		Intent intent;
 		if (sharedPreferences.contains("is_login")
 				&& sharedPreferences.getBoolean("is_login", false)) {
+			
+			Log.w("TOKEN",sharedPreferences.getString("current_user_token", "NOSET"));
+			
 			intent = new Intent(Loading.this, Main.class);
 			//intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
 			//如果这个activity已经启动了，就不产生新的activity，

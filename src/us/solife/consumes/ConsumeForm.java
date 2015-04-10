@@ -194,7 +194,7 @@ public class ConsumeForm extends BaseActivity {
 			 }
 			 Log.i("whatIn", whatIn+ " - " + klass);
 
-	         UIHelper.consume_tag_form(ConsumeForm.this, Integer.valueOf(String.valueOf(row_id)), klass, whatIn, currentUserId, textViewRecordFormTags, linearLayoutRecordFormTag);
+	         UIHelper.consumeTagFormDialog(ConsumeForm.this, Integer.valueOf(String.valueOf(row_id)), klass, whatIn, currentUserId, textViewRecordFormTags, linearLayoutRecordFormTag);
 		 }
 	};
 		 

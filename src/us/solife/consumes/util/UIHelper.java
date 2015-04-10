@@ -205,9 +205,9 @@ public class UIHelper {
 		    mNotificationManager.notify(1000+uid, notification);  
 		} 
 	}
-	
-	@SuppressLint("CutPasteId")
-	public static void consume_tag_form(final Context context, Integer rowId, final Integer klass, String wathIn, final Long currentUserId, final TextView textViewRecordFormTags, final LinearLayout linearLayoutRecordFormTags) {	
+
+
+	public static void consumeTagFormDialog(final Context context, Integer rowId, final Integer klass, String wathIn, final Long currentUserId, final TextView textViewRecordFormTags,final LinearLayout linearLayoutRecordFormTags) {	
 
 		CurrentUser currentUser = CurrentUser.getCurrentUser(context, currentUserId);
 		final ConsumeInfo recordInfo = currentUser.findRecordById(rowId);
@@ -218,8 +218,6 @@ public class UIHelper {
 
 		alertDialogBuilder.setTitle("["+wathIn+"]±Í«©");//"["+wathIn+"]
 		alertDialogBuilder.setView(promptView);
-		
-		
 
 		final EditText tagFormLabel = (EditText) promptView.findViewById(R.id.editText_tag_label);
         final Button tagFormSubmit = (Button)promptView.findViewById(R.id.button_tag_submit);
@@ -262,7 +260,7 @@ public class UIHelper {
         if(listView != null) {
 			TagTb tagTable = TagTb.getTagTb(context);
 			ArrayList<TagInfo> tagInfos = tagTable.getTagWithKlass(klass);
-        	UIHelper.initTagListView(context, recordInfo, listView, tagInfos, textViewTags, linearLayoutRecordFormTags); 
+        	UIHelper.initTagListView(context, recordInfo, listView, tagInfos, textViewTags, textViewRecordFormTags, linearLayoutRecordFormTags); 
         } else {
         	Log.e("UIHelperError", "ListViewIsNULL");
         }
@@ -272,7 +270,13 @@ public class UIHelper {
             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     Log.w("TagForm",tagFormLabel.getText().toString());
-                    textViewRecordFormTags.setText(textViewTags.getText().toString());
+                    if(textViewTags.getText().toString() != null
+                       && textViewTags.getText().toString().length() > 0
+                       && textViewTags.getText().toString() != "Œ¥—°‘Ò±Í«©") { 
+                       textViewRecordFormTags.setText(textViewTags.getText().toString());
+                    } else {
+                    	textViewRecordFormTags.setText("");
+                    }
                 }
             })
             .setNegativeButton("Cancel",
@@ -306,15 +310,15 @@ public class UIHelper {
 				tagTable.findOrCreateTag(tag_info);
 				
 				ArrayList<TagInfo> tag_infos = tagTable.getTagWithKlass(klass);
-		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, recordInfo, listView, tag_infos, textViewTags, linearLayoutRecordFormTags); 
+		        if(tag_infos.size() > 0) UIHelper.initTagListView(context, recordInfo, listView, tag_infos, textViewTags, textViewRecordFormTags, linearLayoutRecordFormTags); 
 		        tagFormLabel.setText("");
 		        tagFormSubmit.setEnabled(false);
 		        tagFormSubmit.setClickable(false);
 			}
         });
 	}
-	public static void initTagListView(Context context, ConsumeInfo recordInfo, ListView listView, final ArrayList<TagInfo> tagInfos, TextView textViewTags, LinearLayout linearLayoutRecordFormTags) {
-		listView.setAdapter( new ListViewTagSelectAdapter(recordInfo, tagInfos, context, textViewTags, linearLayoutRecordFormTags));
+	public static void initTagListView(Context context, ConsumeInfo recordInfo, ListView listView, final ArrayList<TagInfo> tagInfos, TextView textViewTags, TextView textViewRecordFormTags, LinearLayout linearLayoutRecordFormTags) {
+		listView.setAdapter( new ListViewTagSelectAdapter(recordInfo, tagInfos, context, textViewTags, textViewRecordFormTags, linearLayoutRecordFormTags));
 		listView.setClickable(true);
 		listView.invalidate();
 	}
